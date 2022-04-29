@@ -33,9 +33,11 @@ class RepositoryImplementation implements Repository {
   }
 
   @override
-  Future<Either<Failure, UserData>> resetPassword() async {
+  Future<Either<Failure, String>> changePassword(
+      String oldPassword, String newPassword) async {
     try {
-      final response = await remoteSource.resetPassword();
+      final response =
+          await remoteSource.changePassword(oldPassword, newPassword);
       return Right(response);
     } catch (e) {
       return Left(ServerFailure());
@@ -43,9 +45,39 @@ class RepositoryImplementation implements Repository {
   }
 
   @override
-  Future<Either<Failure, String>> changePassword(String oldPassword, String newPassword) async {
+  Future<Either<Failure, String>> postImage() async {
     try {
-      final response = await remoteSource.changePassword(oldPassword, newPassword);
+      final response = await remoteSource.postImage();
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> attendenceSave() async {
+    try {
+      final response = await remoteSource.attendenceSave();
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> getProductList() async {
+    try {
+      final response = await remoteSource.getProductList();
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> getRegionList() async {
+    try {
+      final response = await remoteSource.getRegionList();
       return Right(response);
     } catch (e) {
       return Left(ServerFailure());

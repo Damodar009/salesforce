@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salesforce/presentation/pages/changePasswordPage.dart';
-import 'package:salesforce/presentation/pages/login/loginScreen.dart';
-import 'package:salesforce/presentation/pages/menuPage.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
-import 'package:salesforce/presentation/pages/salesPage.dart';
 import 'package:salesforce/presentation/pages/visitedOutletPage.dart';
-import '../widgets/visitedOutletWidget.dart';
-import 'attendencePage.dart';
 import 'calenderPage.dart';
 import 'editProfile.dart';
-import 'home/homePage.dart';
-import 'newOrderPage.dart';
-import 'newOutletsPage.dart';
 
 class DashboardScreen extends StatefulWidget {
   int index;
