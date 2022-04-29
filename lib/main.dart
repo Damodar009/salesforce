@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
+import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
 import 'injectable.dart';
 
@@ -47,6 +48,7 @@ class _MayAppState extends State<MayApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
+        onGenerateRoute: RouteGenerator.getRoute,
         title: 'SalesForce',
         theme: theme,
         home: isLoggedIn
