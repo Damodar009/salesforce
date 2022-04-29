@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salesforce/presentation/pages/changePasswordPage.dart';
-import 'package:salesforce/presentation/pages/login/loginScreen.dart';
-import 'package:salesforce/presentation/pages/menuPage.dart';
+import 'package:salesforce/presentation/pages/merchandise_support_page.dart';
+import 'package:salesforce/presentation/pages/notice_board_page.dart';
+import 'package:salesforce/presentation/pages/payment_page.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
-import 'package:salesforce/presentation/pages/salesPage.dart';
-import 'package:salesforce/presentation/pages/visitedOutletPage.dart';
-import '../widgets/visitedOutletWidget.dart';
-import 'attendencePage.dart';
 import 'calenderPage.dart';
 import 'editProfile.dart';
-import 'home/homePage.dart';
-import 'newOrderPage.dart';
-import 'newOutletsPage.dart';
 
 class DashboardScreen extends StatefulWidget {
   int index;
@@ -26,10 +19,10 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
   List<Widget> screens = [
-    const ProfileScreen(),
+    const NoticeBoardScreen(),
     const EditProfileScreen(),
-    const CalenderScreen(),
-    const VisitedOutletScreen(),
+    const PaymentScreen(),
+    const ProfileScreen(),
 
     // const AttendenceScreen(),
     // const MenuScreen()
