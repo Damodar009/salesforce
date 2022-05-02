@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/injectable.dart';
 import '../../error/failure.dart';
 import '../entities/userData.dart';
 import '../repositories/repository.dart';
@@ -18,8 +19,11 @@ abstract class UseCaseForRemoteSource {
 
 @Singleton(as: UseCaseForRemoteSource)
 class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
-  final Repository repository;
-  UseCaseForRemoteSourceimpl(this.repository);
+  // final Repository repository;
+  var repository = getIt<Repository>();
+  UseCaseForRemoteSourceimpl(this.repository){
+    print("the usecase for remote soure impl is created ");
+  }
 
   @override
   Future<Either<Failure, UserData>> login(
