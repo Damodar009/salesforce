@@ -6,8 +6,13 @@ import '../repositories/repository.dart';
 
 abstract class UseCaseForRemoteSource {
   Future<Either<Failure, UserData>> login(String username, String password);
-  Future<Either<Failure, String>> changePassword(String oldPassword, String newPassword);
-  Future<Either<Failure, UserData>> resetPassword();
+  Future<Either<Failure, String>> changePassword(
+      String oldPassword, String newPassword);
+  Future<Either<Failure, String>> postImage();
+  Future<Either<Failure, String>> getProductList();
+  Future<Either<Failure, String>> getRegionList();
+  Future<Either<Failure, String>> attendenceSave();
+
   Future<Either<Failure, dynamic>> postToRemoteSource();
 }
 
@@ -27,11 +32,28 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   }
 
   @override
-  Future<Either<Failure, String>> changePassword(String oldPassword, String newPassword) async {
+  Future<Either<Failure, String>> changePassword(
+      String oldPassword, String newPassword) async {
     return await repository.changePassword(oldPassword, newPassword);
   }
 
-  Future<Either<Failure, UserData>> resetPassword() async {
-    return await repository.resetPassword();
+  @override
+  Future<Either<Failure, String>> postImage() async {
+    return await repository.postImage();
+  }
+
+  @override
+  Future<Either<Failure, String>> attendenceSave() async {
+    return await repository.attendenceSave();
+  }
+
+  @override
+  Future<Either<Failure, String>> getProductList() async {
+    return await repository.getProductList();
+  }
+
+  @override
+  Future<Either<Failure, String>> getRegionList() async {
+    return await repository.getRegionList();
   }
 }
