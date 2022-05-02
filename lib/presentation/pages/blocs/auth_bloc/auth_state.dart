@@ -9,10 +9,9 @@ abstract class AuthState extends Equatable {
 
 class AuthInitial extends AuthState {}
 
-class LoadingState extends AuthState {}
-
 
 //login state
+class LoginLoadingState extends AuthState {}
 
 class LoginSuccessState extends AuthState {}
 
@@ -20,6 +19,7 @@ class LoginFailedState extends AuthState {}
 
 
 //Change Password State
+class ChangePasswordLoadingState extends AuthState {}
 
 class ChangePasswordSuccessState extends AuthState {}
 
@@ -27,6 +27,8 @@ class ChangePasswordFailedState extends AuthState {}
 
 
 //Reset Password State
+
+class ResetPasswordLoadingState extends AuthState {}
 
 class ResetPasswordSuccessState extends AuthState {}
 

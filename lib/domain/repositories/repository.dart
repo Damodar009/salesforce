@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import '../../error/failure.dart';
 

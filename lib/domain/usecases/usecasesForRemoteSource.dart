@@ -11,7 +11,6 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, dynamic>> postToRemoteSource();
 }
 
-@Singleton(as: UseCaseForRemoteSource)
 class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   final Repository repository;
   UseCaseForRemoteSourceimpl(this.repository);

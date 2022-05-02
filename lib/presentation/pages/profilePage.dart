@@ -9,13 +9,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double mediaQueryHeight = MediaQuery.of(context).size.height;
-    double mediaQueryWidth = MediaQuery.of(context).size.width;
 
     double heightBetweenTextField = mediaQueryHeight * 0.04;
-
-    final String title;
-
-    List<String> titles = ["CitizenShip", "Bank"];
 
     return Scaffold(
       appBar:
@@ -147,9 +142,8 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(
                     height: mediaQueryHeight * 0.04,
                   ),
-                  SizedBox(
-                    height: 300,
-                    child: GridView.count(
+                     GridView.count(
+                      shrinkWrap: true,
                         primary: true,
                         physics: const NeverScrollableScrollPhysics(),
                         crossAxisCount: 2,
@@ -183,7 +177,7 @@ class ProfileScreen extends StatelessWidget {
                             ]),
                           );
                         })),
-                  ),
+                  
                   SizedBox(
                     height: mediaQueryHeight * 0.04,
                   ),

@@ -15,7 +15,7 @@ abstract class RemoteSource {
   Future<String?> postDataToApi();
 }
 
-@Singleton(as: RemoteSource)
+// @Injectable(as: RemoteSource) 
 class RemoteSourceImplementation implements RemoteSource {
   Dio dio = Dio();
   SaveLocally hive = SaveLocally();

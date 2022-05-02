@@ -5,7 +5,6 @@ import '../../domain/repositories/repository.dart';
 import '../../error/failure.dart';
 import '../datasource/remotesource.dart';
 
-@Singleton(as: Repository)
 class RepositoryImplementation implements Repository {
   final RemoteSource remoteSource;
 
