@@ -11,11 +11,15 @@ import '../models/Userdata.dart';
 abstract class RemoteSource {
   Future<UserData> login(String username, String password);
   Future<String> changePassword(String oldpassword, String newPassword);
-  Future<UserData> resetPassword();
+  Future<String> postImage();
+  Future<String> getProductList();
+
+  Future<String> getRegionList();
+  Future<String> attendenceSave();
   Future<String?> postDataToApi();
 }
 
-@Singleton(as: RemoteSource)
+// @Injectable(as: RemoteSource) 
 class RemoteSourceImplementation implements RemoteSource {
   Dio dio = Dio();
   SaveLocally hive = SaveLocally();
@@ -71,12 +75,8 @@ class RemoteSourceImplementation implements RemoteSource {
     dio.options.headers['content-Type'] = 'application/json';
 
     Box box = await hive.openBox();
-
     String acessToken = box.get('acess_token');
-    // dio.options.headers["Authorization"] =
-    //     "Bearer " + userdata.read('access_token');
-
-    // try {
+    try {
       Response response = await dio.post(
         ApiUrl.login,
         data: <String, String>{
@@ -89,34 +89,53 @@ class RemoteSourceImplementation implements RemoteSource {
           headers: <String, String>{'Authorization': 'Basic ' + acessToken},
         ),
       );
-
-      print(response.statusCode);
-
       if (response.data["status"] == true) {
         return Future.value('Success');
       } else {
         throw ServerException();
       }
-    // } on DioError catch (e) {
-    //   throw ServerException();
-    // }
+    } on DioError catch (e) {
+      throw ServerException();
+    }
+  }
+
+//todo
+  @override
+  Future<String> postImage() async {
+    try {
+      Response response = await dio.post(
+        ApiUrl.login,
+        data: <String, String>{'grant_type': 'password'},
+        options: Options(
+          contentType: "application/x-www-form-urlencoded",
+          headers: <String, String>{'Authorization': 'Basic '},
+        ),
+      );
+      if (response.data["status"] == true) {
+        return Future.value('Success');
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      throw ServerException();
+    }
   }
 
   @override
-  Future<UserData> resetPassword() async {
+  Future<String> attendenceSave() {
+    // TODO: implement attendenceSave
     throw UnimplementedError();
+  }
 
-    // Box box = await SaveLocally().openBox();
-    //     if (box.isNotEmpty) {
-    //       print('hellhhhhhhhho');
-    //       String token = box.get('token');
-    //       print(token);
-    // List<ProductModel> searchList =
-    //     await SearchRepo().searchProduct(token: token, name: event.name);
+  @override
+  Future<String> getProductList() {
+    // TODO: implement getProductList
+    throw UnimplementedError();
+  }
 
-    // print(searchList);
-
-    // emit(SeachProductState(searchList: searchList));
-    // }
+  @override
+  Future<String> getRegionList() {
+    // TODO: implement getRegionList
+    throw UnimplementedError();
   }
 }

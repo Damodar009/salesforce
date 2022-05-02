@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:salesforce/presentation/pages/blocs/auth_bloc/auth_bloc.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
+import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
 import 'injectable.dart';
 
@@ -14,23 +17,14 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const MayApp();
-  }
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MayApp extends StatefulWidget {
-  const MayApp({Key? key}) : super(key: key);
-
-  @override
-  State<MayApp> createState() => _MayAppState();
-}
-
-class _MayAppState extends State<MayApp> {
+class _MyAppState extends State<MyApp> {
   bool isLoggedIn = true;
   checkUserLoggedIn() async {
     var box = await Hive.openBox("salesForce");
@@ -45,14 +39,20 @@ class _MayAppState extends State<MayApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'SalesForce',
-        theme: theme,
-        home: isLoggedIn
-            ? DashboardScreen(
-                index: 0,
-              )
-            : const LOginScreen());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<AuthBloc>()),
+      ],
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: RouteGenerator.getRoute,
+          title: 'SalesForce',
+          theme: theme,
+          home: isLoggedIn
+              ? DashboardScreen(
+                  index: 0,
+                )
+              : const LOginScreen()),
+    );
   }
 }
