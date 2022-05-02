@@ -5,6 +5,8 @@ import 'package:salesforce/presentation/pages/merchandise_support_page.dart';
 import 'package:salesforce/presentation/pages/notice_board_page.dart';
 import 'package:salesforce/presentation/pages/payment_page.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
+import 'package:salesforce/presentation/pages/profilePage.dart';
+import 'package:salesforce/presentation/pages/visitedOutletPage.dart';
 import 'calenderPage.dart';
 import 'editProfile.dart';
 
