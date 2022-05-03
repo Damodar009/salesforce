@@ -70,42 +70,31 @@ class RemoteSourceImplementation implements RemoteSource {
 
   @override
   Future<String> changePassword(String oldpassword, String newPassword) async {
-    // dio.options.headers['content-Type'] = 'application/json';
+    Box box = await hive.openBox();
 
-    Box box = await hive.openBox(HiveConstants.userdata);
-    print('.box('')');
+    String accessToken = box.get('access_token');
 
-    String acessToken = box.get('access_token');
-    // String userId = box.get('userid');
-    
-    print(box.keys);
-    // print(userId);
-    // try {
-    Response response = await dio.post(
-      ApiUrl.changePassword,
-      data: <String, String>{
-        // 'userId': userId,
-        'oldPassword': oldpassword,
-        'newPassword': newPassword,
-      },
-      options: Options(
-        contentType: "application/x-www-form-urlencoded",
-        headers: <String, String>{'Authorization': 'Bearer ' },
-      ),
-    );
-    print(ApiUrl.changePassword);
-    print(oldpassword + newPassword);
-    print(response.statusCode);
-    if (response.data["status"] == true) {
-      return Future.value('Success');
-    } else {
-      print('server dfshajkdhfjkdshfjk');
+    String userId = box.get('userid');
+    try {
+      Response response = await dio.post(
+        ApiUrl.changePassword,
+        data: <String, String>{
+          'oldPassword': oldpassword,
+          'newPassword': newPassword,
+          'userId': userId
+        },
+        options: Options(
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
+        ),
+      );
+      if (response.data["status"] == true) {
+        return Future.value('Success');
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
       throw ServerException();
     }
-    // }
-    //  on DioError catch (e) {
-    //   throw ServerException();
-    // }
   }
 
 //todo

@@ -3,14 +3,14 @@ import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
 
 class SaveLocally {
-  Future<Box> openBox(String userdata) async {
+  Future<Box> openBox() async {
     Box box = await Hive.openBox(HiveConstants.userdata);
     return box;
   }
 
   Future savetoken({required UserData userdata}) async {
     try {
-      var box = await openBox(HiveConstants.userdata);
+      var box = await openBox();
 
       await box.put("refresh_token", userdata.refresh_token);
       await box.put("access_token", userdata.access_token);
