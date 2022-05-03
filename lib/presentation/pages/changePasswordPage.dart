@@ -33,8 +33,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     RemoteSourceImplementation remoteSourceImplementation =
         RemoteSourceImplementation();
 
-    
-
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is ChangePasswordSuccessState) {
@@ -106,16 +104,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     hintText: 'Confirm Password',
                     obsecureText1: () {
                       setState(() {
-                        obsecureTextReTypePassword = !obsecureTextReTypePassword;
+                        obsecureTextReTypePassword =
+                            !obsecureTextReTypePassword;
                         print("hgchgfcxhgfcdgrvhctdx");
                       });
                     }),
                 const Spacer(),
                 button('Save', () {
-                 BlocProvider.of<AuthBloc>(context)
-                    .add(ChangePasswordEvent(
+                  if (_newPasswordController.text ==
+                      _oldPasswordController.text) {
+                    BlocProvider.of<AuthBloc>(context).add(ChangePasswordEvent(
                         oldPassword: _oldPasswordController.text,
                         newPassword: _newPasswordController.text));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Both password doesn't match")));
+                  }
                 }, false, AppColors.buttonColor),
               ],
             ),

@@ -184,7 +184,12 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(
                     height: mediaQueryHeight * 0.04,
                   ),
-                  button('Edit Profile', () {}, false, AppColors.buttonColor),
+                  button('Edit Profile', () {
+                    Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const EditProfileScreen()));
+                  }, false, AppColors.buttonColor),
                   SizedBox(
                     height: mediaQueryHeight * 0.01,
                   ),

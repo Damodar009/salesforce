@@ -6,7 +6,7 @@ class SaveLocally {
   Future<Box> openBox() async {
     Box box = await Hive.openBox(HiveConstants.userdata);
     return box;
-  }
+  } 
 
   Future savetoken({required UserData userdata}) async {
     try {

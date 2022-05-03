@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/presentation/pages/newOrderPage.dart';
+import 'package:salesforce/presentation/pages/newOutletsPage.dart';
+import 'package:salesforce/presentation/pages/salesPage.dart';
 
 import '../../utils/app_colors.dart';
 
@@ -30,12 +33,37 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
           const SizedBox(
             height: 10,
           ),
-          outletsCard("Create new orders",
-              "To create new Orders and \n send or save the data ", " Add now"),
-          outletsCard("Create new Outlets",
-              "To Create New Outlets and \nSave Outlets", "Add now"),
-          outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
-              "Check In"),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const NewOrderScreen()));
+            },
+            child: outletsCard(
+                "Create new orders",
+                "To create new Orders and \n send or save the data ",
+                " Add now"),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const NewOutletsScreen()));
+            },
+            child: outletsCard("Create new Outlets",
+                "To Create New Outlets and \nSave Outlets", "Add now"),
+          ),
+          InkWell( onTap: (){
+            Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const SalesPage()));
+          },
+            child: outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
+                "Check In"),
+          ),
           outletsCardOutline(Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(

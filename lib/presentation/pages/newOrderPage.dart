@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
+import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/buttonWidget.dart';
 import '../widgets/textformfeild.dart';
@@ -262,7 +263,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  button("Save Order", () {}, false, AppColors.buttonColor),
+                  button("Save Order", () {
+                    Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const VisitedOutletWidget()));
+                  }, false, AppColors.buttonColor),
                 ],
               ),
             ),

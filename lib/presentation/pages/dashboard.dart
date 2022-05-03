@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:salesforce/presentation/pages/attendencePage.dart';
+import 'package:salesforce/presentation/pages/home/homePage.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/presentation/pages/menuPage.dart';
 import 'package:salesforce/presentation/pages/merchandise_support_page.dart';
 import 'package:salesforce/presentation/pages/notice_board_page.dart';
+import 'package:salesforce/presentation/pages/outlets.dart';
 import 'package:salesforce/presentation/pages/payment_page.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
@@ -23,9 +26,9 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
   List<Widget> screens = [
-    const NoticeBoardScreen(),
-    const LOginScreen(),
-    const PaymentScreen(),
+    const HomeScreen(),
+    const AttendenceScreen(),
+    const CalenderScreen(),
     const MenuScreen(),
 
     // const AttendenceScreen(),
@@ -77,7 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           items: [
             buildButtonNavigationBarItem('assets/icons/home.svg', "Home"),
             buildButtonNavigationBarItem('assets/icons/sales.svg', "sales"),
-            buildButtonNavigationBarItem(
+            buildButtonNavigationBarItem(           
                 'assets/icons/attendence.svg', "attendence"),
             buildButtonNavigationBarItem('assets/icons/home.svg', "menu"),
           ],

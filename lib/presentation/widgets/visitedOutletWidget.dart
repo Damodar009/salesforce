@@ -3,7 +3,7 @@ import '../../utils/app_colors.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
 
-class VisitedOutlet extends StatelessWidget {
+class VisitedOutletWidget extends StatelessWidget {
   final IconData? icon;
   final String? navTitle;
   final String? settingTitle;
@@ -13,7 +13,7 @@ class VisitedOutlet extends StatelessWidget {
   final String? bodySubTitle;
   final String? buttonText;
 
-  const VisitedOutlet(
+  const VisitedOutletWidget(
       {Key? key,
       this.icon,
       this.settingIcon,
