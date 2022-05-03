@@ -17,10 +17,10 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, dynamic>> postToRemoteSource();
 }
 
+@injectable
 class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
-  // final Repository repository;
   var repository = getIt<Repository>();
-  UseCaseForRemoteSourceimpl(this.repository){
+  UseCaseForRemoteSourceimpl(this.repository) {
     print("the usecase for remote soure impl is created ");
   }
 
