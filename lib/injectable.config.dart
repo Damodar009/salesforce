@@ -18,10 +18,10 @@ import 'domain/usecases/usecasesForRemoteSource.dart'
 _i1.GetIt $initGetIt(_i1.GetIt get,
     {String? environment, _i2.EnvironmentFilter? environmentFilter}) {
   final gh = _i2.GetItHelper(get, environment, environmentFilter);
-  gh.singleton<_i3.RemoteSource>(_i3.RemoteSourceImplementation());
-  gh.singleton<_i4.Repository>(
+  gh.factory<_i3.RemoteSource>(() => _i3.RemoteSourceImplementation());
+  gh.factory<_i4.Repository>(() =>
       _i5.RepositoryImplementation(remoteSource: get<_i3.RemoteSource>()));
-  gh.singleton<_i6.UseCaseForRemoteSource>(
-      _i6.UseCaseForRemoteSourceimpl(get<_i4.Repository>()));
+  gh.factory<_i6.UseCaseForRemoteSourceimpl>(
+      () => _i6.UseCaseForRemoteSourceimpl(get<_i4.Repository>()));
   return get;
 }

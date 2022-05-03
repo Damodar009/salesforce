@@ -1,6 +1,6 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
-
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/domain/entities/userData.dart';
@@ -13,53 +13,51 @@ abstract class RemoteSource {
   Future<String> changePassword(String oldpassword, String newPassword);
   Future<String> postImage();
   Future<String> getProductList();
-
   Future<String> getRegionList();
   Future<String> attendenceSave();
   Future<String?> postDataToApi();
 }
 
-// @Injectable(as: RemoteSource) 
+@Injectable(as: RemoteSource)
 class RemoteSourceImplementation implements RemoteSource {
   Dio dio = Dio();
   SaveLocally hive = SaveLocally();
 
   RemoteSourceImplementation();
-  // getIt.get<>().login(event.username, event.password);
 
   @override
   Future<UserData> login(String username, String password) async {
-    dio.options.headers['content-Type'] = 'application/json';
-    // dio.options.headers["Authorization"] =
-    //     "Bearer " + userdata.read('access_token');
-
+    const String _clientId = 'clientId';
+    const String _clientSecret = 'secret';
     try {
       Response response = await dio.post(
         ApiUrl.login,
         data: <String, String>{
+          'grant_type': 'password',
           'username': username,
           'password': password,
-          'grant_type': 'password'
         },
         options: Options(
           contentType: "application/x-www-form-urlencoded",
           headers: <String, String>{
-            'Authorization': 'Basic Y2xpZW50SWQ6c2VjcmV0'
+            'Authorization': 'Basic ' +
+                base64Encode(utf8.encode('$_clientId:$_clientSecret'))
           },
         ),
       );
+      print("this is response ");
+      print(response.data);
       if (response.statusCode == 200) {
         UserData userData = UserDataModel.fromJson(response.data);
 
-        hive.savetoken(
-            access_token: userData.access_token,
-            refresh_token: userData.refresh_token);
+        hive.savetoken(userdata: userData);
 
         return userData;
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }

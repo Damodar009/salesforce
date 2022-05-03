@@ -5,16 +5,16 @@ import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/error/failure.dart';
+import 'package:salesforce/injectable.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-// @injectable
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-   UseCaseForRemoteSourceimpl useCaseForRemoteSourceimpl;
   SaveLocally hiveDb = SaveLocally();
+  var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
 
-  AuthBloc({required this.useCaseForRemoteSourceimpl}) : super(AuthInitial()) {
+  AuthBloc(this.useCaseForRemoteSourceimpl) : super(AuthInitial()) {
     on<LoginAttemptEvent>((event, emit) async {
       emit(LoginLoadingState());
       final isSuccessful = await useCaseForRemoteSourceimpl.login(
@@ -22,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       isSuccessful.fold(
           (l) => {
+            print("This is the server failure ") ,
                 if (l is ServerFailure)
                   emit(LoginFailedState())
                 else if (l is CacheFailure)
@@ -29,7 +30,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               },
           (r) => emit(LoginSuccessState()));
     });
-    
   }
 
   // AuthBloc({required this.useCaseForRemoteSourceimpl}) : super(AuthInitial());
