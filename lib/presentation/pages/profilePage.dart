@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/presentation/pages/changePasswordPage.dart';
+import 'package:salesforce/presentation/pages/editProfile.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
@@ -13,8 +15,10 @@ class ProfileScreen extends StatelessWidget {
     double heightBetweenTextField = mediaQueryHeight * 0.04;
 
     return Scaffold(
-      appBar:
-          appBar(icon: Icons.arrow_back_ios_new_outlined, navTitle: 'PROFILE'),
+      appBar: appBar(
+          icon: Icons.arrow_back_ios_new_outlined,
+          navTitle: 'PROFILE',
+          backNavigate: () { Navigator.pop(context); }),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
@@ -142,42 +146,41 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(
                     height: mediaQueryHeight * 0.04,
                   ),
-                     GridView.count(
+                  GridView.count(
                       shrinkWrap: true,
-                        primary: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        children: List.generate(4, (index) {
-                          return Center(
-                            child: Column(children: [
-                              const Text(
-                                'CitizenShip',
-                              ),
-                              Stack(
-                                children: const [
-                                  Icon(
-                                    Icons.image,
-                                    size: 100,
-                                  ),
-                                  Positioned(
-                                      right: 17,
-                                      top: 6,
-                                      child: Text(
-                                        'x',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold),
-                                      )),
-                                ],
-                              ),
-                              const Text(
-                                'view',
-                              )
-                            ]),
-                          );
-                        })),
-                  
+                      primary: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      children: List.generate(4, (index) {
+                        return Center(
+                          child: Column(children: [
+                            const Text(
+                              'CitizenShip',
+                            ),
+                            Stack(
+                              children: const [
+                                Icon(
+                                  Icons.image,
+                                  size: 100,
+                                ),
+                                Positioned(
+                                    right: 17,
+                                    top: 6,
+                                    child: Text(
+                                      'x',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                              ],
+                            ),
+                            const Text(
+                              'view',
+                            )
+                          ]),
+                        );
+                      })),
                   SizedBox(
                     height: mediaQueryHeight * 0.04,
                   ),
@@ -185,8 +188,13 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(
                     height: mediaQueryHeight * 0.01,
                   ),
-                  button('Change password', () {}, false,
-                      const Color(0xfffa8b7cb)),
+                  button('Change password', () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                ChangePasswordScreen()));
+                  }, false, const Color(0xfffa8b7cb)),
                 ],
               ),
             );

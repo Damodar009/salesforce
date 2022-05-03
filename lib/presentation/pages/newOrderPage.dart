@@ -30,7 +30,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           navTitle: 'NEW ORDER',
           icon: Icons.arrow_back,
           settingTitle: 'Edit',
-          settingIcon: Icons.edit),
+          settingIcon: Icons.edit, backNavigate: () { Navigator.pop(context); }),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(builder: (context, constraint) {

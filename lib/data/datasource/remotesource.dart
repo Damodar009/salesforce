@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/utils/apiUrl.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 import '../../error/exception.dart';
 import '../models/Userdata.dart';
 
@@ -45,19 +46,18 @@ class RemoteSourceImplementation implements RemoteSource {
           },
         ),
       );
-      print("this is response ");
-      print(response.data);
       if (response.statusCode == 200) {
         UserData userData = UserDataModel.fromJson(response.data);
+        print(userData.userid);
 
         hive.savetoken(userdata: userData);
+        print('oleoleoleoleoleoeloel');
 
         return userData;
       } else {
         throw ServerException();
       }
-    } on DioError catch (e) {
-      print(e);
+    } on DioError {
       throw ServerException();
     }
   }
@@ -70,31 +70,42 @@ class RemoteSourceImplementation implements RemoteSource {
 
   @override
   Future<String> changePassword(String oldpassword, String newPassword) async {
-    dio.options.headers['content-Type'] = 'application/json';
+    // dio.options.headers['content-Type'] = 'application/json';
 
-    Box box = await hive.openBox();
-    String acessToken = box.get('acess_token');
-    try {
-      Response response = await dio.post(
-        ApiUrl.login,
-        data: <String, String>{
-          'oldPassword': oldpassword,
-          'newPassword': newPassword,
-          'grant_type': 'password'
-        },
-        options: Options(
-          contentType: "application/x-www-form-urlencoded",
-          headers: <String, String>{'Authorization': 'Basic ' + acessToken},
-        ),
-      );
-      if (response.data["status"] == true) {
-        return Future.value('Success');
-      } else {
-        throw ServerException();
-      }
-    } on DioError catch (e) {
+    Box box = await hive.openBox(HiveConstants.userdata);
+    print('.box('')');
+
+    String acessToken = box.get('access_token');
+    // String userId = box.get('userid');
+    
+    print(box.keys);
+    // print(userId);
+    // try {
+    Response response = await dio.post(
+      ApiUrl.changePassword,
+      data: <String, String>{
+        // 'userId': userId,
+        'oldPassword': oldpassword,
+        'newPassword': newPassword,
+      },
+      options: Options(
+        contentType: "application/x-www-form-urlencoded",
+        headers: <String, String>{'Authorization': 'Bearer ' },
+      ),
+    );
+    print(ApiUrl.changePassword);
+    print(oldpassword + newPassword);
+    print(response.statusCode);
+    if (response.data["status"] == true) {
+      return Future.value('Success');
+    } else {
+      print('server dfshajkdhfjkdshfjk');
       throw ServerException();
     }
+    // }
+    //  on DioError catch (e) {
+    //   throw ServerException();
+    // }
   }
 
 //todo

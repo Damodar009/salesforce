@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
+import 'package:salesforce/presentation/pages/menuPage.dart';
 import 'package:salesforce/presentation/pages/merchandise_support_page.dart';
 import 'package:salesforce/presentation/pages/notice_board_page.dart';
 import 'package:salesforce/presentation/pages/payment_page.dart';
@@ -25,7 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const NoticeBoardScreen(),
     const LOginScreen(),
     const PaymentScreen(),
-    const ProfileScreen(),
+    const MenuScreen(),
 
     // const AttendenceScreen(),
     // const MenuScreen()
