@@ -6,13 +6,17 @@ class TotalOrderCompletedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const VisitedOutletWidget(
-      navTitle: 'TOTAL',
-      imageUrl: 'assets/images/total_order_complete.png',
-      bodyTitle: 'Order Confirmed!',
-      bodySubTitle:
-          'Your order has been confirmed, Order will send to distributor.',
-      buttonText: 'Go to Home',
-    );
+
+    // ModalRoute.of(context)!.settings.arguments as VistedOutlets;
+
+    return Container();
+    // VisitedOutletWidget(visitedOutlets: ,
+      // navTitle: 'TOTAL',
+      // imageUrl: 'assets/images/total_order_complete.png',
+      // bodyTitle: 'Order Confirmed!',
+      // bodySubTitle:
+      //     'Your order has been confirmed, Order will send to distributor.',
+      // buttonText: 'Go to Home',
+    // );
   }
 }

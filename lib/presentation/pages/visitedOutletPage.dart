@@ -8,12 +8,10 @@ class VisitedOutletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const VisitedOutletWidget(
-      navTitle : 'VISITED OUTLET',
-      imageUrl: 'assets/images/visited_outlet.png',
-      bodyTitle : 'No orders founded',
-      bodySubTitle : 'Try to visit other Outlets to get results',
-      buttonText : 'Go to Home',
-    );
+    return  Container();
+    // const VisitedOutletWidget(
+      
+    //    visitedOutlets: null,
+    // );
   }
 }

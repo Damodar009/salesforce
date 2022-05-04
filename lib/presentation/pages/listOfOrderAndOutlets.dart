@@ -5,6 +5,7 @@ import '../../utils/app_colors.dart';
 import '../widgets/individualOrderDetail.dart';
 
 class ListOfOrderAndOutletDetailScreen extends StatelessWidget {
+
   ListOfOrderAndOutletDetailScreen({Key? key}) : super(key: key);
   String text = "1234567890m";
 
@@ -20,7 +21,7 @@ class ListOfOrderAndOutletDetailScreen extends StatelessWidget {
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraint.maxHeight),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              // mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(
                   height: 30,
@@ -39,7 +40,9 @@ class ListOfOrderAndOutletDetailScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: button("Go to home", () {}, false, AppColors.buttonColor),
+                  child: button("Go to home", () {
+                    Navigator.pop(context);
+                  }, false, AppColors.buttonColor),
                 ),
                 const SizedBox(
                   height: 15,

@@ -111,15 +111,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     }),
                 const Spacer(),
                 button('Save', () {
-                  if (_newPasswordController.text ==
-                      _oldPasswordController.text) {
+                  // if (_newPasswordController.text ==
+                  //     _oldPasswordController.text) {
                     BlocProvider.of<AuthBloc>(context).add(ChangePasswordEvent(
                         oldPassword: _oldPasswordController.text,
                         newPassword: _newPasswordController.text));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Both password doesn't match")));
-                  }
+                  // } else {
+                  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //       content: Text("Both password doesn't match")));
+                  // }
                 }, false, AppColors.buttonColor),
               ],
             ),

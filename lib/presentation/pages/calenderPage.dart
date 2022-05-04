@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalenderScreen extends StatelessWidget {
@@ -6,13 +7,17 @@ class CalenderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SfCalendar(
-        showDatePickerButton: true,
-        headerHeight: 50,
-        view: CalendarView.week,
-        dataSource: MeetingDataSource(getAppointments()),
+    return Scaffold(
+      appBar: appBar(
+          icon: Icons.arrow_back, navTitle: "Attendence", backNavigate: () {}),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SfCalendar(
+          showDatePickerButton: true,
+          headerHeight: 50,
+          view: CalendarView.week,
+          dataSource: MeetingDataSource(getAppointments()),
+        ),
       ),
     );
   }

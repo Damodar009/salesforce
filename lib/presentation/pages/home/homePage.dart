@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:salesforce/routes.dart';
 import '../../../utils/app_colors.dart';
 import 'card.dart';
 import 'doughnatChart.dart';
@@ -139,15 +140,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(
                                   width: 10,
                                 ),
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xffF29F05),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: const Icon(
-                                    Icons.arrow_forward,
-                                    size: 20,
+                                InkWell(
+                                  onTap: () {
+                                    Routes.attendanceRoute;
+                                    Navigator.of(context)
+                                        .pushNamed(Routes.attendanceRoute);
+                                  },
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xffF29F05),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: const Icon(
+                                      Icons.arrow_forward,
+                                      size: 20,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -173,8 +182,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
-                    itemBuilder: (_, index) =>
-                        card(icons[index], title[index], 34),
+                    itemBuilder: (_, index) => InkWell(
+                        onTap: () {
+                          switch (index) {
+                            case 0:
+                              Navigator.of(context)
+                                  .pushNamed(Routes.totalOutletsRoute);
+                              break;
+                            case 1:
+                              Navigator.of(context)
+                                  .pushNamed(Routes.newOutletRoute);
+                              break;
+                            case 2:
+                              Navigator.of(context)
+                                  .pushNamed(Routes.totalOutLetsVisitedRoute);
+                              break;
+                            case 3:
+                              Navigator.of(context)
+                                  .pushNamed(Routes.totalSalesRoute);
+                              break;
+                            default:
+                          }
+                        },
+                        child: card(icons[index], title[index], 34)),
                     itemCount: 4,
                   )),
                 ],

@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salesforce/presentation/pages/attendencePage.dart';
 import 'package:salesforce/presentation/pages/home/homePage.dart';
-import 'package:salesforce/presentation/pages/login/loginScreen.dart';
+import 'package:salesforce/presentation/pages/outlets_page.dart';
 import 'package:salesforce/presentation/pages/menuPage.dart';
-import 'package:salesforce/presentation/pages/merchandise_support_page.dart';
-import 'package:salesforce/presentation/pages/notice_board_page.dart';
 import 'package:salesforce/presentation/pages/outlets.dart';
-import 'package:salesforce/presentation/pages/payment_page.dart';
-import 'package:salesforce/presentation/pages/profilePage.dart';
-import 'package:salesforce/presentation/pages/profilePage.dart';
-import 'package:salesforce/presentation/pages/visitedOutletPage.dart';
+import 'package:salesforce/presentation/pages/attendance_page.dart';
 import 'calenderPage.dart';
-import 'editProfile.dart';
 
 class DashboardScreen extends StatefulWidget {
   int index;
@@ -27,7 +20,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
   List<Widget> screens = [
     const HomeScreen(),
-    const AttendenceScreen(),
+    const OutletScreen(),
     const CalenderScreen(),
     const MenuScreen(),
 
@@ -64,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: SizedBox(
-        height: 80,
+        
         child: BottomNavigationBar(
           onTap: (value) {
             setState(() {

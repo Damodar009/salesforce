@@ -83,7 +83,9 @@ class _MenuScreenState extends State<MenuScreen> {
           const Spacer(),
           Padding(
             padding: const EdgeInsets.all(13),
-            child: button('LogOut', () {}, false, AppColors.buttonColor),
+            child: button('LogOut', () {
+              Navigator.of(context).pushNamed(Routes.logOUtRoutes);
+            }, false, AppColors.buttonColor),
           )
         ],
       ),
