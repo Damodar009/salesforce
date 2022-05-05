@@ -30,20 +30,20 @@ class MerchandiseSupportScreen extends StatelessWidget {
           SizedBox(
             height: mediaQueryHeight * 0.01,
           ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: textFeildWithDropDown(
-                  controller: _textEditingController,
-                  validator: (string) {},
-                  hintText: 'Banner'),
-            ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: textFeildWithDropDown(
+                controller: _textEditingController,
+                validator: (string) {},
+                hintText: 'Banner'),
+          ),
           SizedBox(
             height: mediaQueryHeight * 0.04,
           ),
           textFeildWithMultipleLines(
-                      validator: (string) {},
-                      hintText: 'Reason',
-                      controller: _textEditingController),
+              validator: (string) {},
+              hintText: 'Reason',
+              controller: _textEditingController),
           SizedBox(
             height: mediaQueryHeight * 0.04,
           ),

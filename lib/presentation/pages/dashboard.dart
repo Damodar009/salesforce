@@ -8,6 +8,7 @@ import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/visitedOutletPage.dart';
 import 'calenderPage.dart';
+import 'changePasswordPage.dart';
 import 'editProfile.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const NoticeBoardScreen(),
     const LOginScreen(),
     const PaymentScreen(),
-    const ProfileScreen(),
+    const ChangePasswordScreen()
 
     // const AttendenceScreen(),
     // const MenuScreen()

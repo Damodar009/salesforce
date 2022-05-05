@@ -14,15 +14,15 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  TextEditingController _oldPasswordController = TextEditingController();
+  TextEditingController _newPasswordController = TextEditingController();
+  TextEditingController _reTypePasswordController = TextEditingController();
+  bool obse3cure = true;
   @override
   Widget build(BuildContext context) {
     double mediaQueryHeight = MediaQuery.of(context).size.height;
 
     double heightBetweenTextField = mediaQueryHeight * 0.03;
-
-    TextEditingController _oldPasswordController = TextEditingController();
-    TextEditingController _newPasswordController = TextEditingController();
-    TextEditingController _reTypePasswordController = TextEditingController();
 
     RemoteSourceImplementation remoteSourceImplementation =
         RemoteSourceImplementation();
@@ -35,13 +35,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: Column(
           children: [
             textFormField(
-                obsecureText: true,
+                obsecureText: obse3cure,
                 showObsecureIcon: true,
                 validator: (value) {},
                 controller: _oldPasswordController,
                 hintText: 'Old password',
                 obsecureText1: () {
-                  setState(() {});
+                  setState(() {
+                    obse3cure = !obse3cure ;
+                  });
                 }),
             SizedBox(
               height: heightBetweenTextField,
