@@ -2,18 +2,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:salesforce/presentation/pages/blocs/auth_bloc/auth_bloc.dart';
-import 'package:salesforce/presentation/pages/dashboard.dart';
-import 'package:salesforce/presentation/pages/login/loginScreen.dart';
+
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
+import 'domain/usecases/usecasesForRemoteSource.dart';
 import 'injectable.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureInjection();
-  var path = Directory.current.path;
-  Hive.init(path);
+  var path = await getApplicationDocumentsDirectory();
+  Hive.init(path.path);
   runApp(const MyApp());
 }
 
@@ -33,26 +34,24 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    checkUserLoggedIn();
+    //  checkUserLoggedIn();
     super.initState();
   }
 
+  var useCaseForRemoteSourceImpl = getIt<UseCaseForRemoteSourceimpl>();
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => sl<AuthBloc>()),
+        BlocProvider(create: (context) => AuthBloc(useCaseForRemoteSourceImpl)),
       ],
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          onGenerateRoute: RouteGenerator.getRoute,
-          title: 'SalesForce',
-          theme: theme,
-          home: isLoggedIn
-              ? DashboardScreen(
-                  index: 0,
-                )
-              : const LOginScreen()),
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: RouteGenerator.getRoute,
+        title: 'SalesForce',
+        theme: theme,
+        initialRoute: isLoggedIn ? Routes.loginRoute : Routes.dashboardRoute,
+      ),
     );
   }
 }

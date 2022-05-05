@@ -1,22 +1,26 @@
 import 'package:hive/hive.dart';
+import 'package:salesforce/domain/entities/userData.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 
 class SaveLocally {
   Future<Box> openBox() async {
-    Box box = await Hive.openBox('user_token');
+    Box box = await Hive.openBox(HiveConstants.userdata);
     return box;
-  }
+  } 
 
-  Future savetoken(
-      {required String access_token, required String refresh_token}) async {
+  Future savetoken({required UserData userdata}) async {
     try {
       var box = await openBox();
 
-      await box.put("refresh_token", refresh_token);
-      await box.put("acess_token", access_token);
-      print('I am inside hive savetoken');
-      print(box.values);
+      await box.put("refresh_token", userdata.refresh_token);
+      await box.put("access_token", userdata.access_token);
+      await box.put("userid", userdata.userid);
+      await box.put("name", userdata.name);
+      await box.put("expires_in", userdata.expires_in);
+      await box.put("userdata", userdata.role);
+      await box.put("token_type", userdata.token_type);
+      await box.put("scope", userdata.scope);
 
-      print(box.values.toString() + 'whats in hive box');
       return true;
     } catch (e) {
       return false;

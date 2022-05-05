@@ -13,6 +13,7 @@ class NoticeBoardScreen extends StatelessWidget {
       appBar: appBar(
         icon: Icons.arrow_back_ios_new_outlined,
         navTitle: 'NOTICE BOARD',
+         backNavigate: () { Navigator.pop(context); }
       ),
       body: SingleChildScrollView(
         child: Padding(

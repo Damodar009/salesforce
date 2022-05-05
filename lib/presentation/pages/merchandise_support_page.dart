@@ -18,9 +18,8 @@ class MerchandiseSupportScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: appBar(
-        icon: Icons.arrow_back_ios_new_outlined,
-        navTitle: 'MERCHANDISE SUPPORT',
-      ),
+          icon: Icons.arrow_back_ios_new_outlined,
+          navTitle: 'MERCHANDISE SUPPORT', backNavigate: () { Navigator.pop(context); }),
       body: Padding(
         padding: const EdgeInsets.all(13),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -30,20 +29,20 @@ class MerchandiseSupportScreen extends StatelessWidget {
           SizedBox(
             height: mediaQueryHeight * 0.01,
           ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: textFeildWithDropDown(
-                  controller: _textEditingController,
-                  validator: (string) {},
-                  hintText: 'Banner'),
-            ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: textFeildWithDropDown(
+                controller: _textEditingController,
+                validator: (string) {},
+                hintText: 'Banner'),
+          ),
           SizedBox(
             height: mediaQueryHeight * 0.04,
           ),
           textFeildWithMultipleLines(
-                      validator: (string) {},
-                      hintText: 'Reason',
-                      controller: _textEditingController),
+              validator: (string) {},
+              hintText: 'Reason',
+              controller: _textEditingController),
           SizedBox(
             height: mediaQueryHeight * 0.04,
           ),

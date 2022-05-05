@@ -19,6 +19,7 @@ class PaymentScreen extends StatelessWidget {
       appBar: appBar(
         icon: Icons.arrow_back_ios_new_outlined,
         navTitle: 'PAYMENT',
+       backNavigate: () { Navigator.pop(context); }
       ),
       body: Padding(
         padding: const EdgeInsets.all(13),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/presentation/pages/editProfile.dart';
+import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
+import 'package:salesforce/routes.dart';
 
 import '../../utils/app_colors.dart';
 
@@ -25,12 +28,20 @@ class _MenuScreenState extends State<MenuScreen> {
           SizedBox(
             height: mediaQueryHeight * 0.12,
           ),
-          const Align(
+          Align(
               alignment: Alignment.center,
-              child: CircleAvatar(
-                radius: 40,
-                backgroundImage:
-                    AssetImage('assets/images/userProfilePicture.png'),
+              child: InkWell(
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ProfileScreen()));
+                },
+                child: const CircleAvatar(
+                  radius: 40,
+                  backgroundImage:
+                      AssetImage('assets/images/userProfilePicture.png'),
+                ),
               )),
           SizedBox(
             height: mediaQueryHeight * 0.01,
@@ -45,8 +56,16 @@ class _MenuScreenState extends State<MenuScreen> {
           SizedBox(
             height: mediaQueryHeight * 0.09,
           ),
-          ProfileOptions(mediaQueryWidth, context,
-              Icons.edit_outlined, 'Edit Account Info'),
+          InkWell(
+            onTap: (() {
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => EditProfileScreen()));
+            }),
+            child: ProfileOptions(mediaQueryWidth, context,
+                Icons.edit_outlined, 'Edit Account Info'),
+          ),
           SizedBox(
             height: mediaQueryHeight * 0.001,
           ),
@@ -64,7 +83,9 @@ class _MenuScreenState extends State<MenuScreen> {
           const Spacer(),
           Padding(
             padding: const EdgeInsets.all(13),
-            child: button('LogOut', () {}, false, AppColors.buttonColor),
+            child: button('LogOut', () {
+              Navigator.of(context).pushNamed(Routes.logOUtRoutes);
+            }, false, AppColors.buttonColor),
           )
         ],
       ),
