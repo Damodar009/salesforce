@@ -15,7 +15,26 @@ class NewOrderScreen extends StatefulWidget {
 
 class _NewOrderScreenState extends State<NewOrderScreen> {
   String dropdownvalue = '';
-  final TextEditingController _textEditingController = TextEditingController();
+
+  final TextEditingController _nameOfOutletsSales = TextEditingController();
+  final TextEditingController _productNameSales = TextEditingController();
+  final TextEditingController _typesOfProductSales = TextEditingController();
+  final TextEditingController _numberOfProductOfSales = TextEditingController();
+  final TextEditingController _productNameAvailability =
+      TextEditingController();
+  final TextEditingController _typesOfProductAvailability =
+      TextEditingController();
+  final TextEditingController _describeProductAvailability =
+      TextEditingController();
+  final TextEditingController _productNameReturn = TextEditingController();
+  final TextEditingController _typeOfProductReturn = TextEditingController();
+  final TextEditingController _describeReturn = TextEditingController();
+  final TextEditingController _availableTimeForDeliveryReturn =
+      TextEditingController();
+  final TextEditingController _avaibaleTimeToDeliveryReturn =
+      TextEditingController();
+  final TextEditingController _availabilityStatus = TextEditingController();
+
   bool showEditBUtton = false;
   bool showSaveBUtton = false;
   bool outletsCreated = true;
@@ -23,7 +42,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   bool editCheckBoxValue = false;
   bool showXlsButton = false;
 
-  var items = [
+  List<String> items = [
     'Item 1',
     'Item 2',
     'Item 3',
@@ -66,7 +85,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           textFormField(
-              controller: _textEditingController,
+              controller: _nameOfOutletsSales,
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'Frank miller '),
@@ -81,7 +100,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           textFormField(
-              controller: _textEditingController,
+              controller: _productNameSales,
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'Rc cola '),
@@ -98,9 +117,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.35,
                 child: textFeildWithDropDown(
-                    controller: _textEditingController,
+                    controller: _typesOfProductSales,
                     validator: (string) {},
-                    hintText: 'Frank miller '),
+                    hintText: 'Frank miller ',
+                    item: items),
               ),
               const SizedBox(
                 width: 10,
@@ -109,7 +129,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 width: MediaQuery.of(context).size.width * 0.35,
                 child: textFormFeildIncreAndDecre(
                     hintText: '9999',
-                    controller: _textEditingController,
+                    controller: _numberOfProductOfSales,
                     validator: (string) {}),
               ),
               circleContainer()
@@ -134,7 +154,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           textFormField(
-              controller: _textEditingController,
+              controller: _productNameAvailability,
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'Rc cola '),
@@ -147,9 +167,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           textFeildWithDropDown(
-              controller: _textEditingController,
+              controller: _typesOfProductAvailability,
               validator: (string) {},
-              hintText: 'Frank miller '),
+              hintText: 'Frank miller ',
+              item: items),
           const SizedBox(
             height: 12,
           ),
@@ -157,7 +178,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           textFeildWithMultipleLines(
               validator: (string) {},
               hintText: 'Remark',
-              controller: _textEditingController),
+              controller: _describeProductAvailability),
 
           const SizedBox(
             height: 12,
@@ -174,7 +195,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           textFormField(
-              controller: _textEditingController,
+              controller: _productNameReturn,
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'Rc cola '),
@@ -192,9 +213,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               SizedBox(
                 width: 200,
                 child: textFeildWithDropDown(
-                    controller: _textEditingController,
+                    controller: _typeOfProductReturn,
                     validator: (string) {},
-                    hintText: 'Frank miller '),
+                    hintText: 'Frank miller ',
+                    item: items),
               ),
               circleContainer()
             ],
@@ -222,7 +244,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           textFeildWithMultipleLines(
               validator: (string) {},
               hintText: 'Remark',
-              controller: _textEditingController),
+              controller: _describeReturn),
 
           const SizedBox(
             height: 12,
@@ -232,7 +254,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           textFormField(
-              controller: _textEditingController,
+              controller: _availableTimeForDeliveryReturn,
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'From'),
@@ -240,7 +262,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           textFormField(
-              controller: _textEditingController,
+              controller: _avaibaleTimeToDeliveryReturn,
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'To '),
@@ -251,7 +273,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           title("Availability"),
 
           textFormField(
-              controller: _textEditingController,
+              controller: _availabilityStatus,
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'What is the status'),

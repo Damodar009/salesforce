@@ -5,7 +5,15 @@ import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
 class PaymentScreen extends StatelessWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
+  PaymentScreen({Key? key}) : super(key: key);
+
+  List<String> items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +60,7 @@ class PaymentScreen extends StatelessWidget {
             child: textFeildWithDropDown(
                 controller: _textEditingController,
                 validator: (string) {},
-                hintText: 'Frank miller '),
+                hintText: 'Frank miller ', item: items),
           ),
           SizedBox(
             height: mediaQueryHeight * 0.04,

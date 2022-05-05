@@ -23,6 +23,20 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
   }
 
   final TextEditingController _textEditingController = TextEditingController();
+
+  final TextEditingController _nameOfOutlets = TextEditingController();
+  final TextEditingController _contactPerson = TextEditingController();
+  final TextEditingController _contactNumber = TextEditingController();
+  final TextEditingController _addressOfTheOUtlets = TextEditingController();
+
+  List<String> items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,7 +113,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     height: 12,
                   ),
                   textFormField(
-                      controller: _textEditingController,
+                      controller: _nameOfOutlets,
                       validator: (string) {},
                       obsecureText1: () {},
                       hintText: 'Frank miller '),
@@ -115,7 +129,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                   //todo
 
                   textFormField(
-                      controller: _textEditingController,
+                      controller: _contactPerson,
                       validator: (string) {},
                       obsecureText1: () {},
                       hintText: 'milller.frank@gmail.com '),
@@ -129,7 +143,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                   ),
 
                   textFormField(
-                      controller: _textEditingController,
+                      controller: _contactNumber,
                       validator: (string) {},
                       obsecureText1: () {},
                       hintText: '977 - 9845392323 '),
@@ -143,7 +157,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     height: 12,
                   ),
                   textFormField(
-                      controller: _textEditingController,
+                      controller: _addressOfTheOUtlets,
                       validator: (string) {},
                       obsecureText1: () {},
                       hintText: 'swoyambhu, kathmandu'),
@@ -246,7 +260,8 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                   textFeildWithDropDown(
                       hintText: '',
                       controller: _textEditingController,
-                      validator: (string) {}),
+                      validator: (string) {},
+                      item: items),
 
                   const SizedBox(
                     height: 20,

@@ -12,7 +12,7 @@ Widget button(String title, Function() onclick, bool isLoading, Color color) {
         onclick();
       },
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

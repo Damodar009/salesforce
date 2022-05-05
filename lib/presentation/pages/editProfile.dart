@@ -12,12 +12,14 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  TextEditingController _userNameController = TextEditingController();
-  TextEditingController _phoneNumberController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _dateOfBirthController = TextEditingController();
-  TextEditingController _permanentAddressController = TextEditingController();
-  TextEditingController _temporaryAddressController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _dateOfBirthController = TextEditingController();
+  final TextEditingController _permanentAddressController =
+      TextEditingController();
+  final TextEditingController _temporaryAddressController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   controller: _userNameController,
                   hintText: 'Username',
                   obsecureText1: () {
-                    setState(() {
-                    });
+                    setState(() {});
                   }),
               SizedBox(
                 height: heightBetweenTextField,
