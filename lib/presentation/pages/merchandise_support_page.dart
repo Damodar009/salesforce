@@ -18,9 +18,8 @@ class MerchandiseSupportScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: appBar(
-        icon: Icons.arrow_back_ios_new_outlined,
-        navTitle: 'MERCHANDISE SUPPORT',
-      ),
+          icon: Icons.arrow_back_ios_new_outlined,
+          navTitle: 'MERCHANDISE SUPPORT', backNavigate: () { Navigator.pop(context); }),
       body: Padding(
         padding: const EdgeInsets.all(13),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

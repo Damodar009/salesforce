@@ -22,13 +22,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       isSuccessful.fold(
           (l) => {
-            print("This is the server failure ") ,
+                print("This is the server failure "),
                 if (l is ServerFailure)
                   emit(LoginFailedState())
                 else if (l is CacheFailure)
                   emit(LoginFailedState())
               },
           (r) => emit(LoginSuccessState()));
+    });
+
+    on<ChangePasswordEvent>((event, emit) async {
+      emit(ChangePasswordLoadingState());
+      final isSuccessful = await useCaseForRemoteSourceimpl.changePassword(
+          event.oldPassword, event.newPassword);
+
+      isSuccessful.fold(
+          (l) => {
+                print("This is the server failure "),
+                if (l is ServerFailure)
+                  emit(ChangePasswordFailedState())
+                else if (l is CacheFailure)
+                  emit(ChangePasswordFailedState())
+              },
+          (r) => emit(ChangePasswordSuccessState()));
     });
   }
 

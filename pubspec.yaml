@@ -53,6 +53,7 @@ dependencies:
   syncfusion_flutter_calendar: ^20.1.50
   permission_handler: ^9.2.0
   path_provider: ^2.0.9
+  image_picker: ^0.7.2+1
 
 dev_dependencies:
   flutter_test:

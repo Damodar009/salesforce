@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../utils/app_colors.dart';
 
-Widget attendenceWidget() {
+Widget attendenceWidget(BuildContext context) {
   return Container(
       height: 280,
       width: 200,
@@ -16,17 +16,21 @@ Widget attendenceWidget() {
             const SizedBox(
               height: 12,
             ),
-            Container(
-              height: 50,
-              width: 50,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryColor,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check,
-                size: 30,
-                color: AppColors.buttonColor,
+            InkWell(onTap: () {
+              Navigator.pop(context);
+            },
+              child: Container(
+                height: 50,
+                width: 50,
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryColor,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  size: 30,
+                  color: AppColors.buttonColor,
+                ),
               ),
             ),
             const SizedBox(

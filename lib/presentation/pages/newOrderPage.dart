@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
+import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
+import 'package:salesforce/routes.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/buttonWidget.dart';
 import '../widgets/textformfeild.dart';
@@ -14,7 +16,13 @@ class NewOrderScreen extends StatefulWidget {
 class _NewOrderScreenState extends State<NewOrderScreen> {
   String dropdownvalue = '';
   final TextEditingController _textEditingController = TextEditingController();
+  bool showEditBUtton = false;
+  bool showSaveBUtton = false;
   bool outletsCreated = true;
+  bool ignorePointer = false;
+  bool editCheckBoxValue = false;
+  bool showXlsButton = false;
+
   var items = [
     'Item 1',
     'Item 2',
@@ -25,247 +33,323 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget newOrderScreenBody() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Text(
+                'Outlets already created',
+                style: TextStyle(color: Color(0xFF003049)),
+              ),
+              StatefulBuilder(builder: (context, setStat) {
+                return Checkbox(
+                    value: outletsCreated,
+                    activeColor: AppColors.buttonColor,
+                    checkColor: Colors.white,
+                    fillColor: MaterialStateColor.resolveWith(
+                        (states) => AppColors.buttonColor),
+                    onChanged: (newValue) {
+                      //todo write code for outletsCreated
+                      setStat(() {
+                        outletsCreated = newValue!;
+                      });
+                    });
+              }),
+            ],
+          ),
+          title("Name of Outlet"),
+          const SizedBox(
+            height: 12,
+          ),
+          textFormField(
+              controller: _textEditingController,
+              validator: (string) {},
+              obsecureText1: () {},
+              hintText: 'Frank miller '),
+          titles("Sales"),
+          const SizedBox(
+            height: 12,
+          ),
+
+          //todo
+          title("Product Name"),
+          const SizedBox(
+            height: 12,
+          ),
+          textFormField(
+              controller: _textEditingController,
+              validator: (string) {},
+              obsecureText1: () {},
+              hintText: 'Rc cola '),
+          const SizedBox(
+            height: 12,
+          ),
+
+          title("Types of Product"),
+          const SizedBox(
+            height: 12,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.35,
+                child: textFeildWithDropDown(
+                    controller: _textEditingController,
+                    validator: (string) {},
+                    hintText: 'Frank miller '),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.35,
+                child: textFormFeildIncreAndDecre(
+                    hintText: '9999',
+                    controller: _textEditingController,
+                    validator: (string) {}),
+              ),
+              circleContainer()
+            ],
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          textButton("Add More Product", MediaQuery.of(context).size.width),
+
+          const SizedBox(
+            height: 12,
+          ),
+          titles("Availability"),
+
+          const SizedBox(
+            height: 12,
+          ),
+
+          title("Product Name"),
+          const SizedBox(
+            height: 12,
+          ),
+          textFormField(
+              controller: _textEditingController,
+              validator: (string) {},
+              obsecureText1: () {},
+              hintText: 'Rc cola '),
+          const SizedBox(
+            height: 12,
+          ),
+
+          title("Types of Product"),
+          const SizedBox(
+            height: 12,
+          ),
+          textFeildWithDropDown(
+              controller: _textEditingController,
+              validator: (string) {},
+              hintText: 'Frank miller '),
+          const SizedBox(
+            height: 12,
+          ),
+
+          textFeildWithMultipleLines(
+              validator: (string) {},
+              hintText: 'Remark',
+              controller: _textEditingController),
+
+          const SizedBox(
+            height: 12,
+          ),
+          titles("Return"),
+
+          const SizedBox(
+            height: 12,
+          ),
+
+          //todo
+          title("Product Name"),
+          const SizedBox(
+            height: 12,
+          ),
+          textFormField(
+              controller: _textEditingController,
+              validator: (string) {},
+              obsecureText1: () {},
+              hintText: 'Rc cola '),
+
+          const SizedBox(
+            height: 12,
+          ),
+
+          title("Types of Product"),
+          const SizedBox(
+            height: 12,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 200,
+                child: textFeildWithDropDown(
+                    controller: _textEditingController,
+                    validator: (string) {},
+                    hintText: 'Frank miller '),
+              ),
+              circleContainer()
+            ],
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+
+          Row(
+            children: [
+              textButton("true", 90),
+              const SizedBox(
+                width: 12,
+              ),
+              textButton("false", 90),
+              const SizedBox(
+                width: 12,
+              ),
+              circleContainer()
+            ],
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          textFeildWithMultipleLines(
+              validator: (string) {},
+              hintText: 'Remark',
+              controller: _textEditingController),
+
+          const SizedBox(
+            height: 12,
+          ),
+          title("Available Time for delivery"),
+          const SizedBox(
+            height: 12,
+          ),
+          textFormField(
+              controller: _textEditingController,
+              validator: (string) {},
+              obsecureText1: () {},
+              hintText: 'From'),
+          const SizedBox(
+            height: 12,
+          ),
+          textFormField(
+              controller: _textEditingController,
+              validator: (string) {},
+              obsecureText1: () {},
+              hintText: 'To '),
+          const SizedBox(
+            height: 12,
+          ),
+
+          title("Availability"),
+
+          textFormField(
+              controller: _textEditingController,
+              validator: (string) {},
+              obsecureText1: () {},
+              hintText: 'What is the status'),
+          const SizedBox(
+            height: 20,
+          ),
+
+          button("Save Order", () {
+            if (showXlsButton) {
+              final VistedOutlets visitedOutlets = VistedOutlets(
+                navTitle: 'TOTAL',
+                imageUrl: 'assets/images/total_order_complete.png',
+                bodyTitle: 'Order Confirmed!',
+                bodySubTitle:
+                    'Your order has been confirmed, Order will send to distributor.',
+                buttonText: 'Go to Home',
+              );
+              // Navigator.of(context).push(MaterialPageRoute(
+              //     builder: (context) => VisitedOutletWidget(
+              //           visitedOutlets: visitedOutlets,
+              //         )));
+
+              Navigator.of(context)
+                  .pushNamed(Routes.visitedOutlets, arguments: visitedOutlets);
+            } else {
+              setState(() {
+                ignorePointer = true;
+                showEditBUtton = true;
+                showSaveBUtton = false;
+              });
+            }
+          }, false, AppColors.buttonColor),
+          const SizedBox(
+            height: 20,
+          ),
+          showXlsButton
+              ? button("Save Order in XLS", () {
+                  Navigator.of(context).pushNamed(Routes.xlsOrder);
+                }, false, AppColors.buttonColor)
+              : SizedBox(),
+          const SizedBox(
+            height: 10,
+          )
+        ],
+      );
+    }
+
     return Scaffold(
       appBar: appBar(
           navTitle: 'NEW ORDER',
           icon: Icons.arrow_back,
-          settingTitle: 'Edit',
-          settingIcon: Icons.edit),
+          settingTitle: showEditBUtton
+              ? showSaveBUtton
+                  ? 'save'
+                  : "Edit"
+              : "",
+          settingIcon: Row(
+            children: [
+              showEditBUtton
+                  ? StatefulBuilder(builder: (context, state) {
+                      return Checkbox(
+                          fillColor: MaterialStateColor.resolveWith(
+                              (states) => AppColors.buttonColor),
+                          value: editCheckBoxValue,
+                          onChanged: (value) {
+                            state(() {
+                              editCheckBoxValue = value!;
+                            });
+                            setState(() {
+                              // editCheckBoxValue = value!;
+                              showEditBUtton = false;
+                              ignorePointer = false;
+                              showSaveBUtton = true;
+                              showXlsButton = true;
+                            });
+                          });
+                    })
+                  : SizedBox(),
+              Text(showEditBUtton || showSaveBUtton
+                  ? showSaveBUtton
+                      ? 'save'
+                      : "Edit"
+                  : ""),
+              const SizedBox(
+                width: 10,
+              )
+            ],
+          ),
+          backNavigate: () {}),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(builder: (context, constraint) {
           return SingleChildScrollView(
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraint.maxHeight),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text(
-                        'Outlets already created',
-                        style: TextStyle(color: Color(0xFF003049)),
-                      ),
-                      StatefulBuilder(builder: (context, setStat) {
-                        return Checkbox(
-                            value: outletsCreated,
-                            activeColor: AppColors.buttonColor,
-                            checkColor: Colors.white,
-                            fillColor: MaterialStateColor.resolveWith(
-                                (states) => AppColors.buttonColor),
-                            onChanged: (newValue) {
-                              //todo write code for outletsCreated
-                              setStat(() {
-                                outletsCreated = newValue!;
-                              });
-                            });
-                      }),
-                    ],
-                  ),
-                  title("Name of Outlet"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFormField(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      obsecureText1: () {},
-                      hintText: 'Frank miller '),
-                  titles("Sales"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  //todo
-                  title("Product Name"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFormField(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      obsecureText1: () {},
-                      hintText: 'Rc cola '),
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  title("Types of Product"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        child: textFeildWithDropDown(
-                            controller: _textEditingController,
-                            validator: (string) {},
-                            hintText: 'Frank miller '),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        child: textFormFeildIncreAndDecre(
-                            hintText: '9999',
-                            controller: _textEditingController,
-                            validator: (string) {}),
-                      ),
-                      circleContainer()
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textButton(
-                      "Add More Product", MediaQuery.of(context).size.width),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  titles("Availability"),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  title("Product Name"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFormField(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      obsecureText1: () {},
-                      hintText: 'Rc cola '),
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  title("Types of Product"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFeildWithDropDown(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      hintText: 'Frank miller '),
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  textFeildWithMultipleLines(
-                      validator: (string) {},
-                      hintText: 'Remark',
-                      controller: _textEditingController),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  titles("Return"),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  //todo
-                  title("Product Name"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFormField(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      obsecureText1: () {},
-                      hintText: 'Rc cola '),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  title("Types of Product"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        child: textFeildWithDropDown(
-                            controller: _textEditingController,
-                            validator: (string) {},
-                            hintText: 'Frank miller '),
-                      ),
-                      circleContainer()
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  Row(
-                    children: [
-                      textButton("true", 90),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                      textButton("false", 90),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                      circleContainer()
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFeildWithMultipleLines(
-                      validator: (string) {},
-                      hintText: 'Remark',
-                      controller: _textEditingController),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  title("Available Time for delivery"),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFormField(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      obsecureText1: () {},
-                      hintText: 'From'),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  textFormField(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      obsecureText1: () {},
-                      hintText: 'To '),
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  title("Availability"),
-
-                  textFormField(
-                      controller: _textEditingController,
-                      validator: (string) {},
-                      obsecureText1: () {},
-                      hintText: 'What is the status'),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  button("Save Order", () {}, false, AppColors.buttonColor),
-                ],
-              ),
-            ),
+                constraints: BoxConstraints(minHeight: constraint.maxHeight),
+                child: ignorePointer
+                    ? IgnorePointer(child: newOrderScreenBody())
+                    : newOrderScreenBody()),
           );
         }),
       ),

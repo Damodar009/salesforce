@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/routes.dart';
 import '../../utils/app_colors.dart';
 
-class AttendenceScreen extends StatefulWidget {
-  const AttendenceScreen({Key? key}) : super(key: key);
+class OutletScreen extends StatefulWidget {
+  const OutletScreen({Key? key}) : super(key: key);
 
   @override
-  _AttendenceScreenState createState() => _AttendenceScreenState();
+  _OutletScreenState createState() => _OutletScreenState();
 }
 
-class _AttendenceScreenState extends State<AttendenceScreen> {
+class _OutletScreenState extends State<OutletScreen> {
+  
+
   @override
   void initState() {
     // TODO: implement initState
@@ -29,15 +32,24 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
           const SizedBox(
             height: 10,
           ),
-          outletsCard("Create new orders",
-              "To create new Orders and \n send or save the data ", " Add now"),
-          outletsCard("Create new Outlets",
-              "To Create New Outlets and \nSave Outlets", "Add now"),
+          outletsCard(
+              "Create new orders",
+              "To create new Orders and \n send or save the data ",
+              " Add now",
+              
+              Routes.newOrderRoute),
+          outletsCard(
+              "Create new Outlets",
+              "To Create New Outlets and \nSave Outlets",
+              "Add now",
+              
+              Routes.newOutletsRoute),
           outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
-              "Check In"),
+              "Check In",  Routes.salesDataCollection),
           outletsCardOutline(Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Padding(
                   padding: EdgeInsets.all(8.0),
@@ -50,18 +62,21 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                 const SizedBox(
                   width: 25,
                 ),
-                Column(
-                  children: const [
-                    Text(
-                      "Request for Correction",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text("Please enter your Queries or Issues ")
-                  ],
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Request for Correction",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("Please enter your Queries or Issues ")
+                    ],
+                  ),
                 )
               ],
             ),
@@ -71,7 +86,8 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
     );
   }
 
-  Widget outletsCard(String title, String subtitle, String text) {
+  Widget outletsCard(String title, String subtitle, String text,
+     String navigateTo) {
     return outletsCardOutline(
       Padding(
         padding: const EdgeInsets.all(16.0),
@@ -99,18 +115,23 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                 const SizedBox(
                   width: 10,
                 ),
-                Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 3,
-                        color: const Color(0xffF29F05),
-                      ),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Icon(
-                    Icons.arrow_forward,
-                    size: 35,
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(navigateTo);
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 3,
+                          color: const Color(0xffF29F05),
+                        ),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: const Icon(
+                      Icons.arrow_forward,
+                      size: 35,
+                    ),
                   ),
                 ),
               ],
