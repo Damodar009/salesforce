@@ -1,19 +1,48 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
+import 'package:salesforce/presentation/widgets/buttonWidget.dart';
+import 'package:salesforce/utils/app_colors.dart';
 
-class XlsOrderScreen extends StatelessWidget {
-  const XlsOrderScreen({Key? key}) : super(key: key);
+class XlsOrder extends StatelessWidget {
+  const XlsOrder({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
-          icon: Icons.arrow_back, navTitle: "order", backNavigate: () {}),
-          body: Column(
-            children: [
+          icon: Icons.arrow_back, navTitle: "ORDER", backNavigate: () {}),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 30,
+            ),
+            const Text("Name of shop : Name of shop "),
+            const SizedBox(
+              height: 15,
+            ),
+            const Text("Location: Longituide / Latitude "),
+            const SizedBox(
+              height: 200,
+              width: 200,
+              child: Center(
+                child: Text("here lies the xls document view "),
+              ),
+            ),
+            button("save & save", () {}, false, AppColors.buttonColor),
+            const SizedBox(
+              height: 15,
+            ),
+            button("Save XLS", () {
               
-            ],
-          ),
+            }, false, AppColors.buttonColor),
+          ],
+        ),
+      ),
     );
   }
 }

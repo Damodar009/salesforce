@@ -8,6 +8,7 @@ import 'package:salesforce/presentation/pages/newOrderPage.dart';
 import 'package:salesforce/presentation/pages/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/xlsOrderPage.dart';
+import 'package:salesforce/presentation/widgets/image_picker_widget.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 
 class Routes {
@@ -32,7 +33,7 @@ class RouteGenerator {
     final args = routeSettings.arguments;
     switch (routeSettings.name) {
       case Routes.loginRoute:
-        return MaterialPageRoute(builder: (_) => const LOginScreen());
+        return MaterialPageRoute(builder: (_) => const ImagePIcker());
       case Routes.profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.newOrderRoute:
@@ -68,7 +69,7 @@ class RouteGenerator {
             builder: (_) => ListOfOrderAndOutletDetailScreen());
 
       case Routes.xlsOrder:
-        return MaterialPageRoute(builder: (_) => const XlsOrderScreen());
+        return MaterialPageRoute(builder: (_) => const XlsOrder());
 
       case Routes.visitedOutlets:
         if (args is VistedOutlets) {
