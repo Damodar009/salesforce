@@ -9,11 +9,11 @@ class MerchandiseSupportScreen extends StatelessWidget {
   MerchandiseSupportScreen({Key? key}) : super(key: key);
 
    List<String> items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
+    'Banner',
+    'Display',
+    'Pharase',
+    'T-shirt',
+    'And more',
   ];
 
   @override
@@ -42,7 +42,7 @@ class MerchandiseSupportScreen extends StatelessWidget {
             child: textFeildWithDropDown(
                 controller: _typesOfMerchandiseSupport,
                 validator: (string) {},
-                hintText: 'Banner', item: items),
+                hintText: 'Choose', item: items),
           ),
           SizedBox(
             height: mediaQueryHeight * 0.04,

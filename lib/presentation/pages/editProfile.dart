@@ -20,6 +20,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController();
   final TextEditingController _temporaryAddressController =
       TextEditingController();
+  final TextEditingController _documentTypesController =
+      TextEditingController();
+
+  List<String> items = [
+    'CitizenShip',
+    'Digination',
+    'Employee Contact',
+    'Bank Account',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +131,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(
                 height: heightBetweenTextField,
               ),
-              const Text('Upload Identification Document'),
+              const Text('Types'),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: textFeildWithDropDown(
+                    controller: _documentTypesController,
+                    validator: (string) {},
+                    hintText: 'Choose',
+                    item: items),
+              ),
               Padding(
                 padding: const EdgeInsets.all(13),
                 child: button('Save', () {

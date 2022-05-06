@@ -10,11 +10,11 @@ class PaymentScreen extends StatelessWidget {
   PaymentScreen({Key? key}) : super(key: key);
 
   List<String> items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
+    'Cash on Delivery',
+    'Debit Card',
+    'Credit',
+    'Online transation',
+    'Cheque',
   ];
 
   @override
@@ -45,7 +45,7 @@ class PaymentScreen extends StatelessWidget {
             showObsecureIcon: false,
             validator: (value) {},
             controller: _nameController,
-            hintText: 'Framk Miller',
+            hintText: 'Name of Outlet',
             obsecureText1: () {},
           ),
           SizedBox(
@@ -62,7 +62,7 @@ class PaymentScreen extends StatelessWidget {
             child: textFeildWithDropDown(
                 controller: _textEditingController,
                 validator: (string) {},
-                hintText: 'Frank miller ', item: items),
+                hintText: 'Choose', item: items),
           ),
           SizedBox(
             height: mediaQueryHeight * 0.04,
