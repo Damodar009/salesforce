@@ -18,7 +18,9 @@ class ProfileScreen extends StatelessWidget {
       appBar: appBar(
           icon: Icons.arrow_back_ios_new_outlined,
           navTitle: 'PROFILE',
-          backNavigate: () { Navigator.pop(context); }),
+          backNavigate: () {
+            Navigator.pop(context);
+          }),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
@@ -186,9 +188,10 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   button('Edit Profile', () {
                     Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => const EditProfileScreen()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const EditProfileScreen()));
                   }, false, AppColors.buttonColor),
                   SizedBox(
                     height: mediaQueryHeight * 0.01,

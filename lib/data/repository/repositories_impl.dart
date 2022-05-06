@@ -2,9 +2,10 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/injectable.dart';
+import '../../domain/entities/depotProductRetailer.dart';
 import '../../domain/repositories/repository.dart';
 import '../../error/failure.dart';
-import '../datasource/remotesource.dart';
+import '../datasource/remoteSource/remotesource.dart';
 
 @Injectable(as: Repository)
 class RepositoryImplementation implements Repository {
@@ -79,6 +80,17 @@ class RepositoryImplementation implements Repository {
   Future<Either<Failure, String>> getRegionList() async {
     try {
       final response = await remoteSource.getRegionList();
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, DepotProductRetailer>>
+      getDepotProductRetailerDropDown() async {
+    try {
+      final response = await remoteSource.getDepotProductAndRetailer();
       return Right(response);
     } catch (e) {
       return Left(ServerFailure());

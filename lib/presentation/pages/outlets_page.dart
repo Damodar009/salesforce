@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/domain/entities/attendence.dart';
 import 'package:salesforce/routes.dart';
+import '../../domain/usecases/useCaseForAttebdenceSave.dart';
+import '../../domain/usecases/usecasesForRemoteSource.dart';
+import '../../error/failure.dart';
+import '../../injectable.dart';
 import '../../utils/app_colors.dart';
 
 class OutletScreen extends StatefulWidget {
@@ -10,8 +15,7 @@ class OutletScreen extends StatefulWidget {
 }
 
 class _OutletScreenState extends State<OutletScreen> {
-  
-
+  var useCaseForAttendenceimpl = getIt<UseCaseForAttendenceImpl>();
   @override
   void initState() {
     // TODO: implement initState
@@ -36,58 +40,84 @@ class _OutletScreenState extends State<OutletScreen> {
               "Create new orders",
               "To create new Orders and \n send or save the data ",
               " Add now",
-              
               Routes.newOrderRoute),
           outletsCard(
               "Create new Outlets",
               "To Create New Outlets and \nSave Outlets",
               "Add now",
-              
               Routes.newOutletsRoute),
           outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
-              "Check In",  Routes.salesDataCollection),
-          outletsCardOutline(Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Image(
-                      height: 50,
-                      width: 50,
-                      color: AppColors.buttonColor,
-                      image: AssetImage("assets/icons/outletsicon.png")),
-                ),
-                const SizedBox(
-                  width: 25,
-                ),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Request for Correction",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text("Please enter your Queries or Issues ")
-                    ],
+              "Check In", Routes.salesDataCollection),
+          InkWell(
+            onTap: () async {
+              print("this is working");
+              Attendence attendence = Attendence(
+                  null,
+                  "22:Ac:23:13:RF",
+                  "2022-02-21 09:30:00",
+                  1231.1231,
+                  1231.1231,
+                  "2022-02-21 19:30:00",
+                  1231.1231,
+                  1231.1231,
+                  "NGBifEuwYylJoyRt7a8bkA==");
+
+              print(attendence.toString());
+              var dd =
+                  await useCaseForAttendenceimpl.attendenceSave(attendence);
+
+              dd.fold(
+                  (l) => {
+                        if (l is ServerFailure)
+                          {print("this is failure")}
+                        else if (l is CacheFailure)
+                          {print("this is failure")}
+                      },
+                  (r) => print(r));
+            },
+            child: outletsCardOutline(Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        color: AppColors.buttonColor,
+                        image: AssetImage("assets/icons/outletsicon.png")),
                   ),
-                )
-              ],
-            ),
-          ))
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          "Request for Correction",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text("Please enter your Queries or Issues ")
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            )),
+          )
         ])
       ],
     );
   }
 
-  Widget outletsCard(String title, String subtitle, String text,
-     String navigateTo) {
+  Widget outletsCard(
+      String title, String subtitle, String text, String navigateTo) {
     return outletsCardOutline(
       Padding(
         padding: const EdgeInsets.all(16.0),
