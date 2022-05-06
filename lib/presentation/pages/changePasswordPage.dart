@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:salesforce/data/datasource/remotesource.dart';
-import 'package:salesforce/presentation/pages/blocs/auth_bloc/auth_bloc.dart';
+import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
 import 'package:salesforce/utils/app_colors.dart';
-
+import '../blocs/auth_bloc/auth_bloc.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
 import '../widgets/textformfeild.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
-
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
 }
@@ -23,16 +21,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool obsecureTextNewPassword = true;
   bool obsecureTextOldPassword = true;
   bool obsecureTextReTypePassword = true;
-
   @override
   Widget build(BuildContext context) {
     double mediaQueryHeight = MediaQuery.of(context).size.height;
-
     double heightBetweenTextField = mediaQueryHeight * 0.03;
-
     RemoteSourceImplementation remoteSourceImplementation =
         RemoteSourceImplementation();
-
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is ChangePasswordSuccessState) {
@@ -113,9 +107,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 button('Save', () {
                   // if (_newPasswordController.text ==
                   //     _oldPasswordController.text) {
-                    BlocProvider.of<AuthBloc>(context).add(ChangePasswordEvent(
-                        oldPassword: _oldPasswordController.text,
-                        newPassword: _newPasswordController.text));
+                  BlocProvider.of<AuthBloc>(context).add(ChangePasswordEvent(
+                      oldPassword: _oldPasswordController.text,
+                      newPassword: _newPasswordController.text));
                   // } else {
                   //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   //       content: Text("Both password doesn't match")));

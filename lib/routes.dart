@@ -33,7 +33,7 @@ class RouteGenerator {
     final args = routeSettings.arguments;
     switch (routeSettings.name) {
       case Routes.loginRoute:
-        return MaterialPageRoute(builder: (_) => XlsOrder());
+        return MaterialPageRoute(builder: (_) => const LOginScreen());
       case Routes.profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.newOrderRoute:

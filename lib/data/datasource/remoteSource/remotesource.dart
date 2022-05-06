@@ -5,9 +5,15 @@ import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/utils/apiUrl.dart';
-import 'package:salesforce/utils/hiveConstant.dart';
-import '../../error/exception.dart';
-import '../models/Userdata.dart';
+import '../../../domain/entities/depot.dart';
+import '../../../domain/entities/depotProductRetailer.dart';
+import '../../../domain/entities/products.dart';
+import '../../../domain/entities/retailerType.dart';
+import '../../../error/exception.dart';
+import '../../models/Userdata.dart';
+import '../../models/DepotModel.dart';
+import '../../models/Products.dart';
+import '../../models/RetailerType.dart';
 
 abstract class RemoteSource {
   Future<UserData> login(String username, String password);
@@ -17,6 +23,7 @@ abstract class RemoteSource {
   Future<String> getRegionList();
   Future<String> attendenceSave();
   Future<String?> postDataToApi();
+  Future<DepotProductRetailer> getDepotProductAndRetailer();
 }
 
 @Injectable(as: RemoteSource)
@@ -135,5 +142,44 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<String> getRegionList() {
     // TODO: implement getRegionList
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DepotProductRetailer> getDepotProductAndRetailer() async {
+    //todo implement authorization token
+    try {
+      Response response = await dio.get(
+        ApiUrl.depotProductAndRetailor,
+        options: Options(
+          headers: <String, String>{
+            'Authorization': 'Bearer abfb62c1-fbf7-4da5-98d0-04ff5e4f899d'
+          },
+        ),
+      );
+
+      if (response.data["status"] == true) {
+        DepotProductRetailer depotProductRetailer;
+        List<RetailerType> retailerTypes =
+            (response.data["data"]["retailerTypeDropDown"] as List)
+                .map((sectorModel) => RetailerTypeModel.fromJson(sectorModel))
+                .toList();
+        List<Products> products =
+            (response.data["data"]["productDropDown"] as List)
+                .map((sectorModel) => ProductsModel.fromJson(sectorModel))
+                .toList();
+        List<Depot> depots = (response.data["data"]["depotDetails"] as List)
+            .map((sectorModel) => DepotModel.fromJson(sectorModel))
+            .toList();
+
+        depotProductRetailer = DepotProductRetailer(
+            products: products, retailerType: retailerTypes, depots: depots);
+
+        return depotProductRetailer;
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      throw ServerException();
+    }
   }
 }

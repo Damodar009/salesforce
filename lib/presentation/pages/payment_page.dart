@@ -4,6 +4,8 @@ import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
+import '../widgets/deleteTheoryTestPopupWidget.dart';
+
 class PaymentScreen extends StatelessWidget {
   PaymentScreen({Key? key}) : super(key: key);
 
@@ -80,7 +82,13 @@ class PaymentScreen extends StatelessWidget {
           ),
           button(
             'Skip',
-            () {},
+            () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) =>
+                    deleteTheoryTestPopupWidget(context),
+              );
+            },
             false,
             AppColors.buttonColor,
           ),

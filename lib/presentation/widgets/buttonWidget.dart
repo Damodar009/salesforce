@@ -8,11 +8,11 @@ Widget button(String title, Function() onclick, bool isLoading, Color color) {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0))),
       ),
       onPressed: () {
-        isLoading = true;
+
         onclick();
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+        padding: const EdgeInsets.all(14.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

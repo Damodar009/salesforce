@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget formGroupItem(String title) {
+Widget formGroupItem(String title, Function() onTap) {
   return Card(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(15),
@@ -10,6 +10,7 @@ Widget formGroupItem(String title) {
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       child: ListTile(
+        onTap: onTap,
         title: Text(
           title,
           style: const TextStyle(

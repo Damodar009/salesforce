@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salesforce/data/datasource/remotesource.dart';
-import 'package:salesforce/presentation/pages/blocs/auth_bloc/auth_bloc.dart';
+import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
+
 import 'package:salesforce/utils/app_colors.dart';
 import 'package:salesforce/utils/validators.dart';
 import '../../../routes.dart';
+import '../../blocs/auth_bloc/auth_bloc.dart';
 import '../../widgets/buttonWidget.dart';
 import '../../widgets/textformfeild.dart';
 

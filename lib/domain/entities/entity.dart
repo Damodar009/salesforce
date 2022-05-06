@@ -10,3 +10,4 @@ class Entity extends Equatable {
   @override
   List<Object?> get props => [name, phone, email];
 }
+  
