@@ -5,9 +5,8 @@ import 'package:salesforce/domain/entities/retailerPojo.dart';
 part 'RetailerPojo.g.dart';
 
 @JsonSerializable()
-
 class RetailerPojoModel extends RetailerPojo {
-  RetailerPojoModel(
+  const RetailerPojoModel(
       {required String name,
       required double latitude,
       required double longitude,
@@ -31,5 +30,5 @@ class RetailerPojoModel extends RetailerPojo {
   factory RetailerPojoModel.fromJson(Map<String, dynamic> json) =>
       _$RetailerPojoModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RetailerPojoModelToJson(this);          
+  Map<String, dynamic> toJson() => _$RetailerPojoModelToJson(this);
 }

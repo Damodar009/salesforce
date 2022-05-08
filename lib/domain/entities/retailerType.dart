@@ -9,5 +9,5 @@ class RetailerType extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => [name, id, status];
+  List<Object> get props => [name, id, status];
 }

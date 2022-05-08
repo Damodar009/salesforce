@@ -8,6 +8,6 @@ class ApiUrl {
   static const String saveSalesCollectionTracking =
       baseUrl + "/api/saleDataTracking/save";
   static const String saveSalesDataCollection = baseUrl + "/api/salesdata/save";
-  static const String getSalesStaffAll =
-      baseUrl + '/api/user/getsalesstaffall/';
+  static const String getSalesStaff = baseUrl + '/api/user/getsalesstaffbyid/';
+  static const String saveAllRetailer = baseUrl + '/api/retailer/saveall';
 }

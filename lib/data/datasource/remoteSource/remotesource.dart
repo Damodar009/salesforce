@@ -3,9 +3,13 @@ import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
+import 'package:salesforce/data/models/RetailerPojo.dart';
 import 'package:salesforce/data/models/SalesDataCollection.dart';
+import 'package:salesforce/data/models/userDetailsDataModel.dart';
+import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
+import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
@@ -27,7 +31,9 @@ abstract class RemoteSource {
   Future<List<SalesDataCollection>> saveSalesDataCollection();
   Future<String?> postDataToApi();
   Future<DepotProductRetailer> getDepotProductAndRetailer();
-  // Future<UserDetails> getUserDetails();
+  Future<UserDetailsData> getUserDetailsData();
+  Future<List<RetailerPojo>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers);
 }
 
 @Injectable(as: RemoteSource)
@@ -73,35 +79,40 @@ class RemoteSourceImplementation implements RemoteSource {
     }
   }
 
-  // @override
-  // Future<UserDetails> getUserDetails() async {
-  //   Box box = await hive.openBox();
+  @override
+  Future<UserDetailsData> getUserDetailsData() async {
+    Box box = await hive.openBox();
 
-  //   String accessToken = box.get('access_token');
+    String accessToken = box.get('access_token');
 
-  //   String userId = box.get('userid');
+    String userId = box.get('userid');
 
-  //   try {
-  //     Response response = await dio.get(
-  //       ApiUrl.getSalesStaffAll,
-  //       options: Options(
-  //         headers: <String, String>{
-  //           'Authorization': 'Bearer ' + accessToken + '/' + userId
-  //         },
-  //       ),
-  //     );
+    print(userId);
+    print(accessToken);
+    print(ApiUrl.getSalesStaff + userId);
 
-  //     if (response.data["status"] == true) {
-  //       UserDetails userDetailsData = UserDetailsModel.fromJson(response.data);
+    try {
+      Response response = await dio.get(
+        ApiUrl.getSalesStaff + userId,
+        options: Options(
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
+        ),
+      );
 
-  //       return userDetailsData;
-  //     } else {
-  //       throw ServerException();
-  //     }
-  //   } on DioError {
-  //     throw ServerException();
-  //   }
-  // }
+      if (response.data["status"] == true) {
+        UserDetailsDataModel userDetailsData =
+            UserDetailsDataModel.fromJson(response.data["data"]);
+
+        return userDetailsData;
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      print(e);
+
+      throw ServerException();
+    }
+  }
 
   @override
   Future<String?> postDataToApi() {
@@ -245,5 +256,63 @@ class RemoteSourceImplementation implements RemoteSource {
     } on DioError catch (e) {
       throw ServerException();
     }
+  }
+
+  @override
+  Future<List<RetailerPojo>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers) async {
+    List<RetailerPojoModel> retailerPojoModelList = [];
+
+    for (var i = 0; i < listOfRetailers.length; i++) {
+      var saveListOfRetailers = listOfRetailers[i];
+      RetailerPojoModel saveListOfRetailersModel = RetailerPojoModel(
+        address: saveListOfRetailers.address,
+        contactNumber: saveListOfRetailers.contactNumber,
+        contactPerson: saveListOfRetailers.contactPerson,
+        latitude: saveListOfRetailers.latitude,
+        longitude: saveListOfRetailers.longitude,
+        name: saveListOfRetailers.name,
+        region: saveListOfRetailers.region,
+        retailerClass: saveListOfRetailers.retailerClass,
+        retailerType: saveListOfRetailers.retailerType,
+      );
+
+      retailerPojoModelList.add(saveListOfRetailersModel);
+    }
+
+    var saveRetailesInJson = retailerPojoModelList
+        .map((saveListOfRetailersModel) => saveListOfRetailersModel.toJson());
+
+    var jsonEncodedAnswer = jsonEncode(saveRetailesInJson);
+
+    Box box = await hive.openBox();
+
+    String accessToken = box.get('access_token');
+
+    //todo implement authorization token
+    // try {
+
+    print(ApiUrl.saveAllRetailer);
+    Response response = await dio.post(
+      ApiUrl.saveAllRetailer,
+      data: jsonEncodedAnswer,
+      options: Options(
+        contentType: "application/json",
+        headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
+      ),
+    );
+
+    print(response.statusCode);
+    print('oleoloeloeloeloleoleol');
+    if (response.data == 200) {
+
+      return Future.value([]);
+      // return Future.value('Success');
+    } else {
+      throw ServerException();
+    }
+    // } on DioError catch (e) {
+    //   throw ServerException();
+    // }
   }
 }
