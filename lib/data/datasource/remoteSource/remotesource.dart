@@ -3,7 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
+import 'package:salesforce/data/models/SalesDataCollection.dart';
+import 'package:salesforce/data/models/user_details_model.dart';
+import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
+import 'package:salesforce/domain/entities/user_details.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
@@ -22,8 +26,10 @@ abstract class RemoteSource {
   Future<String> getProductList();
   Future<String> getRegionList();
   Future<String> attendenceSave();
+  Future<List<SalesDataCollection>> saveSalesDataCollection();
   Future<String?> postDataToApi();
   Future<DepotProductRetailer> getDepotProductAndRetailer();
+  Future<UserDetails> getUserDetails();
 }
 
 @Injectable(as: RemoteSource)
@@ -61,6 +67,36 @@ class RemoteSourceImplementation implements RemoteSource {
         print('oleoleoleoleoleoeloel');
 
         return userData;
+      } else {
+        throw ServerException();
+      }
+    } on DioError {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<UserDetails> getUserDetails() async {
+    Box box = await hive.openBox();
+
+    String accessToken = box.get('access_token');
+
+    String userId = box.get('userid');
+
+    try {
+      Response response = await dio.get(
+        ApiUrl.getSalesStaffAll,
+        options: Options(
+          headers: <String, String>{
+            'Authorization': 'Bearer ' + accessToken + '/' + userId
+          },
+        ),
+      );
+
+      if (response.data["status"] == true) {
+        UserDetails userDetailsData = UserDetailsModel.fromJson(response.data);
+
+        return userDetailsData;
       } else {
         throw ServerException();
       }
@@ -142,6 +178,36 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<String> getRegionList() {
     // TODO: implement getRegionList
     throw UnimplementedError();
+  }
+
+  @override
+  Future<List<SalesDataCollection>> saveSalesDataCollection() async {
+    //todo implement authorization token
+    try {
+      Response response = await dio.get(
+        ApiUrl.saveSalesDataCollection,
+        options: Options(
+          headers: <String, String>{
+            'Authorization': 'Bearer 2c0f2635-6d0a-46af-b822-0a6cf55df729'
+          },
+        ),
+      );
+
+      if (response.data["status"] == true) {
+        List<SalesDataCollection> saveSalesDataCollection =
+            (response.data as List)
+                .map((e) => SalesDataCollectionModel.fromJson(e))
+                .toList();
+
+        print(saveSalesDataCollection);
+
+        return saveSalesDataCollection;
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      throw ServerException();
+    }
   }
 
   @override

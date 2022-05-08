@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import '../../error/failure.dart';
 import '../entities/attendence.dart';
@@ -15,6 +16,8 @@ abstract class Repository {
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown();
 
+  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
+
   Future<dynamic> postToRemoteSource();
 }
 
@@ -22,6 +25,8 @@ abstract class AttendenceRepository {
   Future<Either<Failure, Attendence>> saveAttendence(Attendence attendence);
 }
 
-abstract class SalesDataTrackCollectionRepository {
-  Future<Either<Failure, Attendence>>
-}
+
+
+// abstract class SalesDataTrackCollectionRepository {
+//   Future<Either<Failure, Attendence>>
+// }

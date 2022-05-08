@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
@@ -144,6 +145,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 padding: const EdgeInsets.all(13),
                 child: button('Save', () {
                   Navigator.pop(context);
+                  RemoteSourceImplementation().saveSalesDataCollection();
                 }, false, AppColors.buttonColor),
               )
             ],

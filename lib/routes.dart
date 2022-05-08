@@ -5,11 +5,8 @@ import 'package:salesforce/presentation/pages/editProfile.dart';
 import 'package:salesforce/presentation/pages/listOfOrderAndOutlets.dart';
 import 'package:salesforce/presentation/pages/logOutPage.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
-import 'package:salesforce/presentation/pages/merchandise_support_page.dart';
 import 'package:salesforce/presentation/pages/newOrderPage.dart';
 import 'package:salesforce/presentation/pages/newOutletsPage.dart';
-import 'package:salesforce/presentation/pages/outlets.dart';
-import 'package:salesforce/presentation/pages/payment_page.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/xlsOrderPage.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
@@ -36,11 +33,7 @@ class RouteGenerator {
     final args = routeSettings.arguments;
     switch (routeSettings.name) {
       case Routes.loginRoute:
-<<<<<<< Updated upstream
         return MaterialPageRoute(builder: (_) => const LOginScreen());
-=======
-        return MaterialPageRoute(builder: (_) =>  OutletsScreen());
->>>>>>> Stashed changes
       case Routes.profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.newOrderRoute:

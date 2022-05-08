@@ -5,6 +5,9 @@ class ApiUrl {
   static const String changePassword = apiUrl + "/user/changePassword";
   static const String depotProductAndRetailor = baseUrl + "/api/merge";
   static const String saveAttendence = baseUrl + "/api/attendance/save";
-  static const String saveSalesCollectionTracking = baseUrl + "/api/salesdata/save";
-
+  static const String saveSalesCollectionTracking =
+      baseUrl + "/api/saleDataTracking/save";
+  static const String saveSalesDataCollection = baseUrl + "/api/salesdata/save";
+  static const String getSalesStaffAll =
+      baseUrl + '/api/user/getsalesstaffall/';
 }

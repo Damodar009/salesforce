@@ -96,4 +96,14 @@ class RepositoryImplementation implements Repository {
       return Left(ServerFailure());
     }
   }
+
+  // @override
+  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection() async {
+  //   try {
+  //     final response = await remoteSource.saveSalesDataCollection();
+  //     return Right(response);
+  //   } catch (e) {
+  //     return Left(ServerFailure());
+  //   }
+  // }
 }

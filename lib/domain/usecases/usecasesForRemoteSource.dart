@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/injectable.dart';
 import '../../error/failure.dart';
 import '../entities/depotProductRetailer.dart';
@@ -16,6 +17,8 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, String>> attendenceSave();
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown();
+
+  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
 
   Future<Either<Failure, dynamic>> postToRemoteSource();
 }
@@ -69,4 +72,9 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
       getDepotProductRetailerDropDown() async {
     return await repository.getDepotProductRetailerDropDown();
   }
+
+  // @override
+  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection() async {
+  //   return await repository.saveSalesDataCollection();
+  // }
 }
