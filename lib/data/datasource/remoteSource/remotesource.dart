@@ -4,10 +4,8 @@ import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/data/models/SalesDataCollection.dart';
-import 'package:salesforce/data/models/user_details_model.dart';
 import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
-import 'package:salesforce/domain/entities/user_details.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
@@ -29,7 +27,7 @@ abstract class RemoteSource {
   Future<List<SalesDataCollection>> saveSalesDataCollection();
   Future<String?> postDataToApi();
   Future<DepotProductRetailer> getDepotProductAndRetailer();
-  Future<UserDetails> getUserDetails();
+  // Future<UserDetails> getUserDetails();
 }
 
 @Injectable(as: RemoteSource)
@@ -75,35 +73,35 @@ class RemoteSourceImplementation implements RemoteSource {
     }
   }
 
-  @override
-  Future<UserDetails> getUserDetails() async {
-    Box box = await hive.openBox();
+  // @override
+  // Future<UserDetails> getUserDetails() async {
+  //   Box box = await hive.openBox();
 
-    String accessToken = box.get('access_token');
+  //   String accessToken = box.get('access_token');
 
-    String userId = box.get('userid');
+  //   String userId = box.get('userid');
 
-    try {
-      Response response = await dio.get(
-        ApiUrl.getSalesStaffAll,
-        options: Options(
-          headers: <String, String>{
-            'Authorization': 'Bearer ' + accessToken + '/' + userId
-          },
-        ),
-      );
+  //   try {
+  //     Response response = await dio.get(
+  //       ApiUrl.getSalesStaffAll,
+  //       options: Options(
+  //         headers: <String, String>{
+  //           'Authorization': 'Bearer ' + accessToken + '/' + userId
+  //         },
+  //       ),
+  //     );
 
-      if (response.data["status"] == true) {
-        UserDetails userDetailsData = UserDetailsModel.fromJson(response.data);
+  //     if (response.data["status"] == true) {
+  //       UserDetails userDetailsData = UserDetailsModel.fromJson(response.data);
 
-        return userDetailsData;
-      } else {
-        throw ServerException();
-      }
-    } on DioError {
-      throw ServerException();
-    }
-  }
+  //       return userDetailsData;
+  //     } else {
+  //       throw ServerException();
+  //     }
+  //   } on DioError {
+  //     throw ServerException();
+  //   }
+  // }
 
   @override
   Future<String?> postDataToApi() {

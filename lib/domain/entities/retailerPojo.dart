@@ -35,4 +35,5 @@ class RetailerPojo extends Equatable {
         retailerType,
         region
       ];
+
 }
