@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/injectable.dart';
 import '../../error/failure.dart';
@@ -17,6 +18,7 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, String>> attendenceSave();
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown();
+  // Future<Either<Failure, RetailerPojo>> saveAllRetailer(listOfRetailers);    
 
   // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
 

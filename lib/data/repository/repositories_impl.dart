@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/injectable.dart';
 import '../../domain/entities/depotProductRetailer.dart';
@@ -107,3 +108,4 @@ class RepositoryImplementation implements Repository {
   //   }
   // }
 }
+

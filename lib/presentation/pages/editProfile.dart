@@ -144,7 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Padding(
                 padding: const EdgeInsets.all(13),
                 child: button('Save', () {
-                  RemoteSourceImplementation().saveAllRetailer();
+                  // RemoteSourceImplementation().saveAllRetailer();
                   // Navigator.pop(context);
                   // RemoteSourceImplementation().saveSalesDataCollection();
                 }, false, AppColors.buttonColor),
