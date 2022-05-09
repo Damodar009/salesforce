@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
+import 'package:salesforce/data/models/RetailerPojo.dart';
+import 'package:salesforce/domain/usecases/useCaseForAttebdenceSave.dart';
+import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
+import 'package:salesforce/injectable.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
@@ -13,6 +17,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
+
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -143,10 +149,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(13),
-                child: button('Save', () {
-                  // RemoteSourceImplementation().saveAllRetailer();
-                  // Navigator.pop(context);
+                child: button('Save', () async {
+                  // RetailerPojoModel retailerPojoModel1 =
+                  //     const RetailerPojoModel(
+                  //         name: 'Gopaldf Prakash Pasal',
+                  //         latitude: 12455.3211,
+                  //         longitude: 21252.2123,
+                  //         address: 'Rampursd',
+                  //         contactPerson: 'Gopalsdaf Prakash',
+                  //         contactNumber: '89786711564556',
+                  //         retailerClass: 'C',
+                  //         retailerType: '506buVWacVShn32ccOHCTw==',
+                  //         region: '506buVWacVShn32ccOHCTw==');
+
+                  // RetailerPojoModel retailerPojoModel2 =
+                  //     const RetailerPojoModel(
+                  //         name: 'Haiiri Prakash Pasal',
+                  //         latitude: 112333.3211,
+                  //         longitude: 2524531.2123,
+                  //         address: 'Rampreur',
+                  //         contactPerson: 'Harrei Prakash',
+                  //         contactNumber: '89786337564446',
+                  //         retailerClass: 'B',
+                  //         retailerType: 'ZRlecVfxmjPY1xs!@sHCIgXP2Q==',
+                  //         region: '506buVWacVShn32ccOHCTw==');
+
+                  // useCaseForRemoteSourceimpl.saveAllRetailer(
+                  //     [retailerPojoModel1, retailerPojoModel2]);
+
                   // RemoteSourceImplementation().saveSalesDataCollection();
+
+                  // useCaseForRemoteSourceimpl.getUserDetailsData();
                 }, false, AppColors.buttonColor),
               )
             ],

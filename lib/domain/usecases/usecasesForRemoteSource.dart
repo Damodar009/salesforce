@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/gestures.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/sales_data_collection.dart';
+import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
 import '../../error/failure.dart';
 import '../entities/depotProductRetailer.dart';
@@ -18,7 +20,9 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, String>> attendenceSave();
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown();
-  // Future<Either<Failure, RetailerPojo>> saveAllRetailer(listOfRetailers);    
+  Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers);
+  Future<Either<Failure, UserDetailsData>> getUserDetailsData();
 
   // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
 
@@ -73,6 +77,17 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown() async {
     return await repository.getDepotProductRetailerDropDown();
+  }
+
+  @override
+  Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers) async {
+    return await repository.saveAllRetailer(listOfRetailers);
+  }
+
+  @override
+  Future<Either<Failure, UserDetailsData>> getUserDetailsData() async {
+    return await repository.getUserDetailsData();
   }
 
   // @override

@@ -6,7 +6,7 @@ class SaveLocally {
   Future<Box> openBox() async {
     Box box = await Hive.openBox(HiveConstants.userdata);
     return box;
-  } 
+  }
 
   Future savetoken({required UserData userdata}) async {
     try {
@@ -22,6 +22,33 @@ class SaveLocally {
       await box.put("scope", userdata.scope);
 
       return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future deletetoken() async {
+    try {
+      var box = await openBox();
+
+      await box.deleteFromDisk();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future showtoken() async {
+    try {
+      var box = await openBox();
+
+      if (box.isEmpty) {
+        print('box.isEmpty)');
+      } else if (box.isNotEmpty) {
+        print('box is not empty');
+      }
+      else{
+        print('idk');
+      }
     } catch (e) {
       return false;
     }

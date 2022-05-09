@@ -1,13 +1,12 @@
 import 'package:equatable/equatable.dart';
-import '../../data/models/userDetailModel.dart';
-
+import 'package:salesforce/data/models/userDetailModel.dart';
 class SalesPerson extends Equatable {
   final String id;
   final String email;
   final String phoneNumber;
   final String password;
   final String roleId;
-  final UserDetailModel userDetails;
+  final UserDetailsModel userDetails;
   SalesPerson(
       {required this.id,
       required this.email,

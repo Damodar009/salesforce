@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:salesforce/domain/entities/attendence.dart';
-import 'package:salesforce/domain/entities/salesPerson.dart';
-import 'package:salesforce/domain/entities/saleslocationTrack.dart';
 import 'package:salesforce/routes.dart';
-import '../../data/models/userDetailModel.dart';
-import '../../data/repository/salesPersonRepositoryImpl.dart';
-import '../../domain/usecases/useCaseForAttebdenceSave.dart';
-import '../../domain/usecases/useCaseForSalesDataTrackCollection.dart';
 import '../../domain/usecases/useCaseForSalesPerson.dart';
-import '../../domain/usecases/usecasesForRemoteSource.dart';
-import '../../error/failure.dart';
 import '../../injectable.dart';
 import '../../utils/app_colors.dart';
 
@@ -58,36 +49,36 @@ class _OutletScreenState extends State<OutletScreen> {
             onTap: () async {
               print("this is working");
 
-              UserDetailModel useDetailModel = UserDetailModel(
-                  contactNumber2: '33333333',
-                  temporaryAddress: 'kathmandu',
-                  dob: '1990-01-21',
-                  fullName: 'raj chaudhary',
-                  permanentAddress: 'butwal',
-                  gender: 'Male');
+              // UserDetailsModel useDetailModel = UserDetailsModel(
+              //     contactNumber2: '33333333',
+              //     temporaryAddress: 'kathmandu',
+              //     dob: '1990-01-21',
+              //     fullName: 'raj chaudhary',
+              //     permanentAddress: 'butwal',
+              //     gender: 'Male', full_name: '');
 
-              SalesPerson salesPerson = SalesPerson(
-                  userDetails: useDetailModel,
-                  id: 'r1szWT3fuMEWm4xeNQpGTw==',
-                  email: 'test123999@gmail.com',
-                  roleId: 'NGBifEuwYylJoyRt7a8bkA==',
-                  password: 'test123',
-                  phoneNumber: '0978678543');
+              // SalesPerson salesPerson = SalesPerson(
+              //     userDetails: useDetailModel,
+              //     id: 'r1szWT3fuMEWm4xeNQpGTw==',
+              //     email: 'test123999@gmail.com',
+              //     roleId: 'NGBifEuwYylJoyRt7a8bkA==',
+              //     password: 'test123',
+              //     phoneNumber: '0978678543');
 
-              print("this is the snfsf");
-              print(salesPerson) ;
+              // print("this is the snfsf");
+              // print(salesPerson) ;
 
-              var dd =
-                  await useCaseForSalesPersonImpl.saveSalesPerson(salesPerson);
+              // var dd =
+              //     await useCaseForSalesPersonImpl.saveSalesPerson(salesPerson);
 
-              dd.fold(
-                  (l) => {
-                        if (l is ServerFailure)
-                          {print("this is failure")}
-                        else if (l is CacheFailure)
-                          {print("this is failure")}
-                      },
-                  (r) => print(r));
+              // dd.fold(
+              //     (l) => {
+              //           if (l is ServerFailure)
+              //             {print("this is failure")}
+              //           else if (l is CacheFailure)
+              //             {print("this is failure")}
+              //         },
+              //     (r) => print(r));
             },
             child: outletsCardOutline(Padding(
               padding: const EdgeInsets.all(16.0),

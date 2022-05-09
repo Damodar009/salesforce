@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/main.dart';
 import 'package:salesforce/presentation/pages/attendance_page.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/editProfile.dart';
@@ -12,6 +13,7 @@ import 'package:salesforce/presentation/pages/xlsOrderPage.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 
 class Routes {
+  static const String splashScreen = "/splash";
   static const String profileRoute = "/profile";
   static const String loginRoute = "/";
   static const String dashboardRoute = "/dashboard";
@@ -32,6 +34,8 @@ class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings routeSettings) {
     final args = routeSettings.arguments;
     switch (routeSettings.name) {
+      case Routes.splashScreen:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case Routes.loginRoute:
         return MaterialPageRoute(builder: (_) => const LOginScreen());
       case Routes.profileRoute:

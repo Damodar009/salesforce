@@ -19,8 +19,11 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
       List<SalesLocationTrack> listSalesLocationTrack) async {
     Dio dio = Dio();
     List<SalesLocationTrackModel> salesLocationTrackModelList = [];
+
     for (var i = 0; i < listSalesLocationTrack.length; i++) {
+
       var salesLocationTRack = listSalesLocationTrack[i];
+      
       SalesLocationTrackModel salesLocationTrackModel = SalesLocationTrackModel(
           salesLocationTRack.latitude,
           salesLocationTRack.longitude,

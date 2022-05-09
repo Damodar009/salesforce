@@ -30,11 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
   String distanceTraveled = "12 km";
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      //todo
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height + 375,
-        width: MediaQuery.of(context).size.width,
+    return LayoutBuilder(builder: (context, constraint) {
+      return ConstrainedBox(
+        constraints: BoxConstraints(minHeight: constraint.maxHeight),
+
+        // height: MediaQuery.of(context).size.height + 375,
+        // width: MediaQuery.of(context).size.width,
+
         child: Stack(
           children: [
             Positioned(
@@ -102,7 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const Text("Walked Today \nFeild name",
                               style: TextStyle(
-                                  fontSize: 18, color: AppColors.primaryColor))
+                                  fontSize: 18,
+                                  color: AppColors.primaryColor))
                         ],
                       )
                     ],
@@ -171,6 +174,46 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const Text("TOTAL ATTENDENCE"),
                   const DoughnutChart(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(13),
+                            decoration: BoxDecoration(
+                                color: AppColors.buttonColor,
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          const Text(
+                            'Present',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(13),
+                            decoration: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          const Text(
+                            'Absent',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   const SizedBox(
                     height: 40,
                   ),
@@ -181,7 +224,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     primary: true,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2),
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.1,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 15,
+                    ),
                     itemBuilder: (_, index) => InkWell(
                         onTap: () {
                           switch (index) {
@@ -204,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             default:
                           }
                         },
-                        child: card(icons[index], title[index], 34)),
+                        child: card(icons[index], title[index], 34, context)),
                     itemCount: 4,
                   )),
                 ],
@@ -212,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

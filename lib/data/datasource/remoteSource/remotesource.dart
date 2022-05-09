@@ -265,6 +265,7 @@ class RemoteSourceImplementation implements RemoteSource {
 
     for (var i = 0; i < listOfRetailers.length; i++) {
       var saveListOfRetailers = listOfRetailers[i];
+
       RetailerPojoModel saveListOfRetailersModel = RetailerPojoModel(
         address: saveListOfRetailers.address,
         contactNumber: saveListOfRetailers.contactNumber,
@@ -281,38 +282,43 @@ class RemoteSourceImplementation implements RemoteSource {
     }
 
     var saveRetailesInJson = retailerPojoModelList
-        .map((saveListOfRetailersModel) => saveListOfRetailersModel.toJson());
+        .map((saveListOfRetailersModel) => saveListOfRetailersModel.toJson())
+        .toList();
 
     var jsonEncodedAnswer = jsonEncode(saveRetailesInJson);
+
+    print(jsonEncodedAnswer);
 
     Box box = await hive.openBox();
 
     String accessToken = box.get('access_token');
 
     //todo implement authorization token
-    // try {
+    try {
+      print(ApiUrl.saveAllRetailer);
 
-    print(ApiUrl.saveAllRetailer);
-    Response response = await dio.post(
-      ApiUrl.saveAllRetailer,
-      data: jsonEncodedAnswer,
-      options: Options(
-        contentType: "application/json",
-        headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
-      ),
-    );
+      Response response = await dio.post(
+        ApiUrl.saveAllRetailer,
+        data: jsonEncodedAnswer,
+        options: Options(
+          contentType: "application/json",
+          headers: <String, String>{
+            'Authorization': 'Bearer ' + accessToken,
+          },
+        ),
+      );
 
-    print(response.statusCode);
-    print('oleoloeloeloeloleoleol');
-    if (response.data == 200) {
+      print(response.statusCode);
+      print('oleoloeloeloeloleoleol');
 
-      return Future.value([]);
-      // return Future.value('Success');
-    } else {
+      if (response.data["status"] == true) {
+        return Future.value([]);
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
-    // } on DioError catch (e) {
-    //   throw ServerException();
-    // }
   }
 }

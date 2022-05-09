@@ -93,92 +93,124 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           const SizedBox(
             height: 12,
           ),
-
-          //todo
-          title("Product Name"),
-          const SizedBox(
-            height: 12,
-          ),
-          textFormField(
-              controller: _productNameSales,
-              validator: (string) {},
-              obsecureText1: () {},
-              hintText: 'Rc cola '),
-          const SizedBox(
-            height: 12,
-          ),
-
-          title("Types of Product"),
-          const SizedBox(
-            height: 12,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.35,
-                child: textFeildWithDropDown(
-                    controller: _typesOfProductSales,
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.backgroundColor,
+                  blurRadius: 3,
+                  spreadRadius: 1,
+                  offset: Offset(1, 1),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //todo
+                title("Product Name"),
+                const SizedBox(
+                  height: 12,
+                ),
+                textFormField(
+                    controller: _productNameSales,
                     validator: (string) {},
-                    hintText: 'Frank miller ',
-                    item: items),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.35,
-                child: textFormFeildIncreAndDecre(
-                    hintText: '9999',
-                    controller: _numberOfProductOfSales,
-                    validator: (string) {}),
-              ),
-              circleContainer()
-            ],
+                    obsecureText1: () {},
+                    hintText: 'Rc cola '),
+                const SizedBox(
+                  height: 12,
+                ),
+
+                title("Types of Product"),
+                const SizedBox(
+                  height: 12,
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      child: textFeildWithDropDown(
+                          controller: _typesOfProductSales,
+                          validator: (string) {},
+                          hintText: 'Frank miller ',
+                          item: items),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      child: textFormFeildIncreAndDecre(
+                          hintText: '9999',
+                          controller: _numberOfProductOfSales,
+                          validator: (string) {}),
+                    ),
+                    circleContainer()
+                  ],
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                textButton(
+                    "Add More Product", MediaQuery.of(context).size.width),
+              ],
+            ),
           ),
-          const SizedBox(
-            height: 12,
-          ),
-          textButton("Add More Product", MediaQuery.of(context).size.width),
 
           const SizedBox(
             height: 12,
           ),
           titles("Availability"),
-
           const SizedBox(
             height: 12,
           ),
 
-          title("Product Name"),
-          const SizedBox(
-            height: 12,
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.backgroundColor,
+                  blurRadius: 3,
+                  spreadRadius: 1,
+                  offset: Offset(1, 1),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                title("Product Name"),
+                const SizedBox(
+                  height: 12,
+                ),
+                textFormField(
+                    controller: _productNameAvailability,
+                    validator: (string) {},
+                    obsecureText1: () {},
+                    hintText: 'Rc cola '),
+                const SizedBox(
+                  height: 12,
+                ),
+                title("Types of Product"),
+                const SizedBox(
+                  height: 12,
+                ),
+                textFeildWithDropDown(
+                    controller: _typesOfProductAvailability,
+                    validator: (string) {},
+                    hintText: 'Frank miller ',
+                    item: items),
+                const SizedBox(
+                  height: 12,
+                ),
+                textFeildWithMultipleLines(
+                    validator: (string) {},
+                    hintText: 'Remark',
+                    controller: _describeProductAvailability),
+              ],
+            ),
           ),
-          textFormField(
-              controller: _productNameAvailability,
-              validator: (string) {},
-              obsecureText1: () {},
-              hintText: 'Rc cola '),
-          const SizedBox(
-            height: 12,
-          ),
-
-          title("Types of Product"),
-          const SizedBox(
-            height: 12,
-          ),
-          textFeildWithDropDown(
-              controller: _typesOfProductAvailability,
-              validator: (string) {},
-              hintText: 'Frank miller ',
-              item: items),
-          const SizedBox(
-            height: 12,
-          ),
-
-          textFeildWithMultipleLines(
-              validator: (string) {},
-              hintText: 'Remark',
-              controller: _describeProductAvailability),
 
           const SizedBox(
             height: 12,
@@ -363,18 +395,15 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             ],
           ),
           backNavigate: () {}),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: LayoutBuilder(builder: (context, constraint) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraint.maxHeight),
-                child: ignorePointer
-                    ? IgnorePointer(child: newOrderScreenBody())
-                    : newOrderScreenBody()),
-          );
-        }),
-      ),
+      body: LayoutBuilder(builder: (context, constraint) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraint.maxHeight),
+              child: ignorePointer
+                  ? IgnorePointer(child: newOrderScreenBody())
+                  : newOrderScreenBody()),
+        );
+      }),
     );
   }
 

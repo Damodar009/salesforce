@@ -1,7 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:salesforce/domain/entities/sales_data_collection.dart';
+import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/userData.dart';
+import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
 import '../../domain/entities/depotProductRetailer.dart';
 import '../../domain/repositories/repository.dart';
@@ -98,6 +99,27 @@ class RepositoryImplementation implements Repository {
     }
   }
 
+  @override
+  Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers) async {
+    try {
+      final response = await remoteSource.saveAllRetailer(listOfRetailers);
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserDetailsData>> getUserDetailsData() async {
+    try {
+      final response = await remoteSource.getUserDetailsData();
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
   // @override
   // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection() async {
   //   try {
@@ -108,4 +130,3 @@ class RepositoryImplementation implements Repository {
   //   }
   // }
 }
-

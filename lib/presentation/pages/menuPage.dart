@@ -31,7 +31,7 @@ class _MenuScreenState extends State<MenuScreen> {
           Align(
               alignment: Alignment.center,
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -59,12 +59,12 @@ class _MenuScreenState extends State<MenuScreen> {
           InkWell(
             onTap: (() {
               Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => EditProfileScreen()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => EditProfileScreen()));
             }),
-            child: ProfileOptions(mediaQueryWidth, context,
-                Icons.edit_outlined, 'Edit Account Info'),
+            child: ProfileOptions(mediaQueryWidth, context, Icons.edit_outlined,
+                'Edit Account Info'),
           ),
           SizedBox(
             height: mediaQueryHeight * 0.001,
