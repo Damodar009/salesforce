@@ -1,20 +1,21 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/saleslocationTrack.dart';
 import '../../../error/exception.dart';
 import '../../../utils/apiUrl.dart';
-
 import '../../models/SalesLocationTrackModel.dart';
 
 abstract class SalesDataAndTrackCollectionRemoteSource {
-  Future<List<SalesLocationTrack>> saveAttendence(
+  Future<List<SalesLocationTrack>> saveSalesDataAndTrackCollection(
       List<SalesLocationTrack> listSalesLocationTrack);
 }
 
+@Injectable(as: SalesDataAndTrackCollectionRemoteSource)
 class SalesDataAndTrackCollectionRemoteSourceimpl
     implements SalesDataAndTrackCollectionRemoteSource {
   @override
-  Future<List<SalesLocationTrack>> saveAttendence(
+  Future<List<SalesLocationTrack>> saveSalesDataAndTrackCollection(
       List<SalesLocationTrack> listSalesLocationTrack) async {
     Dio dio = Dio();
     List<SalesLocationTrackModel> salesLocationTrackModelList = [];
@@ -28,11 +29,16 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
       salesLocationTrackModelList.add(salesLocationTrackModel);
     }
 
+    print("this is list of sales dara colletion");
+    print(salesLocationTrackModelList);
+
     var salesTrackInJson = salesLocationTrackModelList
         .map((salesLocationTrackModel) => salesLocationTrackModel.toJson())
         .toList();
 
     var jsonEncodedAnswer = jsonEncode(salesTrackInJson);
+    print("this is list of sales data colletion");
+    print(jsonEncodedAnswer);
 
     try {
       Response response = await dio.post(
@@ -41,7 +47,7 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer abfb62c1-fbf7-4da5-98d0-04ff5e4f899d'
+            'Authorization': 'Bearer 6c737f4e-45a1-4938-b559-4ee60f403dcc'
           },
         ),
       );

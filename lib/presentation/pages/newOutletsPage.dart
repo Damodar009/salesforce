@@ -54,7 +54,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
             ],
           )
         ],
-        leading: BackButton(),
+        leading: const BackButton(),
         title: const Text(
           "NEW ORDER",
           style: TextStyle(color: AppColors.primaryColor),

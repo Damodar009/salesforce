@@ -3,6 +3,8 @@ import 'package:salesforce/domain/entities/userData.dart';
 import '../../error/failure.dart';
 import '../entities/attendence.dart';
 import '../entities/depotProductRetailer.dart';
+import '../entities/salesPerson.dart';
+import '../entities/saleslocationTrack.dart';
 
 abstract class Repository {
   Future<Either<Failure, UserData>> login(String username, String password);
@@ -23,5 +25,11 @@ abstract class AttendenceRepository {
 }
 
 abstract class SalesDataTrackCollectionRepository {
-  Future<Either<Failure, Attendence>>
+  Future<Either<Failure, List<SalesLocationTrack>>>
+      saveSalesDataAndTrackCollection(
+          List<SalesLocationTrack> listSalesLocationTrack);
+}
+
+abstract class SalesTeamRepository {
+  Future<Either<Failure, SalesPerson>> saveSalesPerson(SalesPerson salesPerson);
 }
