@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:salesforce/domain/entities/attendence.dart';
+import 'package:salesforce/domain/entities/salesPerson.dart';
+import 'package:salesforce/domain/entities/saleslocationTrack.dart';
 import 'package:salesforce/routes.dart';
+import '../../data/models/userDetailModel.dart';
+import '../../data/repository/salesPersonRepositoryImpl.dart';
 import '../../domain/usecases/useCaseForAttebdenceSave.dart';
+import '../../domain/usecases/useCaseForSalesDataTrackCollection.dart';
+import '../../domain/usecases/useCaseForSalesPerson.dart';
 import '../../domain/usecases/usecasesForRemoteSource.dart';
 import '../../error/failure.dart';
 import '../../injectable.dart';
@@ -15,7 +21,7 @@ class OutletScreen extends StatefulWidget {
 }
 
 class _OutletScreenState extends State<OutletScreen> {
-  var useCaseForAttendenceimpl = getIt<UseCaseForAttendenceImpl>();
+  var useCaseForSalesPersonImpl = getIt<UseCaseForSalesPersonImpl>();
   @override
   void initState() {
     // TODO: implement initState
@@ -51,20 +57,28 @@ class _OutletScreenState extends State<OutletScreen> {
           InkWell(
             onTap: () async {
               print("this is working");
-              Attendence attendence = Attendence(
-                  null,
-                  "22:Ac:23:13:RF",
-                  "2022-02-21 09:30:00",
-                  1231.1231,
-                  1231.1231,
-                  "2022-02-21 19:30:00",
-                  1231.1231,
-                  1231.1231,
-                  "NGBifEuwYylJoyRt7a8bkA==");
 
-              print(attendence.toString());
+              UserDetailModel useDetailModel = UserDetailModel(
+                  contactNumber2: '33333333',
+                  temporaryAddress: 'kathmandu',
+                  dob: '1990-01-21',
+                  fullName: 'raj chaudhary',
+                  permanentAddress: 'butwal',
+                  gender: 'Male');
+
+              SalesPerson salesPerson = SalesPerson(
+                  userDetails: useDetailModel,
+                  id: 'r1szWT3fuMEWm4xeNQpGTw==',
+                  email: 'test123999@gmail.com',
+                  roleId: 'NGBifEuwYylJoyRt7a8bkA==',
+                  password: 'test123',
+                  phoneNumber: '0978678543');
+
+              print("this is the snfsf");
+              print(salesPerson) ;
+
               var dd =
-                  await useCaseForAttendenceimpl.attendenceSave(attendence);
+                  await useCaseForSalesPersonImpl.saveSalesPerson(salesPerson);
 
               dd.fold(
                   (l) => {
