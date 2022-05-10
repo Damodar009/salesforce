@@ -1,9 +1,12 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
 import 'package:salesforce/data/models/RetailerPojo.dart';
+import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/usecases/useCaseForAttebdenceSave.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/injectable.dart';
+import 'package:salesforce/presentation/widgets/radioBotton.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
@@ -17,6 +20,13 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  String selectedValue = "";
+  void selectValueRadioButton(String selectValue) {
+    setState(() {
+      selectedValue = selectValue;
+    });
+  }
+
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
 
   final TextEditingController _userNameController = TextEditingController();
@@ -89,13 +99,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(
                 height: heightBetweenTextField,
               ),
-              textFormField(
-                  validator: (value) {},
-                  controller: _dateOfBirthController,
-                  hintText: 'Date of Birth',
-                  obsecureText1: () {
-                    setState(() {});
-                  }),
+              DateTimePicker(
+                // initialValue: 'DateTime.now()',
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+                dateLabelText: 'Date',
+                decoration: const InputDecoration(
+                    fillColor: Colors.white,
+                    errorStyle: TextStyle(color: AppColors.primaryColor),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30.0),
+                      ),
+                      borderSide:
+                          BorderSide(color: AppColors.textFeildINputBorder),
+                    ),
+                    filled: true,
+                    hintStyle: TextStyle(
+                      color: Colors.blue,
+                      fontFamily: 'Inter',
+                      fontSize: 15,
+                    ),
+                    hintText: 'DD/MM/YYYY',
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30.0),
+                        )),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30.0),
+                        ))),
+                onChanged: (val) => print(val),
+                validator: (val) {
+                  print(val);
+                  return null;
+                },
+                onSaved: (val) => print(val),
+              ),
               SizedBox(
                 height: heightBetweenTextField,
               ),
@@ -124,11 +168,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 height: heightBetweenTextField,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  radioButtonWidget('Male', 'Male', () {}),
-                  radioButtonWidget('Male', 'Female', () {}),
-                  radioButtonWidget('Male', 'others', () {}),
+                children: [
+                  buildIndividualRadio(
+                      "Male", selectedValue, selectValueRadioButton),
+                  buildIndividualRadio(
+                      "Female", selectedValue, selectValueRadioButton),
+                  buildIndividualRadio(
+                      "others", selectedValue, selectValueRadioButton),
                 ],
               ),
               SizedBox(
@@ -191,12 +237,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 }
 
 Widget radioButtonWidget(
-    String _selectedGender, String genderTitle, Function() onclick) {
+    int selectedValue, int value, String genderTitle, Function() onclick) {
   return Row(
     children: [
       Radio(
-        value: 'Male',
-        groupValue: _selectedGender,
+        value: selectedValue,
+        groupValue: selectedValue,
         onChanged: (value) {
           onclick();
         },

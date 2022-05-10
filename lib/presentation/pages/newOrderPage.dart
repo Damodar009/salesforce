@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/presentation/pages/home/card.dart';
+import 'package:salesforce/presentation/pages/newOutletsPage.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 import 'package:salesforce/routes.dart';
@@ -57,29 +59,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const Text(
-                'Outlets already created',
-                style: TextStyle(color: Color(0xFF003049)),
-              ),
-              StatefulBuilder(builder: (context, setStat) {
-                return Checkbox(
-                    value: outletsCreated,
-                    activeColor: AppColors.buttonColor,
-                    checkColor: Colors.white,
-                    fillColor: MaterialStateColor.resolveWith(
-                        (states) => AppColors.buttonColor),
-                    onChanged: (newValue) {
-                      //todo write code for outletsCreated
-                      setStat(() {
-                        outletsCreated = newValue!;
-                      });
-                    });
-              }),
-            ],
-          ),
           title("Name of Outlet"),
           const SizedBox(
             height: 12,
@@ -89,39 +68,178 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               validator: (string) {},
               obsecureText1: () {},
               hintText: 'Frank miller '),
+          const SizedBox(
+            height: 25,
+          ),
           titles("Sales"),
           const SizedBox(
-            height: 12,
+            height: 5,
           ),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.backgroundColor,
-                  blurRadius: 3,
-                  spreadRadius: 1,
-                  offset: Offset(1, 1),
-                ),
-              ],
+          Card(
+            elevation: 10,
+            // shadowColor: Color.fromARGB(1, 5, 8, 10),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromARGB(255, 235, 233, 233),
+                    blurRadius: 3,
+                    spreadRadius: 1,
+                    offset: Offset(1, 1),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //todo
+                  title("Product Name"),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  textFormField(
+                      controller: _productNameSales,
+                      validator: (string) {},
+                      obsecureText1: () {},
+                      hintText: 'Rc cola '),
+                  const SizedBox(
+                    height: 12,
+                  ),
+
+                  title("Types of Product"),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        child: textFeildWithDropDown(
+                            controller: _typesOfProductSales,
+                            validator: (string) {},
+                            hintText: 'Frank miller ',
+                            item: items),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        child: textFormFeildIncreAndDecre(
+                            hintText: '9999',
+                            controller: _numberOfProductOfSales,
+                            validator: (string) {}),
+                      ),
+                      circleContainer()
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  textButton(
+                      "Add More Product", MediaQuery.of(context).size.width),
+                ],
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //todo
+          ),
+
+          const SizedBox(
+            height: 25,
+          ),
+          titles("Availability"),
+          const SizedBox(
+            height: 5,
+          ),
+
+          Card(
+            elevation: 10,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromARGB(255, 235, 233, 233),
+                    blurRadius: 3,
+                    spreadRadius: 1,
+                    offset: Offset(1, 1),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  title("Product Name"),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  textFormField(
+                      controller: _productNameAvailability,
+                      validator: (string) {},
+                      obsecureText1: () {},
+                      hintText: 'Rc cola '),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  title("Types of Product"),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  textFeildWithDropDown(
+                      controller: _typesOfProductAvailability,
+                      validator: (string) {},
+                      hintText: 'Frank miller ',
+                      item: items),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  textFeildWithMultipleLines(
+                      validator: (string) {},
+                      hintText: 'Remark',
+                      controller: _describeProductAvailability),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(
+            height: 25,
+          ),
+          titles("Return"),
+
+          const SizedBox(
+            height: 5,
+          ),
+
+          Card(
+            elevation: 10,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromARGB(255, 235, 233, 233),
+                    blurRadius: 3,
+                    spreadRadius: 1,
+                    offset: Offset(1, 1),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 title("Product Name"),
                 const SizedBox(
                   height: 12,
                 ),
                 textFormField(
-                    controller: _productNameSales,
+                    controller: _productNameReturn,
                     validator: (string) {},
                     obsecureText1: () {},
                     hintText: 'Rc cola '),
                 const SizedBox(
                   height: 12,
                 ),
-
                 title("Types of Product"),
                 const SizedBox(
                   height: 12,
@@ -129,22 +247,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 Row(
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.35,
+                      width: 200,
                       child: textFeildWithDropDown(
-                          controller: _typesOfProductSales,
+                          controller: _typeOfProductReturn,
                           validator: (string) {},
                           hintText: 'Frank miller ',
                           item: items),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.35,
-                      child: textFormFeildIncreAndDecre(
-                          hintText: '9999',
-                          controller: _numberOfProductOfSales,
-                          validator: (string) {}),
                     ),
                     circleContainer()
                   ],
@@ -152,134 +260,34 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 const SizedBox(
                   height: 12,
                 ),
-                textButton(
-                    "Add More Product", MediaQuery.of(context).size.width),
-              ],
-            ),
-          ),
-
-          const SizedBox(
-            height: 12,
-          ),
-          titles("Availability"),
-          const SizedBox(
-            height: 12,
-          ),
-
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.backgroundColor,
-                  blurRadius: 3,
-                  spreadRadius: 1,
-                  offset: Offset(1, 1),
+                Row(
+                  children: [
+                    textButton("true", 90),
+                    const SizedBox(
+                      width: 12,
+                    ),
+                    textButton("false", 90),
+                    const SizedBox(
+                      width: 12,
+                    ),
+                    circleContainer()
+                  ],
                 ),
-              ],
-            ),
-            child: Column(
-              children: [
-                title("Product Name"),
-                const SizedBox(
-                  height: 12,
-                ),
-                textFormField(
-                    controller: _productNameAvailability,
-                    validator: (string) {},
-                    obsecureText1: () {},
-                    hintText: 'Rc cola '),
-                const SizedBox(
-                  height: 12,
-                ),
-                title("Types of Product"),
-                const SizedBox(
-                  height: 12,
-                ),
-                textFeildWithDropDown(
-                    controller: _typesOfProductAvailability,
-                    validator: (string) {},
-                    hintText: 'Frank miller ',
-                    item: items),
                 const SizedBox(
                   height: 12,
                 ),
                 textFeildWithMultipleLines(
                     validator: (string) {},
                     hintText: 'Remark',
-                    controller: _describeProductAvailability),
-              ],
+                    controller: _describeReturn),
+              ]),
             ),
           ),
 
-          const SizedBox(
-            height: 12,
-          ),
-          titles("Return"),
-
-          const SizedBox(
-            height: 12,
-          ),
-
           //todo
-          title("Product Name"),
-          const SizedBox(
-            height: 12,
-          ),
-          textFormField(
-              controller: _productNameReturn,
-              validator: (string) {},
-              obsecureText1: () {},
-              hintText: 'Rc cola '),
 
           const SizedBox(
-            height: 12,
-          ),
-
-          title("Types of Product"),
-          const SizedBox(
-            height: 12,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 200,
-                child: textFeildWithDropDown(
-                    controller: _typeOfProductReturn,
-                    validator: (string) {},
-                    hintText: 'Frank miller ',
-                    item: items),
-              ),
-              circleContainer()
-            ],
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-
-          Row(
-            children: [
-              textButton("true", 90),
-              const SizedBox(
-                width: 12,
-              ),
-              textButton("false", 90),
-              const SizedBox(
-                width: 12,
-              ),
-              circleContainer()
-            ],
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          textFeildWithMultipleLines(
-              validator: (string) {},
-              hintText: 'Remark',
-              controller: _describeReturn),
-
-          const SizedBox(
-            height: 12,
+            height: 30,
           ),
           title("Available Time for delivery"),
           const SizedBox(
@@ -299,10 +307,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               obsecureText1: () {},
               hintText: 'To '),
           const SizedBox(
-            height: 12,
+            height: 20,
           ),
 
           title("Availability"),
+          const SizedBox(
+            height: 10,
+          ),
 
           textFormField(
               controller: _availabilityStatus,
@@ -345,7 +356,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ? button("Save Order in XLS", () {
                   Navigator.of(context).pushNamed(Routes.xlsOrder);
                 }, false, AppColors.buttonColor)
-              : SizedBox(),
+              : const SizedBox(),
           const SizedBox(
             height: 10,
           )
@@ -383,7 +394,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             });
                           });
                     })
-                  : SizedBox(),
+                  : const SizedBox(),
               Text(showEditBUtton || showSaveBUtton
                   ? showSaveBUtton
                       ? 'save'
@@ -399,9 +410,47 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         return SingleChildScrollView(
           child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraint.maxHeight),
-              child: ignorePointer
-                  ? IgnorePointer(child: newOrderScreenBody())
-                  : newOrderScreenBody()),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const Text(
+                          'Outlets already created',
+                          style: TextStyle(color: Color(0xFF003049)),
+                        ),
+                        Checkbox(
+                            value: outletsCreated,
+                            activeColor: AppColors.buttonColor,
+                            checkColor: Colors.white,
+                            fillColor: MaterialStateColor.resolveWith(
+                                (states) => AppColors.buttonColor),
+                            onChanged: (newValue) {
+                              //todo write code for outletsCreated
+                              setState(() {
+                                outletsCreated = newValue!;
+                              });
+                            }),
+                      ],
+                    ),
+                    ignorePointer
+                        ? (IgnorePointer(
+                            child: newOrderScreenBody(),
+                          ))
+                        : (outletsCreated
+                            ? newOrderScreenBody()
+                            : NewOrderScreenChangeToNewOutLetScreen()),
+                    // outletsCreated
+                    //     ? newOrderScreenBody()
+                    //     : const NewOrderScreenChangeToNewOutLetScreen(),
+                    // ignorePointer
+                    //     ? IgnorePointer(child: newOrderScreenBody())
+                    //     : newOrderScreenBody(),
+                  ],
+                ),
+              )),
         );
       }),
     );

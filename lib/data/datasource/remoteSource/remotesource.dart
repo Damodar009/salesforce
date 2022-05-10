@@ -5,10 +5,13 @@ import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/data/models/RetailerPojo.dart';
 import 'package:salesforce/data/models/SalesDataCollection.dart';
+import 'package:salesforce/data/models/salesPersonModel.dart';
 import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
+import 'package:salesforce/domain/entities/salesPerson.dart';
 import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
+import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
@@ -20,6 +23,7 @@ import '../../models/Userdata.dart';
 import '../../models/DepotModel.dart';
 import '../../models/Products.dart';
 import '../../models/RetailerType.dart';
+import '../../models/userDetailModel.dart';
 
 abstract class RemoteSource {
   Future<UserData> login(String username, String password);
@@ -34,6 +38,9 @@ abstract class RemoteSource {
   Future<UserDetailsData> getUserDetailsData();
   Future<List<RetailerPojo>> saveAllRetailer(
       List<RetailerPojo> listOfRetailers);
+
+  Future<SalesPerson> saveUserDetails(
+      SalesPerson salesPerson, UserDetails userDetails);
 }
 
 @Injectable(as: RemoteSource)
@@ -318,6 +325,58 @@ class RemoteSourceImplementation implements RemoteSource {
       }
     } on DioError catch (e) {
       print(e);
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<SalesPerson> saveUserDetails(
+      SalesPerson salesPerson, UserDetails userDetails) async {
+    Box box = await hive.openBox();
+
+    String accessToken = box.get('access_token');
+
+    UserDetailsModel userDetailsModel = UserDetailsModel(
+        fullName: userDetails.fullName,
+        gender: userDetails.gender,
+        dob: userDetails.dob,
+        permanentAddress: userDetails.permanentAddress,
+        temporaryAddress: userDetails.temporaryAddress,
+        userDocument: userDetails.userDocument,
+        contactNumber2: userDetails.contactNumber2);
+
+    SalesPersonModel salesPersonModel = SalesPersonModel(
+      id: salesPerson.id,
+      email: salesPerson.email,
+      phoneNumber: salesPerson.phoneNumber,
+      password: salesPerson.password,
+      roleId: salesPerson.roleId,
+      userDetails: userDetailsModel,
+    );
+
+    var salesPersonInJson = salesPersonModel.toJson();
+    var jsonEncodedSalesPerson = jsonEncode(salesPersonInJson);
+    print(jsonEncodedSalesPerson);
+
+    try {
+      Response response = await dio.post(
+        ApiUrl.saveUser,
+        data: jsonEncodedSalesPerson,
+        options:
+            Options(contentType: "application/json", headers: <String, String>{
+          'Authorization': 'Bearer ' + accessToken,
+        }),
+      );
+
+      if (response.data["status"] == true) {
+        SalesPerson salesPerson =
+            SalesPersonModel.fromJson(response.data["data"]);
+
+        return salesPerson;
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
       throw ServerException();
     }
   }

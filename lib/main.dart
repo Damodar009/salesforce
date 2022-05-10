@@ -8,7 +8,6 @@ import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
-import 'package:salesforce/utils/hiveConstant.dart';
 import 'domain/usecases/usecasesForRemoteSource.dart';
 import 'injectable.dart';
 

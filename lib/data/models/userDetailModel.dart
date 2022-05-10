@@ -6,21 +6,25 @@ part 'userDetailModel.g.dart';
 @JsonSerializable()
 class UserDetailsModel extends UserDetails {
   UserDetailsModel(
-      {required String full_name,
+      {required String fullName,
+      DateTime? dob,
       required String gender,
-      required String path,
-      required String permanent_address,
-      required String temporary_address,
-      required String user_detail_id,
-      required String contact_number2})
+      String? path,
+      required String permanentAddress,
+      required String temporaryAddress,
+      String? userDocument,
+      String? user_detail_id,
+      required String contactNumber2})
       : super(
-            full_name: full_name,
-            gender: gender,
+            fullName: fullName,
+            dob: dob,
             path: path,
-            permanent_address: permanent_address,
-            temporary_address: temporary_address,
+            userDocument: userDocument,
             user_detail_id: user_detail_id,
-            contact_number2: contact_number2);
+            gender: gender,
+            permanentAddress: permanentAddress,
+            temporaryAddress: temporaryAddress,
+            contactNumber2: contactNumber2);
 
   factory UserDetailsModel.fromJson(Map<String, dynamic> json) =>
       _$UserDetailsModelFromJson(json);
