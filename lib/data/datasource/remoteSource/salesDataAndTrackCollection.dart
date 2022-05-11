@@ -32,8 +32,6 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
       salesLocationTrackModelList.add(salesLocationTrackModel);
     }
 
-    print("this is list of sales dara colletion");
-    print(salesLocationTrackModelList);
 
     var salesTrackInJson = salesLocationTrackModelList
         .map((salesLocationTrackModel) => salesLocationTrackModel.toJson())

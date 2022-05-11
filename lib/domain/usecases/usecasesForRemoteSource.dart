@@ -80,6 +80,7 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   @override
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown() async {
+    print("use case for remote source");
     return await repository.getDepotProductRetailerDropDown();
   }
 

@@ -19,5 +19,6 @@ class UseCaseForAttendenceImpl implements UseCaseForAttendence {
   Future<Either<Failure, Attendence>> attendenceSave(
       Attendence attendence) async {
     return await attendenceRepository.saveAttendence(attendence);
+
   }
 }

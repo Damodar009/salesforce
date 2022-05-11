@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:salesforce/presentation/pages/home/homePage.dart';
-import 'package:salesforce/presentation/pages/outlets_page.dart';
 import 'package:salesforce/presentation/pages/menuPage.dart';
+import 'package:salesforce/presentation/pages/outlets.dart';
 import 'package:salesforce/utils/app_colors.dart';
+import 'baclground.dart';
 import 'calenderPage.dart';
+import 'outlets_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   int index;

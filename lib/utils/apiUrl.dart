@@ -11,4 +11,5 @@ class ApiUrl {
   static const String getSalesStaff = baseUrl + '/api/user/getsalesstaffbyid/';
   static const String saveAllRetailer = baseUrl + '/api/retailer/saveall';
   static const String saveUser = baseUrl + "/api/user/save";
+  static const String salesData = baseUrl + "/api/salesdata/save";
 }

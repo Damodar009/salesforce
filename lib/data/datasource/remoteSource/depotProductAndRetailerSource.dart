@@ -18,6 +18,7 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
     try {
+      print("staeting ");
       Response response = await dio.post(
         ApiUrl.depotProductAndRetailor,
 
@@ -51,7 +52,8 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
       } else {
         throw ServerException();
       }
-    } on DioError {
+    } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }

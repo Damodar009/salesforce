@@ -94,6 +94,7 @@ class RepositoryImplementation implements Repository {
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown() async {
     try {
+
       final response = await remoteSource.getDepotProductAndRetailer();
       return Right(response);
     } catch (e) {
