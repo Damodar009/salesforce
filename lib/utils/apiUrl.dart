@@ -8,4 +8,5 @@ class ApiUrl {
   static const String saveSalesCollectionTracking =
       baseUrl + "/api/saleDataTracking/save";
   static const String saveUser = baseUrl + "/api/user/save";
+  static const String salesData = baseUrl + "/api/salesdata/save";
 }

@@ -16,9 +16,10 @@ Widget attendenceWidget(BuildContext context) {
             const SizedBox(
               height: 12,
             ),
-            InkWell(onTap: () {
-              Navigator.pop(context);
-            },
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
               child: Container(
                 height: 50,
                 width: 50,

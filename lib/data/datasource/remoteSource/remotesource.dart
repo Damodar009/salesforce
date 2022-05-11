@@ -152,7 +152,7 @@ class RemoteSourceImplementation implements RemoteSource {
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer abfb62c1-fbf7-4da5-98d0-04ff5e4f899d'
+            'Authorization': 'Bearer bb81196a-bc85-4c26-b3af-abae634a3795'
           },
         ),
       );
@@ -179,6 +179,7 @@ class RemoteSourceImplementation implements RemoteSource {
         throw ServerException();
       }
     } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }
