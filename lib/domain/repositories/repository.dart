@@ -1,8 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:salesforce/data/models/salesPersonModel.dart';
-import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
-import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
@@ -28,7 +25,7 @@ abstract class Repository {
 
   Future<Either<Failure, UserDetailsData>> getUserDetailsData();      
 
-  Future<Either<Failure, SalesPerson>>  saveUserDetails(SalesPerson salesPerson, UserDetails userDetails);  
+  Future<Either<Failure, UserDetails>>  saveUserDetails(UserDetails userDetails);  
 
   // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
 

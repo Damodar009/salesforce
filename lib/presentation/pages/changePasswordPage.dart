@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
 import 'package:salesforce/utils/app_colors.dart';
+import 'package:salesforce/utils/validators.dart';
 import '../blocs/auth_bloc/auth_bloc.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
@@ -16,7 +17,10 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _reTypePasswordController = TextEditingController();
+  final TextEditingController _reTypePasswordController =
+      TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   bool obsecureTextNewPassword = true;
   bool obsecureTextOldPassword = true;
@@ -32,6 +36,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         if (state is ChangePasswordSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('Password has been successfull updated.')));
+          Navigator.pop(context);    
         } else if (state is ChangePasswordFailedState) {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text('Error occured.')));
@@ -48,6 +53,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
           child: Form(
+            key: _formKey,
             child: Column(
               children: [
                 textFormField(
@@ -92,7 +98,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
                 textFormField(
                     showObsecureIcon: true,
-                    validator: (value) {},
+                    validator: (value) {
+                      if (!Validators.isValidConfirmPassword(
+                          _newPasswordController.text,
+                          _reTypePasswordController.text)) {
+                        return "Confirm password does not match";
+                      } else {
+                        return null;
+                      }
+                    },
                     controller: _reTypePasswordController,
                     obsecureText: obsecureTextReTypePassword,
                     hintText: 'Confirm Password',
@@ -104,17 +118,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       });
                     }),
                 const Spacer(),
-                button('Save', () {
-                  // if (_newPasswordController.text ==
-                  //     _oldPasswordController.text) {
-                  BlocProvider.of<AuthBloc>(context).add(ChangePasswordEvent(
-                      oldPassword: _oldPasswordController.text,
-                      newPassword: _newPasswordController.text));
-                  // } else {
-                  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  //       content: Text("Both password doesn't match")));
-                  // }
-                }, false, AppColors.buttonColor),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    return button('Save', () {
+                      if (_formKey.currentState!.validate()) {
+                        BlocProvider.of<AuthBloc>(context).add(
+                            ChangePasswordEvent(
+                                oldPassword: _oldPasswordController.text,
+                                newPassword: _newPasswordController.text));
+                        
+                      } else {}
+                    }, state is ChangePasswordLoadingState ? true : false,
+                        AppColors.buttonColor);
+                  },
+                ),
               ],
             ),
           ),

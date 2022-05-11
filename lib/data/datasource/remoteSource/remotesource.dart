@@ -39,8 +39,7 @@ abstract class RemoteSource {
   Future<List<RetailerPojo>> saveAllRetailer(
       List<RetailerPojo> listOfRetailers);
 
-  Future<SalesPerson> saveUserDetails(
-      SalesPerson salesPerson, UserDetails userDetails);
+  Future<UserDetails> saveUserDetails(UserDetails userDetails);
 }
 
 @Injectable(as: RemoteSource)
@@ -105,6 +104,8 @@ class RemoteSourceImplementation implements RemoteSource {
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
         ),
       );
+
+      print(response.statusCode);
 
       if (response.data["status"] == true) {
         UserDetailsDataModel userDetailsData =
@@ -330,13 +331,17 @@ class RemoteSourceImplementation implements RemoteSource {
   }
 
   @override
-  Future<SalesPerson> saveUserDetails(
-      SalesPerson salesPerson, UserDetails userDetails) async {
+  Future<UserDetails> saveUserDetails(UserDetails userDetails) async {
     Box box = await hive.openBox();
 
     String accessToken = box.get('access_token');
 
+    print(accessToken);
+
+    print('hello hello');
+
     UserDetailsModel userDetailsModel = UserDetailsModel(
+        
         fullName: userDetails.fullName,
         gender: userDetails.gender,
         dob: userDetails.dob,
@@ -345,18 +350,11 @@ class RemoteSourceImplementation implements RemoteSource {
         userDocument: userDetails.userDocument,
         contactNumber2: userDetails.contactNumber2);
 
-    SalesPersonModel salesPersonModel = SalesPersonModel(
-      id: salesPerson.id,
-      email: salesPerson.email,
-      phoneNumber: salesPerson.phoneNumber,
-      password: salesPerson.password,
-      roleId: salesPerson.roleId,
-      userDetails: userDetailsModel,
-    );
-
-    var salesPersonInJson = salesPersonModel.toJson();
+    var salesPersonInJson = userDetailsModel.toJson();
     var jsonEncodedSalesPerson = jsonEncode(salesPersonInJson);
     print(jsonEncodedSalesPerson);
+
+    print(ApiUrl.saveUser);
 
     try {
       Response response = await dio.post(
@@ -368,15 +366,18 @@ class RemoteSourceImplementation implements RemoteSource {
         }),
       );
 
-      if (response.data["status"] == true) {
-        SalesPerson salesPerson =
-            SalesPersonModel.fromJson(response.data["data"]);
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        UserDetailsModel salesPerson =
+            UserDetailsModel.fromJson(response.data["data"]);
 
         return salesPerson;
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }

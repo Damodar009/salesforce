@@ -9,7 +9,8 @@ part of 'userDetailModel.dart';
 UserDetailsModel _$UserDetailsModelFromJson(Map<String, dynamic> json) =>
     UserDetailsModel(
       fullName: json['fullName'] as String,
-      dob: json['dob'] == null ? null : DateTime.parse(json['dob'] as String),
+      id: json['id'] as String?,
+      dob: json['dob'] as String?,
       gender: json['gender'] as String,
       path: json['path'] as String?,
       permanentAddress: json['permanentAddress'] as String,
@@ -21,9 +22,10 @@ UserDetailsModel _$UserDetailsModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$UserDetailsModelToJson(UserDetailsModel instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'fullName': instance.fullName,
       'gender': instance.gender,
-      'dob': instance.dob?.toIso8601String(),
+      'dob': instance.dob,
       'path': instance.path,
       'permanentAddress': instance.permanentAddress,
       'temporaryAddress': instance.temporaryAddress,

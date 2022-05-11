@@ -9,17 +9,17 @@ class UserDetailsDataModel extends UserDetailsData {
   UserDetailsDataModel(
       {required String email,
       required String id,
-      required String phone_number,
-      required String role_id,
-      required String role_name,
+      required String phoneNumber,
+      required String roleId,
+      required String roleName,
       required bool status,
       required UserDetailsModel userDetail})
       : super(
             email: email,
             id: id,
-            phone_number: phone_number,
-            role_id: role_id,
-            role_name: role_name,
+            phoneNumber: phoneNumber,
+            roleId: roleId,
+            roleName: roleName,
             status: status,
             userDetail: userDetail);
 

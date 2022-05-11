@@ -26,9 +26,9 @@ abstract class UseCaseForRemoteSource {
       List<RetailerPojo> listOfRetailers);
   Future<Either<Failure, UserDetailsData>> getUserDetailsData();
 
-  Future<Either<Failure, SalesPerson>> saveUserDetails(SalesPerson salesPerson, UserDetails userDetails);
+  Future<Either<Failure, UserDetails>> saveUserDetails(UserDetails userDetails);
 
-  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
+  // Future<Either<Failure, UserDetailsData>> saveUserDetails();
 
   Future<Either<Failure, dynamic>> postToRemoteSource();
 }
@@ -95,9 +95,9 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   }
 
   @override
-  Future<Either<Failure, SalesPerson>> saveUserDetails(
-      SalesPerson salesPerson, UserDetails userDetails) async {
-    return await repository.saveUserDetails(salesPerson, userDetails);
+  Future<Either<Failure, UserDetails>> saveUserDetails(
+      UserDetails userDetails) async {
+    return await repository.saveUserDetails(userDetails);
   }
 
   // @override

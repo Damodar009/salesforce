@@ -123,9 +123,9 @@ class RepositoryImplementation implements Repository {
   }
 
   @override
-  Future<Either<Failure, SalesPerson>> saveUserDetails(SalesPerson salesPerson, UserDetails userDetails) async{
+  Future<Either<Failure, UserDetails>> saveUserDetails(UserDetails userDetails) async{
     try {
-      final response = await remoteSource.saveUserDetails(salesPerson, userDetails);
+      final response = await remoteSource.saveUserDetails(userDetails);
       return Right(response);
     } catch (e) {
       return Left(ServerFailure());

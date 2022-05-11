@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 class UserDetails extends Equatable {
+  final String? id;
   final String fullName;
   final String gender;
-  final DateTime? dob;
+  final String? dob;
   final String? path;
   final String permanentAddress;
   final String temporaryAddress;
@@ -13,6 +14,7 @@ class UserDetails extends Equatable {
 
   UserDetails(
       {required this.fullName,
+      this.id,
       this.dob,
       this.path,
       this.userDocument,
@@ -26,6 +28,7 @@ class UserDetails extends Equatable {
   // TODO: implement props
   List<Object?> get props => [
         fullName,
+        id,
         dob,
         path,
         userDocument,

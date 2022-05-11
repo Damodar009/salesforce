@@ -7,7 +7,8 @@ part 'userDetailModel.g.dart';
 class UserDetailsModel extends UserDetails {
   UserDetailsModel(
       {required String fullName,
-      DateTime? dob,
+      String? id,
+      String? dob,
       required String gender,
       String? path,
       required String permanentAddress,
@@ -17,6 +18,7 @@ class UserDetailsModel extends UserDetails {
       required String contactNumber2})
       : super(
             fullName: fullName,
+            id: id,
             dob: dob,
             path: path,
             userDocument: userDocument,
