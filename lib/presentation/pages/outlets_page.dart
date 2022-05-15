@@ -1,4 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:salesforce/data/datasource/remoteSource/salesDataRemoteSource.dart';
+import 'package:salesforce/data/models/RetailerModel.dart';
+import 'package:salesforce/domain/entities/SalesData.dart';
+import 'package:salesforce/routes.dart';
+import 'package:uuid/uuid.dart';
+import '../../data/models/AvailabilityModel.dart';
+import '../../data/models/SalesModel.dart';
+import '../../data/models/returnModel.dart';
 import 'package:salesforce/routes.dart';
 import '../../domain/usecases/useCaseForSalesPerson.dart';
 import '../../injectable.dart';
@@ -12,7 +21,9 @@ class OutletScreen extends StatefulWidget {
 }
 
 class _OutletScreenState extends State<OutletScreen> {
-  var useCaseForSalesPersonImpl = getIt<UseCaseForSalesPersonImpl>();
+  // var useCaseForSalesPersonImpl = getIt<UseCaseForSalesPersonImpl>();
+  SalesDataRemoteSourceImpl _salesDataRemoteSourceImpl =
+      SalesDataRemoteSourceImpl();
   @override
   void initState() {
     // TODO: implement initState

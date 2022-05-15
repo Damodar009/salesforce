@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           //todo
           child: SizedBox(
-            height: MediaQuery.of(context).size.height + 375,
+            height: MediaQuery.of(context).size.height + 395,
             width: MediaQuery.of(context).size.width,
             child: Stack(
               children: [
@@ -230,7 +230,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             },
                             child:
-                                card(icons[index], title[index], 34, context)),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: card(icons[index], title[index], 34, context),
+                                )),
                         itemCount: 4,
                       )),
                     ],

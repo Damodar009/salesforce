@@ -58,14 +58,13 @@ Widget textFormField(
             borderRadius: BorderRadius.all(
               Radius.circular(30.0),
             ))),
-   
     obscureText: obsecureText,
   );
 }
 
 Widget textFeildWithDropDown({
   required String hintText,
-  required TextEditingController controller,
+  TextEditingController? controller,
   TextInputType textInputType = TextInputType.text,
   required String? Function(String?) validator,
   required List<String> item,
@@ -93,7 +92,7 @@ Widget textFeildWithDropDown({
             ),
           ),
           onSelected: (String value) {
-            controller.text = value;
+            controller!.text = value;
           },
           itemBuilder: (BuildContext context) {
             return item.map<PopupMenuItem<String>>((String value) {

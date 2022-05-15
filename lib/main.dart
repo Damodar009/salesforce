@@ -46,8 +46,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool isLoggedIn = true;
+  checkUserLoggedIn() async {
+    Box box = await Hive.openBox("salesForce");
+    isLoggedIn = box.get("isLoggedIN", defaultValue: false);
+  }
+
   @override
   void initState() {
+    print("this is logged in") ;
+     checkUserLoggedIn();
     super.initState();
   }
 

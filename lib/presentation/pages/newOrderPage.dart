@@ -226,61 +226,61 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 ],
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                title("Product Name"),
-                const SizedBox(
-                  height: 12,
-                ),
-                textFormField(
-                    controller: _productNameReturn,
-                    validator: (string) {},
-                    obsecureText1: () {},
-                    hintText: 'Rc cola '),
-                const SizedBox(
-                  height: 12,
-                ),
-                title("Types of Product"),
-                const SizedBox(
-                  height: 12,
-                ),
-                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: 200,
-                      child: textFeildWithDropDown(
-                          controller: _typeOfProductReturn,
-                          validator: (string) {},
-                          hintText: 'Frank miller ',
-                          item: items),
-                    ),
-                    circleContainer()
-                  ],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Row(
-                  children: [
-                    textButton("true", 90),
+                    title("Product Name"),
                     const SizedBox(
-                      width: 12,
+                      height: 12,
                     ),
-                    textButton("false", 90),
+                    textFormField(
+                        controller: _productNameReturn,
+                        validator: (string) {},
+                        obsecureText1: () {},
+                        hintText: 'Rc cola '),
                     const SizedBox(
-                      width: 12,
+                      height: 12,
                     ),
-                    circleContainer()
-                  ],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                textFeildWithMultipleLines(
-                    validator: (string) {},
-                    hintText: 'Remark',
-                    controller: _describeReturn),
-              ]),
+                    title("Types of Product"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          child: textFeildWithDropDown(
+                              controller: _typeOfProductReturn,
+                              validator: (string) {},
+                              hintText: 'Frank miller ',
+                              item: items),
+                        ),
+                        circleContainer()
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        textButton("true", 90),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        textButton("false", 90),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        circleContainer()
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    textFeildWithMultipleLines(
+                        validator: (string) {},
+                        hintText: 'Remark',
+                        controller: _describeReturn),
+                  ]),
             ),
           ),
 

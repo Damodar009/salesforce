@@ -79,7 +79,8 @@ class RemoteSourceImplementation implements RemoteSource {
       } else {
         throw ServerException();
       }
-    } on DioError {
+    } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }
