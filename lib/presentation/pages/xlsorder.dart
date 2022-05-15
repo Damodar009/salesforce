@@ -9,7 +9,8 @@ class XlsOrder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(icon: Icons.arrow_back, navTitle: "ORDER"),
+      appBar: appBar(
+          icon: Icons.arrow_back, navTitle: "ORDER", backNavigate: () {}),
       body: Column(
         children: [
           const SizedBox(

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/main.dart';
 import 'package:salesforce/presentation/pages/attendance_page.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
+import 'package:salesforce/presentation/pages/editProfile.dart';
 import 'package:salesforce/presentation/pages/listOfOrderAndOutlets.dart';
 import 'package:salesforce/presentation/pages/logOutPage.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
-import 'package:salesforce/presentation/pages/newOrderPage.dart';
+import 'package:salesforce/presentation/pages/newOrderPage/newOrderPage.dart';
 import 'package:salesforce/presentation/pages/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/xlsOrderPage.dart';
-import 'package:salesforce/presentation/widgets/image_picker_widget.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 
 class Routes {
+  static const String splashScreen = "/splash";
   static const String profileRoute = "/profile";
   static const String loginRoute = "/";
   static const String dashboardRoute = "/dashboard";
@@ -32,8 +34,10 @@ class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings routeSettings) {
     final args = routeSettings.arguments;
     switch (routeSettings.name) {
+      case Routes.splashScreen:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case Routes.loginRoute:
-        return MaterialPageRoute(builder: (_) => const ImagePIcker());
+        return MaterialPageRoute(builder: (_) => const LOginScreen());
       case Routes.profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.newOrderRoute:

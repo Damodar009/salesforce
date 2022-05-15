@@ -2,9 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<key>NSCameraUsageDescription</key>
-		<key>NSMicrophoneUsageDescription</key>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
@@ -48,5 +45,14 @@
 		<false/>
 		<key>UIStatusBarHidden</key>
 		<true/>
+		<key>NSCameraUsageDescription</key>
+		<string>To scan the QR of cycles given by company on their particular stations</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>To show nearby cycles or stations</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>To show nearby cycles or stations</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>To get the image from library</string>
+		
 	</dict>
 </plist>

@@ -1,7 +1,14 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/domain/entities/retailerPojo.dart';
+import 'package:salesforce/domain/entities/salesPerson.dart';
+import 'package:salesforce/domain/entities/userDetail.dart';
+import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
 import '../../error/failure.dart';
+import '../entities/depotProductRetailer.dart';
 import '../entities/userData.dart';
 import '../repositories/repository.dart';
 
@@ -13,6 +20,15 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, String>> getProductList();
   Future<Either<Failure, String>> getRegionList();
   Future<Either<Failure, String>> attendenceSave();
+  Future<Either<Failure, DepotProductRetailer>>
+      getDepotProductRetailerDropDown();
+  Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers);
+  Future<Either<Failure, UserDetailsData>> getUserDetailsData();
+
+  Future<Either<Failure, UserDetails>> saveUserDetails(UserDetails userDetails);
+
+  // Future<Either<Failure, UserDetailsData>> saveUserDetails();
 
   Future<Either<Failure, dynamic>> postToRemoteSource();
 }
@@ -60,4 +76,33 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   Future<Either<Failure, String>> getRegionList() async {
     return await repository.getRegionList();
   }
+
+  @override
+  Future<Either<Failure, DepotProductRetailer>>
+      getDepotProductRetailerDropDown() async {
+    print("use case for remote source");
+    return await repository.getDepotProductRetailerDropDown();
+  }
+
+  @override
+  Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers) async {
+    return await repository.saveAllRetailer(listOfRetailers);
+  }
+
+  @override
+  Future<Either<Failure, UserDetailsData>> getUserDetailsData() async {
+    return await repository.getUserDetailsData();
+  }
+
+  @override
+  Future<Either<Failure, UserDetails>> saveUserDetails(
+      UserDetails userDetails) async {
+    return await repository.saveUserDetails(userDetails);
+  }
+
+  // @override
+  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection() async {
+  //   return await repository.saveSalesDataCollection();
+  // }
 }

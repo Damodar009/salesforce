@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:salesforce/presentation/pages/home/homePage.dart';
-import 'package:salesforce/presentation/pages/outlets_page.dart';
 import 'package:salesforce/presentation/pages/menuPage.dart';
 import 'package:salesforce/presentation/pages/outlets.dart';
-import 'package:salesforce/presentation/pages/attendance_page.dart';
+import 'package:salesforce/utils/app_colors.dart';
+import 'baclground.dart';
 import 'calenderPage.dart';
+import 'outlets_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   int index;
@@ -23,9 +24,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const OutletScreen(),
     const CalenderScreen(),
     const MenuScreen(),
-
-    // const AttendenceScreen(),
-    // const MenuScreen()
   ];
 
   @override
@@ -41,7 +39,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: Colors.blue,
       activeIcon: SvgPicture.asset(
         icon,
-        color: Colors.black,
+        color: AppColors.buttonColor,
         //   color: AppColors.primaryColor,
         height: 30,
       ),
@@ -49,6 +47,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       icon: SvgPicture.asset(
         icon,
         height: 30,
+        color: AppColors.primaryColor,
       ),
     );
   }
@@ -57,7 +56,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: SizedBox(
-        
         child: BottomNavigationBar(
           onTap: (value) {
             setState(() {
@@ -73,9 +71,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           items: [
             buildButtonNavigationBarItem('assets/icons/home.svg', "Home"),
             buildButtonNavigationBarItem('assets/icons/sales.svg', "sales"),
-            buildButtonNavigationBarItem(           
-                'assets/icons/attendence.svg', "attendence"),
-            buildButtonNavigationBarItem('assets/icons/home.svg', "menu"),
+            buildButtonNavigationBarItem(
+                'assets/icons/Attendence.svg', "attendence"),
+            buildButtonNavigationBarItem('assets/icons/menu.svg', "menu"),
           ],
         ),
       ),
