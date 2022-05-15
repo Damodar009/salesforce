@@ -67,6 +67,7 @@ Widget textFeildWithDropDown({
   TextEditingController? controller,
   TextInputType textInputType = TextInputType.text,
   required String? Function(String?) validator,
+  required List<String> item,
 }) {
   return TextFormField(
     controller: controller,
@@ -77,21 +78,27 @@ Widget textFeildWithDropDown({
       fontSize: 15,
     ),
     decoration: InputDecoration(
-        suffixIcon: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: InkWell(
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(18.0)),
-                color: AppColors.buttonColor,
-              ),
-              child: const Icon(
-                Icons.arrow_downward,
-                color: Colors.white,
-                size: 20,
-              ),
+        suffixIcon: PopupMenuButton<String>(
+          icon: Container(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.amber,
+            ),
+            child: const Icon(
+              Icons.arrow_downward,
+              size: 20,
+              color: Colors.white,
             ),
           ),
+          onSelected: (String value) {
+            controller!.text = value;
+          },
+          itemBuilder: (BuildContext context) {
+            return item.map<PopupMenuItem<String>>((String value) {
+              return PopupMenuItem(child: Text(value), value: value);
+            }).toList();
+          },
         ),
         fillColor: Colors.white,
         errorStyle: const TextStyle(color: AppColors.primaryColor),

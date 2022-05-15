@@ -19,6 +19,7 @@ class NewOrderScreen extends StatefulWidget {
 
 class _NewOrderScreenState extends State<NewOrderScreen> {
   String dropdownvalue = '';
+  double? textbuttonSize ;
   final TextEditingController _outletName = TextEditingController();
   final TextEditingController _textEditingController = TextEditingController();
   // final TextEditingController _textEditingController = TextEditingController();
@@ -50,7 +51,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-  double textbuttonSize =  MediaQuery.of(context).size.width * 0.9 ;
+   textbuttonSize =  MediaQuery.of(context).size.width * 0.9 ;
     Widget newOrderScreenBody() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +124,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           salesPressed
               ? salesWidet()
               : textButton(
-                  "Sales", textbuttonSize, true, () {
+                  "Sales", textbuttonSize!, true, () {
                   setState(() {
                     returnPressed = false;
                     availabilityPressed = false;
@@ -368,7 +369,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.35,
               child: textFeildWithDropDown(
-                  validator: (string) {}, hintText: 'Frank miller '),
+                  validator: (string) {}, hintText: 'Frank miller ', item: []),
             ),
             const SizedBox(
               width: 10,
@@ -424,10 +425,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         const SizedBox(
           height: 12,
         ),
-        textFeildWithDropDown(
-            controller: _textEditingController,
-            validator: (string) {},
-            hintText: 'Frank miller '),
+        // textFeildWithDropDown(
+        //     controller: _textEditingController,
+        //     validator: (string) {},
+        //     hintText: 'Frank miller '),
         const SizedBox(
           height: 12,
         ),
@@ -496,7 +497,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           child: textFeildWithDropDown(
                               controller: _textEditingController,
                               validator: (string) {},
-                              hintText: 'Frank miller '),
+                              hintText: 'Frank miller ', item: []),
                         ),
 
                         //todo
@@ -510,7 +511,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ),
 
         textButton(
-             "Add mmore Prodeucts",  , bool isbold, Function() onClick)
+             "Add mmore Prodeucts", textbuttonSize! , false, (){})
       ],
     );
   }

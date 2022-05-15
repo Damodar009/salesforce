@@ -13,8 +13,8 @@ SalesPersonModel _$SalesPersonModelFromJson(Map<String, dynamic> json) =>
       phoneNumber: json['phoneNumber'] as String,
       password: json['password'] as String,
       roleId: json['roleId'] as String,
-      userDetails:
-          UserDetailModel.fromJson(json['userDetails'] as Map<String, dynamic>),
+      userDetails: UserDetailsModel.fromJson(
+          json['userDetails'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SalesPersonModelToJson(SalesPersonModel instance) =>

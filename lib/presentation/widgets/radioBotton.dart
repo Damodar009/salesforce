@@ -7,6 +7,8 @@ Widget buildIndividualRadio(
   return Row(
     children: [
       Radio<String>(
+        fillColor: MaterialStateColor.resolveWith(
+                        (states) => AppColors.textFeildINputBorder),
         toggleable: true,
         activeColor: AppColors.primaryColor,
         value: value,

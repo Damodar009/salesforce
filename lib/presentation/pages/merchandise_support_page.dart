@@ -6,12 +6,20 @@ import '../widgets/appBarWidget.dart';
 import '../widgets/textformfeild.dart';
 
 class MerchandiseSupportScreen extends StatelessWidget {
-  const MerchandiseSupportScreen({Key? key}) : super(key: key);
+  MerchandiseSupportScreen({Key? key}) : super(key: key);
+
+   List<String> items = [
+    'Banner',
+    'Display',
+    'Pharase',
+    'T-shirt',
+    'And more',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _nameController = TextEditingController();
-    final TextEditingController _textEditingController =
+    TextEditingController _typesOfMerchandiseSupport = TextEditingController();
+    final TextEditingController _reason =
         TextEditingController();
 
     double mediaQueryHeight = MediaQuery.of(context).size.height;
@@ -32,9 +40,9 @@ class MerchandiseSupportScreen extends StatelessWidget {
           SizedBox(
             width: MediaQuery.of(context).size.width,
             child: textFeildWithDropDown(
-                controller: _textEditingController,
+                controller: _typesOfMerchandiseSupport,
                 validator: (string) {},
-                hintText: 'Banner'),
+                hintText: 'Choose', item: items),
           ),
           SizedBox(
             height: mediaQueryHeight * 0.04,
@@ -42,7 +50,7 @@ class MerchandiseSupportScreen extends StatelessWidget {
           textFeildWithMultipleLines(
               validator: (string) {},
               hintText: 'Reason',
-              controller: _textEditingController),
+              controller: _reason),
           SizedBox(
             height: mediaQueryHeight * 0.04,
           ),
