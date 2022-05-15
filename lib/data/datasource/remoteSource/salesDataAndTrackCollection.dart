@@ -29,7 +29,6 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
       salesLocationTrackModelList.add(salesLocationTrackModel);
     }
 
-
     var salesTrackInJson = salesLocationTrackModelList
         .map((salesLocationTrackModel) => salesLocationTrackModel.toJson())
         .toList();

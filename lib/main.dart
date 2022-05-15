@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
         onGenerateRoute: RouteGenerator.getRoute,
         title: 'SalesForce',
         theme: theme,
-        initialRoute: isLoggedIn ? Routes.loginRoute : Routes.dashboardRoute,
+        initialRoute:  Routes.dashboardRoute,
       ),
     );
   }

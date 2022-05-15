@@ -1,16 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:salesforce/domain/entities/attendence.dart';
-import 'package:salesforce/domain/entities/salesPerson.dart';
-import 'package:salesforce/domain/entities/saleslocationTrack.dart';
+import 'package:salesforce/data/datasource/remoteSource/salesDataRemoteSource.dart';
+import 'package:salesforce/data/models/RetailerModel.dart';
+import 'package:salesforce/domain/entities/SalesData.dart';
 import 'package:salesforce/routes.dart';
-import '../../data/models/userDetailModel.dart';
-import '../../data/repository/salesPersonRepositoryImpl.dart';
-import '../../domain/usecases/useCaseForAttebdenceSave.dart';
-import '../../domain/usecases/useCaseForSalesDataTrackCollection.dart';
-import '../../domain/usecases/useCaseForSalesPerson.dart';
-import '../../domain/usecases/usecasesForRemoteSource.dart';
-import '../../error/failure.dart';
-import '../../injectable.dart';
+import 'package:uuid/uuid.dart';
+import '../../data/models/AvailabilityModel.dart';
+import '../../data/models/SalesModel.dart';
+import '../../data/models/returnModel.dart';
 import '../../utils/app_colors.dart';
 
 class OutletScreen extends StatefulWidget {
@@ -21,7 +18,9 @@ class OutletScreen extends StatefulWidget {
 }
 
 class _OutletScreenState extends State<OutletScreen> {
-  var useCaseForSalesPersonImpl = getIt<UseCaseForSalesPersonImpl>();
+  // var useCaseForSalesPersonImpl = getIt<UseCaseForSalesPersonImpl>();
+  SalesDataRemoteSourceImpl _salesDataRemoteSourceImpl =
+      SalesDataRemoteSourceImpl();
   @override
   void initState() {
     // TODO: implement initState
@@ -56,38 +55,119 @@ class _OutletScreenState extends State<OutletScreen> {
               "Check In", Routes.salesDataCollection),
           InkWell(
             onTap: () async {
-              print("this is working");
+              List<SalesModel> sales = [];
+              List<AvailabilityModel> availability = [];
+              List<ReturnsModel> returns = [];
+              for (var i = 0; i < 3; i++) {}
 
-              UserDetailModel useDetailModel = UserDetailModel(
-                  contactNumber2: '33333333',
-                  temporaryAddress: 'kathmandu',
-                  dob: '1990-01-21',
-                  fullName: 'raj chaudhary',
-                  permanentAddress: 'butwal',
-                  gender: 'Male');
+              /// sales
+              SalesModel sale1 =
+                  SalesModel(sales: 120, product: "Nh5PXNgMPBdS1gqJOz7PoQ==");
+              sales.add(sale1);
+              SalesModel sale2 =
+                  SalesModel(sales: 12, product: "Nh5PXNgMPBdS1gqJOz7PoQ==");
+              sales.add(sale2);
 
-              SalesPerson salesPerson = SalesPerson(
-                  userDetails: useDetailModel,
-                  id: 'r1szWT3fuMEWm4xeNQpGTw==',
-                  email: 'test123999@gmail.com',
-                  roleId: 'NGBifEuwYylJoyRt7a8bkA==',
-                  password: 'test123',
-                  phoneNumber: '0978678543');
+              ///  avaiolability
+              AvailabilityModel availability1 = AvailabilityModel(
+                  stock: 25,
+                  availability: true,
+                  product: "Nh5PXNgMPBdS1gqJOz7PoQ==");
+              AvailabilityModel availability2 = AvailabilityModel(
+                  stock: 234,
+                  availability: true,
+                  product: "Nh5PXNgMPBdS1gqJOz7PoQ==");
 
-              print("this is the snfsf");
-              print(salesPerson) ;
+              availability.addAll([availability1, availability2]);
 
-              var dd =
-                  await useCaseForSalesPersonImpl.saveSalesPerson(salesPerson);
+              /// returns
+              ReturnsModel returns1 = ReturnsModel(
+                  returned: 21, product: 'Nh5PXNgMPBdS1gqJOz7PoQ==');
+              ReturnsModel returns2 = ReturnsModel(
+                  returned: 25, product: 'Nh5PXNgMPBdS1gqJOz7PoQ==');
 
-              dd.fold(
-                  (l) => {
-                        if (l is ServerFailure)
-                          {print("this is failure")}
-                        else if (l is CacheFailure)
-                          {print("this is failure")}
-                      },
-                  (r) => print(r));
+              /// retailer
+              RetailerModel retailer1 = RetailerModel(
+                  name: "saurav stor",
+                  latitude: 21.21,
+                  longitude: 21.21,
+                  address: "kathmandu",
+                  contactPerson: "sauravs",
+                  contactNumber: "1234567890",
+                  retailerClass: "A",
+                  retailerType: "506buVWacVShn32ccOHCTw==",
+                  region: "NGBifEuwYylJoyRt7a8bkA==");
+
+              RetailerModel retailer2 = RetailerModel(
+                  name: "saurav chor",
+                  latitude: 21.21,
+                  longitude: 21.21,
+                  address: "kathmandu",
+                  contactPerson: "sauravs",
+                  contactNumber: "1234567890",
+                  retailerClass: "A",
+                  retailerType: "506buVWacVShn32ccOHCTw==",
+                  region: "NGBifEuwYylJoyRt7a8bkA==");
+
+              returns.addAll([returns1, returns2]);
+
+              SalesData salesData = SalesData(
+                  sales: sales,
+                  availability: availability,
+                  returns: returns,
+                  salesDescription: "test",
+                  returnedDescription: "test",
+                  stockDescription: "test",
+                  availabilityDescription: "all damage",
+                  assignedDepot: "ZRlecVfxmjPY1xs!@sHCIgXP2Q==",
+                  collectionDate: "2021-01-01",
+                  latitude: 20.21,
+                  longitude: 20.21,
+                  paymentType: "CREDIT",
+                  paymentdocument: "abcdsadsa",
+                  userId: "KdNUBc6r+5WeVj1uUOLKnw==",
+                  retiler: retailer1);
+
+              SalesData salesDat2a = SalesData(
+                  sales: sales,
+                  availability: availability,
+                  returns: returns,
+                  salesDescription: "test",
+                  returnedDescription: "test",
+                  stockDescription: "test",
+                  availabilityDescription: "all damage",
+                  assignedDepot: "ZRlecVfxmjPY1xs!@sHCIgXP2Q==",
+                  collectionDate: "2021-01-01",
+                  latitude: 20.21,
+                  longitude: 20.21,
+                  paymentType: "CREDIT",
+                  paymentdocument: "abcdsadsa",
+                  userId: "KdNUBc6r+5WeVj1uUOLKnw==",
+                  retiler: retailer2);
+
+              List<SalesData> listSalesData = [salesData, salesDat2a];
+
+              Uuid uuid = Uuid();
+              String v4 = uuid.v4();
+              String v5 = uuid.v4();
+
+              await _salesDataRemoteSourceImpl
+                  .saveSalesData(listSalesData, [v4, v5]);
+              if (kDebugMode) {
+                print("this is success ");
+              }
+
+              // var dd =
+              //  //   await useCaseForSalesPersonImpl.saveSalesPerson(salesPerson);
+              //
+              // dd.fold(
+              //     (l) => {
+              //           if (l is ServerFailure)
+              //             {print("this is failure")}
+              //           else if (l is CacheFailure)
+              //             {print("this is failure")}
+              //         },
+              //     (r) => print(r));
             },
             child: outletsCardOutline(Padding(
               padding: const EdgeInsets.all(16.0),

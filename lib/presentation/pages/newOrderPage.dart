@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/domain/entities/availability.dart';
+import 'package:salesforce/domain/entities/returns.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 import 'package:salesforce/routes.dart';
+import '../../domain/entities/sales.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/buttonWidget.dart';
 import '../widgets/textformfeild.dart';
@@ -22,6 +25,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   bool ignorePointer = false;
   bool editCheckBoxValue = false;
   bool showXlsButton = false;
+  List<Returns> returns = [];
+  List<Availability> availability = [];
+  List<Sales> sales = [];
 
   var items = [
     'Item 1',

@@ -54,11 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
               content: Text('Gettting dat from hive is failed')));
         }
       },
-      child: SingleChildScrollView(
-        //todo
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height + 375,
-          width: MediaQuery.of(context).size.width,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height + 400,
+        child: SingleChildScrollView(
           child: Stack(
             children: [
               Positioned(
@@ -88,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  //  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(
                       height: 60,
@@ -200,38 +198,39 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 40,
                     ),
                     const Text("Today Target"),
-                    Expanded(
-                        child: GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      primary: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2),
-                      itemBuilder: (_, index) => InkWell(
-                          onTap: () {
-                            switch (index) {
-                              case 0:
-                                Navigator.of(context)
-                                    .pushNamed(Routes.totalOutletsRoute);
-                                break;
-                              case 1:
-                                Navigator.of(context)
-                                    .pushNamed(Routes.newOutletRoute);
-                                break;
-                              case 2:
-                                Navigator.of(context)
-                                    .pushNamed(Routes.totalOutLetsVisitedRoute);
-                                break;
-                              case 3:
-                                Navigator.of(context)
-                                    .pushNamed(Routes.totalSalesRoute);
-                                break;
-                              default:
-                            }
-                          },
-                          child: card(icons[index], title[index], 34)),
-                      itemCount: 4,
-                    )),
+                    // Expanded(
+                    //   child: GridView.builder(
+                    //     physics: const NeverScrollableScrollPhysics(),
+                    //     primary: true,
+                    //     gridDelegate:
+                    //         const SliverGridDelegateWithFixedCrossAxisCount(
+                    //             crossAxisCount: 2),
+                    //     itemBuilder: (_, index) => InkWell(
+                    //         onTap: () {
+                    //           switch (index) {
+                    //             case 0:
+                    //               Navigator.of(context)
+                    //                   .pushNamed(Routes.totalOutletsRoute);
+                    //               break;
+                    //             case 1:
+                    //               Navigator.of(context)
+                    //                   .pushNamed(Routes.newOutletRoute);
+                    //               break;
+                    //             case 2:
+                    //               Navigator.of(context).pushNamed(
+                    //                   Routes.totalOutLetsVisitedRoute);
+                    //               break;
+                    //             case 3:
+                    //               Navigator.of(context)
+                    //                   .pushNamed(Routes.totalSalesRoute);
+                    //               break;
+                    //             default:
+                    //           }
+                    //         },
+                    //         child: card(icons[index], title[index], 34)),
+                    //     itemCount: 4,
+                    //   ),
+                    // ),
                   ],
                 ),
               )
