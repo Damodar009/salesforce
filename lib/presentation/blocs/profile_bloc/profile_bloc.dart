@@ -1,7 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:salesforce/data/models/userDetailsDataModel.dart';
-import 'package:salesforce/domain/entities/salesPerson.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
