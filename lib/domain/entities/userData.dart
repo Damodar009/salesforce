@@ -1,13 +1,14 @@
 class UserData {
-  final String access_token;
-  final String token_type;
-  final String refresh_token;
-  final int expires_in;
-  final String scope;
-  final String role;
+  final String? access_token;
+  final String? token_type;
+  final String? refresh_token;
+  final int? expires_in;
+  final String? scope;
+  final String? role;
   final String? full_name;
   final String? name;
-  final String userid;
+  final String? userid;
+  final String? user_detail_id;
   UserData(
       this.access_token,
       this.token_type,
@@ -18,5 +19,5 @@ class UserData {
       this.full_name,
       this.name,
       this.userid,
-      );
+      this.user_detail_id);
 }

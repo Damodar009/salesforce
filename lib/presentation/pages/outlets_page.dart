@@ -1,16 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:salesforce/data/datasource/remoteSource/salesDataRemoteSource.dart';
-import 'package:salesforce/data/models/RetailerModel.dart';
-import 'package:salesforce/domain/entities/SalesData.dart';
 import 'package:salesforce/routes.dart';
-import 'package:uuid/uuid.dart';
-import '../../data/models/AvailabilityModel.dart';
-import '../../data/models/SalesModel.dart';
-import '../../data/models/returnModel.dart';
-import 'package:salesforce/routes.dart';
-import '../../domain/usecases/useCaseForSalesPerson.dart';
-import '../../injectable.dart';
 import '../../utils/app_colors.dart';
 
 class OutletScreen extends StatefulWidget {
@@ -33,9 +23,8 @@ class _OutletScreenState extends State<OutletScreen> {
     return Stack(
       children: [
         SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center, 
-            children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             const SizedBox(
               height: 75,
             ),
@@ -62,7 +51,7 @@ class _OutletScreenState extends State<OutletScreen> {
             InkWell(
               onTap: () async {
                 print("this is working");
-        
+
                 // UserDetailsModel useDetailModel = UserDetailsModel(
                 //     contactNumber2: '33333333',
                 //     temporaryAddress: 'kathmandu',
@@ -70,7 +59,7 @@ class _OutletScreenState extends State<OutletScreen> {
                 //     fullName: 'raj chaudhary',
                 //     permanentAddress: 'butwal',
                 //     gender: 'Male', full_name: '');
-        
+
                 // SalesPerson salesPerson = SalesPerson(
                 //     userDetails: useDetailModel,
                 //     id: 'r1szWT3fuMEWm4xeNQpGTw==',
@@ -78,13 +67,13 @@ class _OutletScreenState extends State<OutletScreen> {
                 //     roleId: 'NGBifEuwYylJoyRt7a8bkA==',
                 //     password: 'test123',
                 //     phoneNumber: '0978678543');
-        
+
                 // print("this is the snfsf");
                 // print(salesPerson) ;
-        
+
                 // var dd =
                 //     await useCaseForSalesPersonImpl.saveSalesPerson(salesPerson);
-        
+
                 // dd.fold(
                 //     (l) => {
                 //           if (l is ServerFailure)

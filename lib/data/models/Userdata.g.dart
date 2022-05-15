@@ -8,15 +8,16 @@ part of 'Userdata.dart';
 
 UserDataModel _$UserDataModelFromJson(Map<String, dynamic> json) =>
     UserDataModel(
-      json['access_token'] as String,
-      json['token_type'] as String,
-      json['refresh_token'] as String,
-      json['expires_in'] as int,
-      json['scope'] as String,
-      json['role'] as String,
+      json['access_token'] as String?,
+      json['token_type'] as String?,
+      json['refresh_token'] as String?,
+      json['expires_in'] as int?,
+      json['scope'] as String?,
+      json['role'] as String?,
       json['full_name'] as String?,
       json['name'] as String?,
-      json['userid'] as String,
+      json['userid'] as String?,
+      json['user_detail_id'] as String?,
     );
 
 Map<String, dynamic> _$UserDataModelToJson(UserDataModel instance) =>
@@ -30,4 +31,5 @@ Map<String, dynamic> _$UserDataModelToJson(UserDataModel instance) =>
       'full_name': instance.full_name,
       'name': instance.name,
       'userid': instance.userid,
+      'user_detail_id': instance.user_detail_id,
     };

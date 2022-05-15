@@ -13,6 +13,7 @@ import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
@@ -72,8 +73,8 @@ class RemoteSourceImplementation implements RemoteSource {
       if (response.statusCode == 200) {
         UserData userData = UserDataModel.fromJson(response.data);
 
-        hive.savetoken(userdata: userData);
-        hive.showtoken();
+        // hive.savetoken(userdata: userData);
+        // hive.showtoken()
 
         return userData;
       } else {
@@ -97,15 +98,17 @@ class RemoteSourceImplementation implements RemoteSource {
       Response response = await dio.get(
         ApiUrl.getSalesStaff + userId,
         options: Options(
-          headers: <String, String>{
-            'Authorization': 'Bearer ' + accessToken
-          },
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
         ),
       );
 
       if (response.data["status"] == true) {
         UserDetailsDataModel userDetailsData =
             UserDetailsDataModel.fromJson(response.data["data"]);
+
+        hive.savetoken(userDetailsData: userDetailsData);
+
+        hive.showtoken();
 
         return userDetailsData;
       } else {
@@ -316,18 +319,31 @@ class RemoteSourceImplementation implements RemoteSource {
 
   @override
   Future<UserDetails> saveUserDetails(UserDetails userDetails) async {
+
+    print("i wont go inside hive");
+
     Box box = await hive.openBox();
 
     String accessToken = box.get('access_token');
 
     String userId = box.get('userid');
 
-    String role = box.get("role");
+    print(accessToken);
+
+    print(userId);
+    // String userId = box.get('userid');
+
+    // String roleId = box.get("RoleId");
+
+    // String roleName = box.get("RoleName");
+    // String userDetailId = box.get("userDetailId");
     print('oeloeloeleoleoeloeloe');
 
-    print(box.get('access_token'));
-
-    // String accessToken = box.get('access_token');
+    // print(box.get('access_token'));
+    // print(userId);
+    // print(roleId);
+    // print(roleName);
+    // print(userDetailId);
 
     // print(accessToken);
 
@@ -358,7 +374,7 @@ class RemoteSourceImplementation implements RemoteSource {
         data: jsonEncodedSalesPerson,
         options:
             Options(contentType: "application/json", headers: <String, String>{
-          'Authorization': 'Bearer ' + accessToken,
+          // 'Authorization': 'Bearer ' + accessToken,
         }),
       );
 

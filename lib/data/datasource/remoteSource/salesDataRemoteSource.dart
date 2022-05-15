@@ -133,6 +133,8 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
         ),
       );
       if (response.data["status"] == true) {
+
+
         // List<SalesLocationTrack> salesLocationTrack =
         //     (response.data["data"] as List).map((salesLoctionTrack) {
         //   return SalesLocationTrackModel.fromJson(salesLoctionTrack);
@@ -140,7 +142,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
 
         // print('oleoleoleoleoleoeloel');
 
-        // return "gf";
+        return "gf";
       } else {
         throw ServerException();
       }
