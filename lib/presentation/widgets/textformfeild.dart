@@ -64,7 +64,7 @@ Widget textFormField(
 
 Widget textFeildWithDropDown({
   required String hintText,
-  required TextEditingController controller,
+  TextEditingController? controller,
   TextInputType textInputType = TextInputType.text,
   required String? Function(String?) validator,
 }) {

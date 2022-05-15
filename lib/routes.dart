@@ -4,7 +4,7 @@ import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/listOfOrderAndOutlets.dart';
 import 'package:salesforce/presentation/pages/logOutPage.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
-import 'package:salesforce/presentation/pages/newOrderPage.dart';
+import 'package:salesforce/presentation/pages/newOrderPage/newOrderPage.dart';
 import 'package:salesforce/presentation/pages/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/xlsOrderPage.dart';

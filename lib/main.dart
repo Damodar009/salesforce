@@ -19,7 +19,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureInjection();
 
-  Hive
+await  Hive
     ..initFlutter()
     ..registerAdapter(AttendenceAdapter())
     ..registerAdapter(DepotAdapter())
@@ -40,13 +40,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isLoggedIn = true;
   checkUserLoggedIn() async {
-    var box = await Hive.openBox("salesForce");
+    Box box = await Hive.openBox("salesForce");
     isLoggedIn = box.get("isLoggedIN", defaultValue: false);
   }
 
   @override
   void initState() {
-    //  checkUserLoggedIn();
+    print("this is logged in") ;
+     checkUserLoggedIn();
     super.initState();
   }
 
@@ -65,7 +66,7 @@ class _MyAppState extends State<MyApp> {
         onGenerateRoute: RouteGenerator.getRoute,
         title: 'SalesForce',
         theme: theme,
-        initialRoute:  Routes.dashboardRoute,
+        initialRoute: isLoggedIn ? Routes.loginRoute : Routes.dashboardRoute,
       ),
     );
   }
