@@ -14,11 +14,11 @@ class ProfileInitial extends ProfileState {}
 class GetProfileLoadingState extends ProfileState {}
 
 class GetProfileLoadedState extends ProfileState {
-  final UserDetailsData userDetailsData;
-  const GetProfileLoadedState({required this.userDetailsData});
+  final UserDetailsData userDetailsdata;
+  const GetProfileLoadedState({required this.userDetailsdata});
 
   @override
-  List<Object> get props => [userDetailsData];
+  List<Object> get props => [userDetailsdata];
 }
 
 class GetProfileFailedState extends ProfileState {}

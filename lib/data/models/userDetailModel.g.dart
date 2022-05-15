@@ -8,16 +8,16 @@ part of 'userDetailModel.dart';
 
 UserDetailsModel _$UserDetailsModelFromJson(Map<String, dynamic> json) =>
     UserDetailsModel(
-      fullName: json['fullName'] as String,
+      fullName: json['fullName'] as String?,
       id: json['id'] as String?,
       dob: json['dob'] as String?,
-      gender: json['gender'] as String,
+      gender: json['gender'] as String?,
       path: json['path'] as String?,
-      permanentAddress: json['permanentAddress'] as String,
-      temporaryAddress: json['temporaryAddress'] as String,
+      permanentAddress: json['permanentAddress'] as String?,
+      temporaryAddress: json['temporaryAddress'] as String?,
       userDocument: json['userDocument'] as String?,
       user_detail_id: json['user_detail_id'] as String?,
-      contactNumber2: json['contactNumber2'] as String,
+      contactNumber2: json['contactNumber2'] as String?,
     );
 
 Map<String, dynamic> _$UserDetailsModelToJson(UserDetailsModel instance) =>

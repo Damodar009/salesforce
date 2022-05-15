@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
@@ -17,38 +18,36 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     });
     on<GetProfileEvent>(
       (event, emit) async {
-        print('get profile data bloc');
         emit(GetProfileLoadingState());
+
         final isSuccessful =
             await useCaseForRemoteSourceimpl.getUserDetailsData();
 
         isSuccessful.fold((l) {
-          print("This is the server failure ");
           if (l is ServerFailure) {
             emit(GetProfileFailedState());
           } else if (l is CacheFailure) {
             emit(GetProfileFailedState());
           }
         }, (r) {
-          emit(GetProfileLoadedState(userDetailsData: r));
+          emit(GetProfileLoadedState(userDetailsdata: r));
         });
       },
     );
 
     on<SaveUserDetailsEvent>(
       (event, emit) async {
-        print('object of SaveUserDetailsEvent');
-
         emit(SaveUserDetailsLoadingState());
 
-        final isSuccessful = await useCaseForRemoteSourceimpl.saveUserDetails(
-           event.userDetails);
+        final isSuccessful =
+            await useCaseForRemoteSourceimpl.saveUserDetails(event.userDetails);
 
         isSuccessful.fold((l) {
-          if (l is ServerFailure)
+          if (l is ServerFailure) {
             emit(SaveUserDetailsFailedState());
-          else if (l is CacheFailure) 
-          emit(SaveUserDetailsFailedState());
+          } else if (l is CacheFailure) {
+            emit(SaveUserDetailsFailedState());
+          }
         }, (r) => emit(SaveUserDetailsLoadedState()));
       },
     );

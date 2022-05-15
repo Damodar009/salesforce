@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/injectable.dart';
@@ -202,7 +206,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(
                         height: heightBetweenTextField,
                       ),
+                      imageUpload(),
+                      SizedBox(
+                        height: heightBetweenTextField,
+                      ),
                       const Text('Types'),
+                      SizedBox(
+                        height: heightBetweenTextField,
+                      ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: textFeildWithDropDown(
@@ -255,6 +266,85 @@ Widget radioButtonWidget(
         },
       ),
       Text(genderTitle)
+    ],
+  );
+}
+
+Widget imageUpload() {
+  File _image;
+  final picker = ImagePicker();
+  return Stack(
+    // textDirection: TextDirection.rtl,
+    children: [
+      const TextField(
+        decoration: InputDecoration(
+            fillColor: Colors.white,
+            errorStyle: TextStyle(color: AppColors.primaryColor),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(15.0),
+              ),
+              borderSide: BorderSide(color: AppColors.textFeildINputBorder),
+            ),
+            filled: true,
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontFamily: 'Inter',
+              fontSize: 15,
+            ),
+            hintText: 'Upload Image',
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30.0),
+                )),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30.0),
+                ))),
+      ),
+      Positioned(
+          right: 10,
+          bottom: 4,
+          child: InkWell(
+            onTap: () {
+              Future selectOrTakePhoto() async {
+                final pickedFile =
+                    await picker.getImage(source: ImageSource.gallery);
+
+                print('object of iamge 1234');
+
+                // setState(() {
+                //   if (pickedFile != null) {
+                //     _image = File(pickedFile.path);
+                //     // Navigator.pushNamed(context, routeEdit,
+                //     //     arguments: _image);
+                //     print('object of image');
+                //   } else
+                //     print('No photo was selected or taken');
+                // });
+              }
+            },
+            child: Container(
+              height: 40,
+              width: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: AppColors.buttonColor,
+              ),
+              child: const Center(
+                child: Text(
+                  'Upload',
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ))
     ],
   );
 }

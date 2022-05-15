@@ -6,16 +6,16 @@ part 'userDetailModel.g.dart';
 @JsonSerializable()
 class UserDetailsModel extends UserDetails {
   UserDetailsModel(
-      {required String fullName,
+      {String? fullName,
       String? id,
       String? dob,
-      required String gender,
+      String? gender,
       String? path,
-      required String permanentAddress,
-      required String temporaryAddress,
+      String? permanentAddress,
+      String? temporaryAddress,
       String? userDocument,
       String? user_detail_id,
-      required String contactNumber2})
+      String? contactNumber2})
       : super(
             fullName: fullName,
             id: id,

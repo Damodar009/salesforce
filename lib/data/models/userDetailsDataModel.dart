@@ -7,13 +7,13 @@ part 'userDetailsDataModel.g.dart';
 @JsonSerializable()
 class UserDetailsDataModel extends UserDetailsData {
   UserDetailsDataModel(
-      {required String email,
-      required String id,
-      required String phoneNumber,
-      required String roleId,
-      required String roleName,
-      required bool status,
-      required UserDetailsModel userDetail})
+      {String? email,
+      String? id,
+      String? phoneNumber,
+      String? roleId,
+      String? roleName,
+      bool ? status,
+      UserDetailsModel? userDetail})
       : super(
             email: email,
             id: id,

@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
-import 'package:salesforce/domain/entities/salesPerson.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
@@ -94,7 +94,6 @@ class RepositoryImplementation implements Repository {
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown() async {
     try {
-
       final response = await remoteSource.getDepotProductAndRetailer();
       return Right(response);
     } catch (e) {
@@ -116,7 +115,9 @@ class RepositoryImplementation implements Repository {
   @override
   Future<Either<Failure, UserDetailsData>> getUserDetailsData() async {
     try {
+      print("you are in try");
       final response = await remoteSource.getUserDetailsData();
+      print(response);
       return Right(response);
     } catch (e) {
       return Left(ServerFailure());
@@ -124,9 +125,12 @@ class RepositoryImplementation implements Repository {
   }
 
   @override
-  Future<Either<Failure, UserDetails>> saveUserDetails(UserDetails userDetails) async{
+  Future<Either<Failure, UserDetails>> saveUserDetails(
+      UserDetails userDetails) async {
+    print('hello hello hello hello');
     try {
       final response = await remoteSource.saveUserDetails(userDetails);
+
       return Right(response);
     } catch (e) {
       return Left(ServerFailure());

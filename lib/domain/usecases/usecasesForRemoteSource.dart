@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/salesPerson.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
@@ -36,9 +37,8 @@ abstract class UseCaseForRemoteSource {
 @injectable
 class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   var repository = getIt<Repository>();
-  UseCaseForRemoteSourceimpl(this.repository) {
-    print("the usecase for remote soure impl is created ");
-  }
+  UseCaseForRemoteSourceimpl(this.repository);
+  
 
   @override
   Future<Either<Failure, UserData>> login(
@@ -80,7 +80,6 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   @override
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown() async {
-    print("use case for remote source");
     return await repository.getDepotProductRetailerDropDown();
   }
 
@@ -98,6 +97,7 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   @override
   Future<Either<Failure, UserDetails>> saveUserDetails(
       UserDetails userDetails) async {
+        
     return await repository.saveUserDetails(userDetails);
   }
 

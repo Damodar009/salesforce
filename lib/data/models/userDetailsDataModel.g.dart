@@ -9,14 +9,16 @@ part of 'userDetailsDataModel.dart';
 UserDetailsDataModel _$UserDetailsDataModelFromJson(
         Map<String, dynamic> json) =>
     UserDetailsDataModel(
-      email: json['email'] as String,
-      id: json['id'] as String,
-      phoneNumber: json['phoneNumber'] as String,
-      roleId: json['roleId'] as String,
-      roleName: json['roleName'] as String,
-      status: json['status'] as bool,
-      userDetail:
-          UserDetailsModel.fromJson(json['userDetail'] as Map<String, dynamic>),
+      email: json['email'] as String?,
+      id: json['id'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      roleId: json['roleId'] as String?,
+      roleName: json['roleName'] as String?,
+      status: json['status'] as bool?,
+      userDetail: json['userDetail'] == null
+          ? null
+          : UserDetailsModel.fromJson(
+              json['userDetail'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$UserDetailsDataModelToJson(

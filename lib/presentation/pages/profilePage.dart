@@ -42,7 +42,7 @@ class ProfileScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  state.userDetailsData.userDetail.fullName,
+                                  state.userDetailsdata.userDetail!.fullName ?? "No name",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2!
@@ -52,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
                                       ),
                                 ),
                                 Text(
-                                  state.userDetailsData.email,
+                                  state.userDetailsdata.email!,
                                 ),
                                 SizedBox(
                                   height: mediaQueryHeight * 0.07,
@@ -84,8 +84,7 @@ class ProfileScreen extends StatelessWidget {
                                         height: mediaQueryHeight * 0.01,
                                       ),
                                       Text(
-                                        state.userDetailsData.userDetail
-                                            .contactNumber2,
+                                        state.userDetailsdata.userDetail!.contactNumber2 ?? "No phone number",
                                       ),
                                       SizedBox(
                                         height: heightBetweenTextField,
@@ -97,8 +96,7 @@ class ProfileScreen extends StatelessWidget {
                                         height: mediaQueryHeight * 0.01,
                                       ),
                                       Text(
-                                        state.userDetailsData.userDetail
-                                            .permanentAddress,
+                                        state.userDetailsdata.userDetail!.permanentAddress ?? "No Address",
                                       ),
                                       SizedBox(
                                         height: heightBetweenTextField,
@@ -120,8 +118,7 @@ class ProfileScreen extends StatelessWidget {
                                                 height: mediaQueryHeight * 0.01,
                                               ),
                                               Text(
-                                                state.userDetailsData.userDetail
-                                                    .dob
+                                                state.userDetailsdata.userDetail!.dob ?? "No dob"
                                                     .toString(),
                                               ),
                                             ],
@@ -137,8 +134,7 @@ class ProfileScreen extends StatelessWidget {
                                                 height: mediaQueryHeight * 0.01,
                                               ),
                                               Text(
-                                                state.userDetailsData.userDetail
-                                                    .temporaryAddress,
+                                                state.userDetailsdata.userDetail!.temporaryAddress ?? "No address",
                                               ),
                                             ],
                                           )
@@ -154,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
                                         height: mediaQueryHeight * 0.01,
                                       ),
                                       Text(
-                                        state.userDetailsData.userDetail.gender,
+                                        state.userDetailsdata.userDetail!.gender ?? "No gender",
                                       ),
                                     ],
                                   ),

@@ -71,10 +71,9 @@ class RemoteSourceImplementation implements RemoteSource {
       );
       if (response.statusCode == 200) {
         UserData userData = UserDataModel.fromJson(response.data);
-        print(userData.userid);
 
         hive.savetoken(userdata: userData);
-        print('oleoleoleoleoleoeloel');
+        hive.showtoken();
 
         return userData;
       } else {
@@ -93,19 +92,15 @@ class RemoteSourceImplementation implements RemoteSource {
 
     String userId = box.get('userid');
 
-    print(userId);
-    print(accessToken);
-    print(ApiUrl.getSalesStaff + userId);
-
     try {
       Response response = await dio.get(
         ApiUrl.getSalesStaff + userId,
         options: Options(
-          headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
+          headers: <String, String>{
+            'Authorization': 'Bearer ' + accessToken
+          },
         ),
       );
-
-      print(response.statusCode);
 
       if (response.data["status"] == true) {
         UserDetailsDataModel userDetailsData =
@@ -116,8 +111,6 @@ class RemoteSourceImplementation implements RemoteSource {
         throw ServerException();
       }
     } on DioError catch (e) {
-      print(e);
-
       throw ServerException();
     }
   }
@@ -216,8 +209,6 @@ class RemoteSourceImplementation implements RemoteSource {
                 .map((e) => SalesDataCollectionModel.fromJson(e))
                 .toList();
 
-        print(saveSalesDataCollection);
-
         return saveSalesDataCollection;
       } else {
         throw ServerException();
@@ -262,7 +253,6 @@ class RemoteSourceImplementation implements RemoteSource {
         throw ServerException();
       }
     } on DioError catch (e) {
-      print(e);
       throw ServerException();
     }
   }
@@ -296,16 +286,12 @@ class RemoteSourceImplementation implements RemoteSource {
 
     var jsonEncodedAnswer = jsonEncode(saveRetailesInJson);
 
-    print(jsonEncodedAnswer);
-
     Box box = await hive.openBox();
 
     String accessToken = box.get('access_token');
 
     //todo implement authorization token
     try {
-      print(ApiUrl.saveAllRetailer);
-
       Response response = await dio.post(
         ApiUrl.saveAllRetailer,
         data: jsonEncodedAnswer,
@@ -317,16 +303,12 @@ class RemoteSourceImplementation implements RemoteSource {
         ),
       );
 
-      print(response.statusCode);
-      print('oleoloeloeloeloleoleol');
-
       if (response.data["status"] == true) {
         return Future.value([]);
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
-      print(e);
       throw ServerException();
     }
   }
@@ -337,12 +319,22 @@ class RemoteSourceImplementation implements RemoteSource {
 
     String accessToken = box.get('access_token');
 
-    print(accessToken);
+    String userId = box.get('userid');
+
+    String role = box.get("role");
+    print('oeloeloeleoleoeloeloe');
+
+    print(box.get('access_token'));
+
+    // String accessToken = box.get('access_token');
+
+    // print(accessToken);
 
     print('hello hello');
 
+    print(userDetails);
+
     UserDetailsModel userDetailsModel = UserDetailsModel(
-        
         fullName: userDetails.fullName,
         gender: userDetails.gender,
         dob: userDetails.dob,
@@ -353,6 +345,8 @@ class RemoteSourceImplementation implements RemoteSource {
 
     var salesPersonInJson = userDetailsModel.toJson();
     var jsonEncodedSalesPerson = jsonEncode(salesPersonInJson);
+
+    print('oleoleoleoleoleoleo');
     print(jsonEncodedSalesPerson);
 
     print(ApiUrl.saveUser);
