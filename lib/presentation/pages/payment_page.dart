@@ -7,7 +7,15 @@ import 'package:salesforce/utils/app_colors.dart';
 import '../widgets/deleteTheoryTestPopupWidget.dart';
 
 class PaymentScreen extends StatelessWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
+  PaymentScreen({Key? key}) : super(key: key);
+
+  List<String> items = [
+    'Cash on Delivery',
+    'Debit Card',
+    'Credit',
+    'Online transation',
+    'Cheque',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +45,7 @@ class PaymentScreen extends StatelessWidget {
             showObsecureIcon: false,
             validator: (value) {},
             controller: _nameController,
-            hintText: 'Framk Miller',
+            hintText: 'Name of Outlet',
             obsecureText1: () {},
           ),
           SizedBox(
@@ -54,7 +62,7 @@ class PaymentScreen extends StatelessWidget {
             child: textFeildWithDropDown(
                 controller: _textEditingController,
                 validator: (string) {},
-                hintText: 'Frank miller '),
+                hintText: 'Choose', item: items),
           ),
           SizedBox(
             height: mediaQueryHeight * 0.04,

@@ -1,8 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/domain/entities/retailerPojo.dart';
+import 'package:salesforce/domain/entities/salesPerson.dart';
 import 'package:salesforce/domain/entities/userData.dart';
+import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
 import '../../domain/entities/depotProductRetailer.dart';
+import '../../domain/entities/userDetail.dart';
 import '../../domain/repositories/repository.dart';
 import '../../error/failure.dart';
 import '../datasource/remoteSource/remotesource.dart';
@@ -97,4 +101,45 @@ class RepositoryImplementation implements Repository {
       return Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers) async {
+    try {
+      final response = await remoteSource.saveAllRetailer(listOfRetailers);
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserDetailsData>> getUserDetailsData() async {
+    try {
+      final response = await remoteSource.getUserDetailsData();
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserDetails>> saveUserDetails(UserDetails userDetails) async{
+    try {
+      final response = await remoteSource.saveUserDetails(userDetails);
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  // @override
+  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection() async {
+  //   try {
+  //     final response = await remoteSource.saveSalesDataCollection();
+  //     return Right(response);
+  //   } catch (e) {
+  //     return Left(ServerFailure());
+  //   }
+  // }
 }

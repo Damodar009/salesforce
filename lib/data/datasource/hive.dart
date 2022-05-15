@@ -15,6 +15,7 @@ class SaveLocally {
       await box.put("refresh_token", userdata.refresh_token);
       await box.put("access_token", userdata.access_token);
       await box.put("userid", userdata.userid);
+      //  await box.put("userid", userdata.userid);
       await box.put("name", userdata.name);
       await box.put("expires_in", userdata.expires_in);
       await box.put("userdata", userdata.role);
@@ -22,6 +23,33 @@ class SaveLocally {
       await box.put("scope", userdata.scope);
 
       return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future deletetoken() async {
+    try {
+      var box = await openBox();
+
+      await box.deleteFromDisk();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future showtoken() async {
+    try {
+      var box = await openBox();
+
+      if (box.isEmpty) {
+        print('box.isEmpty)');
+      } else if (box.isNotEmpty) {
+        print('box is not empty');
+      }
+      else{
+        print('idk');
+      }
     } catch (e) {
       return false;
     }

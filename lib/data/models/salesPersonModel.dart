@@ -12,7 +12,7 @@ class SalesPersonModel extends SalesPerson {
       required String phoneNumber,
       required String password,
       required String roleId,
-      required UserDetailModel userDetails})
+      required UserDetailsModel userDetails})
       : super(
             id: id,
             email: email,

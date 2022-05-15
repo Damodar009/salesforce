@@ -7,6 +7,9 @@ class ApiUrl {
   static const String saveAttendence = baseUrl + "/api/attendance/save";
   static const String saveSalesCollectionTracking =
       baseUrl + "/api/saleDataTracking/save";
+  static const String saveSalesDataCollection = baseUrl + "/api/salesdata/save";
+  static const String getSalesStaff = baseUrl + '/api/user/getsalesstaffbyid/';
+  static const String saveAllRetailer = baseUrl + '/api/retailer/saveall';
   static const String saveUser = baseUrl + "/api/user/save";
   static const String salesData = baseUrl + "/api/salesdata/save";
 }

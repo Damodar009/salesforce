@@ -1,13 +1,20 @@
-import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
+import 'package:salesforce/presentation/widgets/report_pop_up.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
-class XlsOrder extends StatelessWidget {
+class XlsOrder extends StatefulWidget {
   const XlsOrder({Key? key}) : super(key: key);
 
+  @override
+  State<XlsOrder> createState() => _XlsOrderState();
+}
+
+class _XlsOrderState extends State<XlsOrder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +45,11 @@ class XlsOrder extends StatelessWidget {
               height: 15,
             ),
             button("Save XLS", () {
-              
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => reportPopUp(
+                        context: context,
+                      ));
             }, false, AppColors.buttonColor),
           ],
         ),
