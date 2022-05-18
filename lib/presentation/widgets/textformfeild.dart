@@ -42,7 +42,7 @@ Widget textFormField(
         ),
         filled: true,
         hintStyle: const TextStyle(
-          color: Colors.blue,
+          color: Colors.black,
           fontFamily: 'Inter',
           fontSize: 15,
         ),
@@ -110,7 +110,7 @@ Widget textFeildWithDropDown({
         ),
         filled: true,
         hintStyle: const TextStyle(
-          color: Colors.blue,
+          color: Colors.black,
           fontFamily: 'Inter',
           fontSize: 15,
         ),

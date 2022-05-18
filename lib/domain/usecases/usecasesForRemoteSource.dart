@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
+import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
@@ -25,7 +27,8 @@ abstract class UseCaseForRemoteSource {
       List<RetailerPojo> listOfRetailers);
   Future<Either<Failure, UserDetailsData>> getUserDetailsData();
 
-  Future<Either<Failure, UserDetails>> saveUserDetails(UserDetails userDetails);
+  Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
+      SaveUserDetailsDataModel saveUserDetailsDataModel);
 
   // Future<Either<Failure, UserDetailsData>> saveUserDetails();
 
@@ -36,7 +39,6 @@ abstract class UseCaseForRemoteSource {
 class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   var repository = getIt<Repository>();
   UseCaseForRemoteSourceimpl(this.repository);
-  
 
   @override
   Future<Either<Failure, UserData>> login(
@@ -93,10 +95,9 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   }
 
   @override
-  Future<Either<Failure, UserDetails>> saveUserDetails(
-      UserDetails userDetails) async {
-        
-    return await repository.saveUserDetails(userDetails);
+  Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
+      SaveUserDetailsDataModel saveUserDetailsDataModel) async {
+    return await repository.saveUserDetails(saveUserDetailsDataModel);
   }
 
   // @override

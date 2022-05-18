@@ -30,3 +30,4 @@ class SaveUserDetailsLoadingState extends ProfileState {}
 class SaveUserDetailsLoadedState extends ProfileState {}
 
 class SaveUserDetailsFailedState extends ProfileState {}
+

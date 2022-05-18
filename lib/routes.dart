@@ -6,6 +6,7 @@ import 'package:salesforce/presentation/pages/editProfile.dart';
 import 'package:salesforce/presentation/pages/listOfOrderAndOutlets.dart';
 import 'package:salesforce/presentation/pages/logOutPage.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
+import 'package:salesforce/presentation/pages/menuPage.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/newOrderPage.dart';
 import 'package:salesforce/presentation/pages/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
@@ -28,6 +29,7 @@ class Routes {
   static const String totalSalesRoute = "/totalSales";
   static const String visitedOutlets = "/visitedOutlets";
   static const String xlsOrder = "/xlsOrder";
+  static const String menuScreen = "/menuScreen";
 }
 
 class RouteGenerator {
@@ -48,6 +50,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Container());
       case Routes.logOUtRoutes:
         return MaterialPageRoute(builder: (_) => const LogOutPage());
+      case Routes.menuScreen:
+        return MaterialPageRoute(builder: (_) => const MenuScreen());  
       case Routes.dashboardRoute:
         return MaterialPageRoute(
             builder: (_) => DashboardScreen(

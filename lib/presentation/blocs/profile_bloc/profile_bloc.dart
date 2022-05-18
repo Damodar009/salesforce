@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/userDetailsDataModel.dart';
+import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
@@ -15,8 +17,8 @@ part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
-  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
-  ProfileBloc() : super(ProfileInitial()) {
+  // var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  ProfileBloc(this.useCaseForRemoteSourceimpl) : super(ProfileInitial()) {
     on<ProfileEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -46,14 +48,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         /// get list of depot from the hive
         List<dynamic>? editProfileKeys;
 
-        Box box = await Hive.openBox(HiveConstants.userdata);
-        var failureOrSuccess = useCaseForHiveImpl.getAllValuesFromHiveBox(box);
+        // Box box = await Hive.openBox(HiveConstants.userdata);
+        // var failureOrSuccess = useCaseForHiveImpl.getAllValuesFromHiveBox(box);
         // getValuesByKey(box, HiveConstants.userdata);
 
-        print(failureOrSuccess);
+        // print("failureOrSuccess $failureOrSuccess");
 
-        final isSuccessful =
-            await useCaseForRemoteSourceimpl.saveUserDetails(event.userDetails);
+        final isSuccessful = await useCaseForRemoteSourceimpl.saveUserDetails(
+            event.saveUserDetailsDataModel);
 
         isSuccessful.fold((l) {
           if (l is ServerFailure) {

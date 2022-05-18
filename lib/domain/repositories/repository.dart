@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
+import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
@@ -20,13 +22,13 @@ abstract class Repository {
   Future<Either<Failure, String>> attendenceSave();
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown();
-   Future<Either<Failure, List<RetailerPojo>>>
-      saveAllRetailer(
-          List<RetailerPojo> listOfRetailers);  
+  Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
+      List<RetailerPojo> listOfRetailers);
 
-  Future<Either<Failure, UserDetailsData>> getUserDetailsData();      
+  Future<Either<Failure, UserDetailsData>> getUserDetailsData();
 
-  Future<Either<Failure, UserDetails>>  saveUserDetails(UserDetails userDetails);  
+  Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
+       SaveUserDetailsDataModel saveUserDetailsDataModel);
 
   // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
 

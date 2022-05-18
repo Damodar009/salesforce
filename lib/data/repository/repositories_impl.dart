@@ -1,8 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
+import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
@@ -27,6 +29,8 @@ class RepositoryImplementation implements Repository {
       String username, String password) async {
     try {
       final question = await remoteSource.login(username, password);
+
+      print('you are inside repository impl');
 
       Box box = await Hive.openBox(HiveConstants.userdata);
 
@@ -151,11 +155,23 @@ class RepositoryImplementation implements Repository {
   }
 
   @override
-  Future<Either<Failure, UserDetails>> saveUserDetails(
-      UserDetails userDetails) async {
+  Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
+    
+    SaveUserDetailsDataModel saveUserDetailsDataModel,
+  ) async {
     print('hello hello hello hello');
     try {
-      final response = await remoteSource.saveUserDetails(userDetails);
+      final response =
+          await remoteSource.saveUserDetails(saveUserDetailsDataModel);
+
+      print('whatr is this beavior');
+
+      // Box box = await Hive.openBox(HiveConstants.userdata);
+
+      // String access_token = (await useCaseForHiveImpl.getValueByKey(
+      //     box, 'access_token')) as String;
+
+      // print("hello iam access token $access_token");
 
       return Right(response);
     } catch (e) {

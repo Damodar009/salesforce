@@ -59,10 +59,10 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
         InkWell(
           onTap: (() {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => EditProfileScreen()));
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (BuildContext context) => EditProfileScreen()));
           }),
           child: ProfileOptions(mediaQueryWidth, context, Icons.edit_outlined,
               'Edit Account Info'),

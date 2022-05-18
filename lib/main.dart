@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:salesforce/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/routes.dart';
@@ -17,7 +19,6 @@ import 'domain/usecases/useCaseForAttebdenceSave.dart';
 import 'domain/usecases/usecasesForRemoteSource.dart';
 import 'injectable.dart';
 import 'package:path_provider/path_provider.dart' as pathprovider;
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,8 +55,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    print("this is logged in") ;
-     checkUserLoggedIn();
+    print("this is logged in");
+    checkUserLoggedIn();
     super.initState();
   }
 
@@ -68,6 +69,12 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => AuthBloc(useCaseForRemoteSourceImpl)),
         BlocProvider(
             create: (context) => AttendenceCubit(useCaseForAttendenceImpl)),
+        BlocProvider(
+            create: (context) => ProfileBloc(useCaseForRemoteSourceImpl)
+              ..add(GetProfileEvent())),
+        // BlocProvider(
+        //   create: (context) => ),
+        // ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -88,23 +95,28 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+
   bool isLoggedIn = false;
   checkUserLoggedIn() async {
-
-    print('checkign hive toek');
+    // print('checkign hive toek');
     final String checkUserAccessToken;
 
     try {
+      // UseCaseForHiveImpl().getValueByKey(box, HiveConstants.userdata);
       Box box = await Hive.openBox(HiveConstants.userdata);
     } catch (e) {
       print(e);
     }
     Box box = await Hive.openBox(HiveConstants.userdata);
-    
 
     // print(box.get("access_token"));
 
     checkUserAccessToken = await box.get("access_token");
+
+    print("this is token $checkUserAccessToken");
+
+    // Box box = await Hive.openBox(HiveConstants.userdata);
 
     print('yoyr token is ');
 
@@ -135,6 +147,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     print('oleoleoleoleolele000');
+    print(isLoggedIn);
     return isLoggedIn ? DashboardScreen(index: 0) : LOginScreen();
   }
 }

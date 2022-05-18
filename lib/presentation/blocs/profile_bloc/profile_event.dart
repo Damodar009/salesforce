@@ -13,9 +13,9 @@ class GetProfileEvent extends ProfileEvent {
 }
 
 class SaveUserDetailsEvent extends ProfileEvent {
-  final UserDetails userDetails;
+  final SaveUserDetailsDataModel saveUserDetailsDataModel;
 
-  const SaveUserDetailsEvent({required this.userDetails});
+  const SaveUserDetailsEvent({required this.saveUserDetailsDataModel});
   @override
-  List<Object> get props => [userDetails];
+  List<Object> get props => [saveUserDetailsDataModel];
 }

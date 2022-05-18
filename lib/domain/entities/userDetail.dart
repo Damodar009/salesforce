@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class UserDetails extends Equatable {
+  final String? designationId;
   final String? id;
   final String? fullName;
   final String? gender;
@@ -11,18 +12,21 @@ class UserDetails extends Equatable {
   final String? userDocument;
   final String? user_detail_id;
   final String? contactNumber2;
+  final String? employee_contract;
 
   const UserDetails(
-      { this.fullName,
+      {this.fullName,
       this.id,
       this.dob,
       this.path,
       this.userDocument,
       this.user_detail_id,
-       this.gender,
-       this.permanentAddress,
-       this.temporaryAddress,
-       this.contactNumber2});
+      this.gender,
+      this.permanentAddress,
+      this.temporaryAddress,
+      this.contactNumber2,
+      this.designationId,
+      this.employee_contract});
 
   @override
   // TODO: implement props
@@ -36,6 +40,8 @@ class UserDetails extends Equatable {
         gender,
         permanentAddress,
         temporaryAddress,
-        contactNumber2
+        contactNumber2,
+        designationId,
+        employee_contract
       ];
 }

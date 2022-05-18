@@ -15,7 +15,9 @@ class UserDetailsModel extends UserDetails {
       String? temporaryAddress,
       String? userDocument,
       String? user_detail_id,
-      String? contactNumber2})
+      String? contactNumber2,
+      String? designationId,
+      String? employee_contract})
       : super(
             fullName: fullName,
             id: id,
@@ -26,7 +28,9 @@ class UserDetailsModel extends UserDetails {
             gender: gender,
             permanentAddress: permanentAddress,
             temporaryAddress: temporaryAddress,
-            contactNumber2: contactNumber2);
+            contactNumber2: contactNumber2,
+            designationId: designationId,
+            employee_contract: employee_contract);
 
   factory UserDetailsModel.fromJson(Map<String, dynamic> json) =>
       _$UserDetailsModelFromJson(json);
