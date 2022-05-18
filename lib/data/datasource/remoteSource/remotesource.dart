@@ -71,6 +71,8 @@ class RemoteSourceImplementation implements RemoteSource {
       if (response.statusCode == 200) {
         UserData userData = UserDataModel.fromJson(response.data);
 
+        print(response.data);
+
         // hive.savetoken(userdata: userData);
         // hive.showtoken()
 
@@ -86,38 +88,41 @@ class RemoteSourceImplementation implements RemoteSource {
 
   @override
   Future<UserDetailsData> getUserDetailsData() async {
+    print("object1233444");
     // Box box = await hive.openBox();
 
     // String accessToken = box.get('access_token');
 
     // String userId = box.get('userid');
 
-    try {
-      Response response = await dio.get(
-        ApiUrl.getSalesStaff + 'Fii0wdochNnYL15BnZAJMg==',
-        options: Options(
-          headers: <String, String>{'Authorization': 'Bearer 5bcd338e-79a6-4681-bdb8-7bd7d24fad0f'},
-        ),
-      );
+    // try {
+    Response response = await dio.get(
+      ApiUrl.getSalesStaff + 'Fii0wdochNnYL15BnZAJMg==',
+      options: Options(
+        headers: <String, String>{
+          'Authorization': 'Bearer 5bcd338e-79a6-4681-bdb8-7bd7d24fad0f'
+        },
+      ),
+    );
 
-      print("Response code of getUserData ${response.statusCode}");
-      print(response.data);
+    print("Response code of getUserData ${response.statusCode}");
+    print(response.data);
 
-      if (response.data["status"] == true) {
-        UserDetailsDataModel userDetailsData =
-            UserDetailsDataModel.fromJson(response.data["data"]);
+    if (response.data["status"] == true) {
+      UserDetailsDataModel userDetailsData =
+          UserDetailsDataModel.fromJson(response.data["data"]);
 
-        hive.savetoken(userDetailsData: userDetailsData);
+      // hive.savetoken(userDetailsData: userDetailsData);
 
-        hive.showtoken();
+      // hive.showtoken();
 
-        return userDetailsData;
-      } else {
-        throw ServerException();
-      }
-    } on DioError catch (e) {
+      return userDetailsData;
+    } else {
       throw ServerException();
     }
+    // } on DioError catch (e) {
+    //   throw ServerException();
+    // }
   }
 
   @override
@@ -330,17 +335,18 @@ class RemoteSourceImplementation implements RemoteSource {
         roleId: saveUserDetailsDataModel.roleId,
         roleName: saveUserDetailsDataModel.roleName,
         userDetail: UserDetailsModel(
-            fullName: saveUserDetailsDataModel.userDetail!.fullName,
-            gender: saveUserDetailsDataModel.userDetail!.gender,
-            permanentAddress:
-                saveUserDetailsDataModel.userDetail!.permanentAddress,
-            temporaryAddress:
-                saveUserDetailsDataModel.userDetail!.temporaryAddress,
-            contactNumber2: saveUserDetailsDataModel.userDetail!.contactNumber2,
-            dob: saveUserDetailsDataModel.userDetail!.dob,
-            id: saveUserDetailsDataModel.userDetail!.id,
-            // userDocument: saveUserDetailsDataModel.userDetail!.userDocument
-            ));
+          fullName: saveUserDetailsDataModel.userDetail!.fullName,
+          gender: saveUserDetailsDataModel.userDetail!.gender,
+          permanentAddress:
+              saveUserDetailsDataModel.userDetail!.permanentAddress,
+          temporaryAddress:
+              saveUserDetailsDataModel.userDetail!.temporaryAddress,
+          contactNumber2: saveUserDetailsDataModel.userDetail!.contactNumber2,
+          dob: saveUserDetailsDataModel.userDetail!.dob,
+          id: saveUserDetailsDataModel.userDetail!.id,
+          userDocument: saveUserDetailsDataModel.userDetail!.userDocument,
+          user_detail_id: saveUserDetailsDataModel.userDetail!.user_detail_id,
+        ));
 
     var saveUserDetailsDataModelInJson = saveUserDetailsData.toJson();
     var jsonEncodedSalesPerson = jsonEncode(saveUserDetailsDataModelInJson);

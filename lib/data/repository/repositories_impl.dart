@@ -2,17 +2,13 @@ import 'package:dartz/dartz.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
-import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
-import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
-import 'package:salesforce/domain/usecases/useCaseForSalesDataTrackCollection.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
 import '../../domain/entities/depotProductRetailer.dart';
-import '../../domain/entities/userDetail.dart';
 import '../../domain/repositories/repository.dart';
 import '../../error/failure.dart';
 import '../datasource/remoteSource/remotesource.dart';
@@ -46,6 +42,11 @@ class RepositoryImplementation implements Repository {
       useCaseForHiveImpl.saveValueByKey(box, "userid", question.userid);
       useCaseForHiveImpl.saveValueByKey(box, "name", question.name);
       useCaseForHiveImpl.saveValueByKey(box, "token_type", question.token_type);
+
+      String access_token =
+          useCaseForHiveImpl.getValueByKey(box, "access_token").toString();
+
+      print(" this is access_token hahhah $access_token");
 
       return Right(question);
     } catch (e) {
@@ -140,13 +141,14 @@ class RepositoryImplementation implements Repository {
   @override
   Future<Either<Failure, UserDetailsData>> getUserDetailsData() async {
     try {
+      print('hello hello hello hello');
       final response = await remoteSource.getUserDetailsData();
 
-      Box box = await Hive.openBox(HiveConstants.userdata);
+      // Box box = await Hive.openBox(HiveConstants.userdata);
 
-      useCaseForHiveImpl.saveValueByKey(box, "roleId", response.roleId);
-      useCaseForHiveImpl.saveValueByKey(
-          box, "user_detail_id", response.userDetail!.user_detail_id);
+      // useCaseForHiveImpl.saveValueByKey(box, "roleId", response.roleId);
+      // useCaseForHiveImpl.saveValueByKey(
+      //     box, "user_detail_id", response.userDetail!.user_detail_id);
 
       return Right(response);
     } catch (e) {
@@ -156,22 +158,14 @@ class RepositoryImplementation implements Repository {
 
   @override
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
-    
     SaveUserDetailsDataModel saveUserDetailsDataModel,
   ) async {
-    print('hello hello hello hello');
+    
     try {
       final response =
           await remoteSource.saveUserDetails(saveUserDetailsDataModel);
 
       print('whatr is this beavior');
-
-      // Box box = await Hive.openBox(HiveConstants.userdata);
-
-      // String access_token = (await useCaseForHiveImpl.getValueByKey(
-      //     box, 'access_token')) as String;
-
-      // print("hello iam access token $access_token");
 
       return Right(response);
     } catch (e) {

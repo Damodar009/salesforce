@@ -2,16 +2,21 @@ import 'dart:io';
 
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/userDetailModel.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/presentation/blocs/profile_bloc/profile_bloc.dart';
+import 'package:salesforce/presentation/blocs/upload_image/upload_image_bloc.dart';
 import 'package:salesforce/presentation/widgets/radioBotton.dart';
 import 'package:salesforce/routes.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 import '../../utils/app_colors.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
@@ -27,6 +32,15 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+
+  File? image;
+
+  openHiveBox() async {
+    Box box = await Hive.openBox(HiveConstants.userdata);
+    return box;
+  }
+
   String selectedValue = "";
   void selectValueRadioButton(String selectValue) {
     setState(() {
@@ -58,6 +72,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     'Bank Account',
   ];
 
+  Future pickImage() async {
+    try {
+      ImagePicker picker = ImagePicker();
+      final image = await picker.pickImage(source: ImageSource.camera);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
+      setState(() => this.image = imageTemporary);
+    } on PlatformException catch (e) {
+      print("Failed to pick image $e");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    openHiveBox();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double mediaQueryHeight = MediaQuery.of(context).size.height;
@@ -66,14 +99,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     double heightBetweenTextField = mediaQueryHeight * 0.02;
 
     return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
+      builder: (context, Profilestate) {
         return BlocListener<ProfileBloc, ProfileState>(
-          listener: (context, state) {
-            if (state is SaveUserDetailsLoadedState) {
+          listener: (context, Profilestate) {
+            if (Profilestate is SaveUserDetailsLoadedState) {
               BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Profile has been updated')));
-            } else if (state is SaveUserDetailsFailedState) {
+            } else if (Profilestate is SaveUserDetailsFailedState) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('Error while updating profile')));
             }
@@ -133,6 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       height: heightBetweenTextField,
                     ),
                     textFormField(
+                        enableTextField: false,
                         validator: (value) {},
                         controller: _emailController,
                         hintText: widget.getProfileState.email ?? "Email",
@@ -241,6 +275,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(
                       height: 5,
                     ),
+
                     Row(
                       children: [
                         buildIndividualRadio(
@@ -263,71 +298,176 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: textFeildWithDropDown(
                           controller: _documentTypesController,
                           validator: (string) {},
-                          hintText: 'Choose',
+                          hintText:
+                              // widget.getProfileState.userDetail!.userDocument ??
+                              "Choose",
                           item: items),
                     ),
                     SizedBox(
                       height: heightBetweenTextField,
                     ),
+                    image != null ? Image.file(image!) : Container(),
                     const Text('Upload Identification Document'),
                     SizedBox(
                       height: heightBetweenTextField,
                     ),
-                    imageUpload(),
+                    //image
+
+                    Stack(
+                      // textDirection: TextDirection.rtl,
+                      children: [
+                        TextField(
+                          decoration: InputDecoration(
+                              fillColor: Colors.white,
+                              errorStyle:
+                                  TextStyle(color: AppColors.primaryColor),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(15.0),
+                                ),
+                                borderSide: BorderSide(
+                                    color: AppColors.textFeildINputBorder),
+                              ),
+                              filled: true,
+                              hintStyle: const TextStyle(
+                                color: Colors.grey,
+                                fontFamily: 'Inter',
+                                fontSize: 12,
+                              ),
+                              hintText: (widget.getProfileState.userDetail!
+                                          .userDocument ==
+                                      null)
+                                  ? "Upload Image"
+                                  : widget
+                                      .getProfileState.userDetail!.userDocument,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 5),
+                              focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.blue),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(30.0),
+                                  )),
+                              enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.blue),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(30.0),
+                                  ))),
+                        ),
+                        Positioned(
+                            right: 10,
+                            bottom: 4,
+                            child: InkWell(
+                              onTap: () {
+                                pickImage();
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppColors.buttonColor,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'Upload',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
+
                     SizedBox(
                       height: heightBetweenTextField,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(13),
-                      child: button('Save', () async {
-                        BlocProvider.of<ProfileBloc>(context).add(
-                          SaveUserDetailsEvent(
-                            saveUserDetailsDataModel: SaveUserDetailsDataModel(
-                              id: 'Fii0wdochNnYL15BnZAJMg==', //userid
-                              roleId: 'Nh5PXNgMPBdS1gqJOz7PoQ==',
-                              email: 'test12345@gmail.com',
-                              phoneNumber: '0978676543',
-                              roleName: 'SALES REPRESENTATIVE',
-                              userDetail: UserDetailsModel(
-                                  fullName: (_userNameController.text == "")
-                                      ? widget
-                                          .getProfileState.userDetail!.fullName
-                                      : _userNameController.text,
-                                  gender: (selectedValue == "")
-                                      ? widget
-                                          .getProfileState.userDetail!.gender
-                                      : selectedValue,
-                                  dob: (_dateOfBirthController.text == "")
-                                      ? widget.getProfileState.userDetail!.dob
-                                      : _dateOfBirthController.text,
-                                  permanentAddress:
-                                      _permanentAddressController.text == ""
-                                          ? widget.getProfileState.userDetail!
-                                              .permanentAddress
-                                          : _permanentAddressController.text,
-                                  temporaryAddress:
-                                      _temporaryAddressController.text == ""
-                                          ? widget.getProfileState.userDetail!
-                                              .temporaryAddress
-                                          : _temporaryAddressController.text,
-                                  contactNumber2: _phoneNumberController.text ==
-                                          ""
-                                      ? widget.getProfileState.userDetail!
-                                          .contactNumber2
-                                      : _phoneNumberController.text,
-                                  userDocument:
-                                      _documentTypesController.text == ""
-                                          ? widget.getProfileState.userDetail!
-                                              .userDocument
-                                          : _documentTypesController.text,
-                                  id: 'KdNUBc6r+5WeVj1uUOLKnw=='),
-                            ),
-                          ),
+                    BlocBuilder<UploadImageBloc, UploadImageState>(
+                      builder: (context, Imagestate) {
+                        return Padding(
+                          padding: const EdgeInsets.all(13),
+                          child: button('Save', () async {
+                            BlocProvider.of<UploadImageBloc>(context).add(
+                                SaveImageEvent(
+                                    imageName:
+                                        image == null ? "" : image!.path));
+
+                            print("image uploaded happeno");
+
+                            Future.delayed(const Duration(seconds: 5), () {
+                              print("Iam in middle of two bloc");
+                              if (Imagestate is SaveImageLoadedState) {
+                                BlocProvider.of<ProfileBloc>(context).add(
+                                  SaveUserDetailsEvent(
+                                    saveUserDetailsDataModel:
+                                        SaveUserDetailsDataModel(
+                                      id: 'Fii0wdochNnYL15BnZAJMg==', //userid
+                                      roleId: 'Nh5PXNgMPBdS1gqJOz7PoQ==',
+                                      email: 'test12345@gmail.com',
+                                      phoneNumber: '0978676543',
+                                      roleName: 'SALES REPRESENTATIVE',
+                                      userDetail: UserDetailsModel(
+                                          user_detail_id:
+                                              "KdNUBc6r+5WeVj1uUOLKnw==",
+                                          fullName: (_userNameController.text == "")
+                                              ? widget.getProfileState
+                                                  .userDetail!.fullName
+                                              : _userNameController.text,
+                                          gender: (selectedValue == "")
+                                              ? widget.getProfileState
+                                                  .userDetail!.gender
+                                              : selectedValue,
+                                          dob: (_dateOfBirthController.text == "")
+                                              ? widget.getProfileState
+                                                  .userDetail!.dob
+                                              : _dateOfBirthController.text,
+                                          permanentAddress:
+                                              _permanentAddressController.text == ""
+                                                  ? widget
+                                                      .getProfileState
+                                                      .userDetail!
+                                                      .permanentAddress
+                                                  : _permanentAddressController
+                                                      .text,
+                                          temporaryAddress:
+                                              _temporaryAddressController.text == ""
+                                                  ? widget
+                                                      .getProfileState
+                                                      .userDetail!
+                                                      .temporaryAddress
+                                                  : _temporaryAddressController
+                                                      .text,
+                                          contactNumber2:
+                                              _phoneNumberController.text == ""
+                                                  ? widget
+                                                      .getProfileState
+                                                      .userDetail!
+                                                      .contactNumber2
+                                                  : _phoneNumberController.text,
+                                          userDocument: Imagestate.imageResponse.id == ""
+                                              ? 'Previous path'
+                                              : "AqwGu8bsOtIe2a2fs!@sHuUQ2w==", //image id
+                                          id: 'KdNUBc6r+5WeVj1uUOLKnw=='),
+                                    ),
+                                  ),
+                                );
+                              } else if (Imagestate is SaveImageFailedState) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Image upload Error.')));
+                              } // Prints after 1 second.
+                            });
+                          },
+                              (Imagestate is SaveImageLoadingState
+                                  ? (Profilestate is SaveUserDetailsLoadedState
+                                      ? true
+                                      : false)
+                                  : false),
+                              AppColors.buttonColor),
                         );
-                        // clearText();
-                        // Navigator.pushNamed(context, Routes.profileRoute);
-                      }, state is SaveUserDetailsLoadedState ? true : false,
-                          AppColors.buttonColor),
+                      },
                     )
                   ],
                 ),
@@ -356,9 +496,9 @@ Widget radioButtonWidget(
   );
 }
 
-Widget imageUpload() {
+Widget imageUpload(Function() onclick) {
   File _image;
-  final picker = ImagePicker();
+  // final picker = ImagePicker();
   return Stack(
     // textDirection: TextDirection.rtl,
     children: [
@@ -397,20 +537,7 @@ Widget imageUpload() {
           child: InkWell(
             onTap: () {
               Future selectOrTakePhoto() async {
-                final pickedFile =
-                    await picker.getImage(source: ImageSource.gallery);
-
-                print('object of iamge 1234');
-
-                // setState(() {
-                //   if (pickedFile != null) {
-                //     _image = File(pickedFile.path);
-                //     // Navigator.pushNamed(context, routeEdit,
-                //     //     arguments: _image);
-                //     print('object of image');
-                //   } else
-                //     print('No photo was selected or taken');
-                // });
+                onclick;
               }
             },
             child: Container(

@@ -8,8 +8,10 @@ Widget textFormField(
     TextInputType textInputType = TextInputType.text,
     required String? Function(String?) validator,
     required void Function() obsecureText1,
-    bool showObsecureIcon = false}) {
+    bool showObsecureIcon = false,
+    bool enableTextField = true}) {
   return TextFormField(
+    enabled: enableTextField,
     controller: controller,
     validator: (val) => validator(val),
     keyboardType: textInputType,
