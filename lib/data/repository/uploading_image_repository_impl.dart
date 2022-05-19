@@ -12,7 +12,7 @@ class UploadImageRepositoryImpl implements UploadImageRepository {
   var uploadImageRemoteDataSource =
       getIt<UploadImageRemoteDataSource>();
   @override
-  Future<Either<Failure, ImageResponse>> uploadImageSave(String imageName) async {
+  Future<Either<Failure, String>> uploadImageSave(String imageName) async {
     try {
       final response = await uploadImageRemoteDataSource.uploadImageSave(imageName);
 

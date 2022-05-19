@@ -51,5 +51,5 @@ abstract class SalesTeamRepository {
 }
 
 abstract class UploadImageRepository {
-  Future<Either<Failure, ImageResponse>> uploadImageSave(String imageName);
+  Future<Either<Failure, String>> uploadImageSave(String imageName);
 }

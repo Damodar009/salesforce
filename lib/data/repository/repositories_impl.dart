@@ -30,8 +30,10 @@ class RepositoryImplementation implements Repository {
 
       Box box = await Hive.openBox(HiveConstants.userdata);
 
-      useCaseForHiveImpl.saveValueByKey(
-          box, "access_token", question.access_token);
+
+
+      // useCaseForHiveImpl.saveValueByKey(
+      //     box, "access_token", question.access_token);
       useCaseForHiveImpl.saveValueByKey(
           box, "access_token", question.access_token);
       useCaseForHiveImpl.saveValueByKey(
@@ -42,11 +44,14 @@ class RepositoryImplementation implements Repository {
       useCaseForHiveImpl.saveValueByKey(box, "userid", question.userid);
       useCaseForHiveImpl.saveValueByKey(box, "name", question.name);
       useCaseForHiveImpl.saveValueByKey(box, "token_type", question.token_type);
+      useCaseForHiveImpl.saveValueByKey(box, "user_detail_id", question.userDetailId);
 
       String access_token =
           useCaseForHiveImpl.getValueByKey(box, "access_token").toString();
 
       print(" this is access_token hahhah $access_token");
+
+      print(box.keys);
 
       return Right(question);
     } catch (e) {
@@ -144,11 +149,17 @@ class RepositoryImplementation implements Repository {
       print('hello hello hello hello');
       final response = await remoteSource.getUserDetailsData();
 
-      // Box box = await Hive.openBox(HiveConstants.userdata);
+      Box box = await Hive.openBox(HiveConstants.userdata);
 
-      // useCaseForHiveImpl.saveValueByKey(box, "roleId", response.roleId);
-      // useCaseForHiveImpl.saveValueByKey(
-      //     box, "user_detail_id", response.userDetail!.user_detail_id);
+      useCaseForHiveImpl.saveValueByKey(box, "roleId", response.roleId);
+      useCaseForHiveImpl.saveValueByKey(box, "email", response.email);
+      useCaseForHiveImpl.saveValueByKey(box, "phoneNumber", response.phoneNumber);
+
+      String roleId =
+      useCaseForHiveImpl.getValueByKey(box, "roleId").toString();
+
+      print("your role id is $roleId");
+
 
       return Right(response);
     } catch (e) {

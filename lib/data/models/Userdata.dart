@@ -14,9 +14,9 @@ class UserDataModel extends UserData {
       String? full_name,
       String? name,
       String? userid,
-      String? user_detail_id)
+      String? userDetailId)
       : super(access_token, token_type, refresh_token, expires_in, scope, role,
-            full_name, name, userid, user_detail_id);
+            full_name, name, userid, userDetailId);
   factory UserDataModel.fromJson(Map<String, dynamic> json) =>
       _$UserDataModelFromJson(json);
 

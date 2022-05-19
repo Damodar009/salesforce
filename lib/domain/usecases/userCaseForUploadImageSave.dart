@@ -8,7 +8,7 @@ import 'package:salesforce/error/failure.dart';
 import 'package:salesforce/injectable.dart';
 
 abstract class UseCaseForUploadImage {
-  Future<Either<Failure, ImageResponse>> uploadImageSave(String imageName);
+  Future<Either<Failure, String>> uploadImageSave(String imageName);
 }
 
 @injectable
@@ -17,7 +17,7 @@ class UseCaseForUploadImageImpl implements UseCaseForUploadImage {
   UseCaseForUploadImageImpl();
 
   @override
-  Future<Either<Failure, ImageResponse>> uploadImageSave(String imageName) async {
+  Future<Either<Failure, String>> uploadImageSave(String imageName) async {
     return await uploadImageRepository.uploadImageSave(imageName);
   }
 }

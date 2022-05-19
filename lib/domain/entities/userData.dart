@@ -8,7 +8,7 @@ class UserData {
   final String? full_name;
   final String? name;
   final String? userid;
-  final String? user_detail_id;
+  final String? userDetailId;
   UserData(
       this.access_token,
       this.token_type,
@@ -19,5 +19,5 @@ class UserData {
       this.full_name,
       this.name,
       this.userid,
-      this.user_detail_id);
+      this.userDetailId);
 }

@@ -7,8 +7,21 @@ import '../../utils/app_colors.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/buttonWidget.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

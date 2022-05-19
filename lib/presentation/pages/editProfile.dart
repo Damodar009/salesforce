@@ -24,8 +24,12 @@ import '../widgets/textformfeild.dart';
 
 class EditProfileScreen extends StatefulWidget {
   UserDetailsData getProfileState;
-  EditProfileScreen({Key? key, required this.getProfileState})
-      : super(key: key);
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+
+  EditProfileScreen({
+    Key? key,
+    required this.getProfileState,
+  }) : super(key: key);
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -42,6 +46,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String selectedValue = "";
+
   void selectValueRadioButton(String selectValue) {
     setState(() {
       selectedValue = selectValue;
@@ -103,7 +108,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         return BlocListener<ProfileBloc, ProfileState>(
           listener: (context, Profilestate) {
             if (Profilestate is SaveUserDetailsLoadedState) {
-              BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
+              // BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
+
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Profile has been updated')));
             } else if (Profilestate is SaveUserDetailsFailedState) {
@@ -217,8 +223,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onChanged: (val) {
                         setState(() {
                           dobOnChangeValue = val;
-                          // print(dobOnChangeValue);
-                          // print("your dob is");
                         });
                       },
                       validator: (val) {
@@ -389,76 +393,105 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return Padding(
                           padding: const EdgeInsets.all(13),
                           child: button('Save', () async {
-                            BlocProvider.of<UploadImageBloc>(context).add(
-                                SaveImageEvent(
-                                    imageName:
-                                        image == null ? "" : image!.path));
+                            print("object99999");
 
-                            print("image uploaded happeno");
+                            //image event
+                            BlocProvider.of<UploadImageBloc>(context)
+                                .add(SaveImageEvent(imageName: image!.path));
 
-                            Future.delayed(const Duration(seconds: 5), () {
-                              print("Iam in middle of two bloc");
-                              if (Imagestate is SaveImageLoadedState) {
-                                BlocProvider.of<ProfileBloc>(context).add(
-                                  SaveUserDetailsEvent(
-                                    saveUserDetailsDataModel:
-                                        SaveUserDetailsDataModel(
-                                      id: 'Fii0wdochNnYL15BnZAJMg==', //userid
-                                      roleId: 'Nh5PXNgMPBdS1gqJOz7PoQ==',
-                                      email: 'test12345@gmail.com',
-                                      phoneNumber: '0978676543',
-                                      roleName: 'SALES REPRESENTATIVE',
-                                      userDetail: UserDetailsModel(
-                                          user_detail_id:
-                                              "KdNUBc6r+5WeVj1uUOLKnw==",
-                                          fullName: (_userNameController.text == "")
-                                              ? widget.getProfileState
-                                                  .userDetail!.fullName
-                                              : _userNameController.text,
-                                          gender: (selectedValue == "")
-                                              ? widget.getProfileState
-                                                  .userDetail!.gender
-                                              : selectedValue,
-                                          dob: (_dateOfBirthController.text == "")
-                                              ? widget.getProfileState
-                                                  .userDetail!.dob
-                                              : _dateOfBirthController.text,
-                                          permanentAddress:
-                                              _permanentAddressController.text == ""
-                                                  ? widget
-                                                      .getProfileState
-                                                      .userDetail!
-                                                      .permanentAddress
-                                                  : _permanentAddressController
-                                                      .text,
-                                          temporaryAddress:
-                                              _temporaryAddressController.text == ""
-                                                  ? widget
-                                                      .getProfileState
-                                                      .userDetail!
-                                                      .temporaryAddress
-                                                  : _temporaryAddressController
-                                                      .text,
-                                          contactNumber2:
-                                              _phoneNumberController.text == ""
-                                                  ? widget
-                                                      .getProfileState
-                                                      .userDetail!
-                                                      .contactNumber2
-                                                  : _phoneNumberController.text,
-                                          userDocument: Imagestate.imageResponse.id == ""
-                                              ? 'Previous path'
-                                              : "AqwGu8bsOtIe2a2fs!@sHuUQ2w==", //image id
-                                          id: 'KdNUBc6r+5WeVj1uUOLKnw=='),
-                                    ),
+                            //image state check
+
+                            String? imageId = Imagestate is SaveImageLoadedState
+                                ? Imagestate.imageResponse
+                                : "Image unable to upload";
+
+                            //edit profile event
+
+                            String? userid;
+                            String? roleName;
+                            String? roleId;
+                            String? userDetailId;
+                            String? email;
+                            String? phoneNumber;
+
+                            Box box =
+                                await Hive.openBox(HiveConstants.userdata);
+                            var useridSuccessOrFailed =
+                                useCaseForHiveImpl.getValueByKey(box, "userid");
+                            var roleNameSuccessOrFailed =
+                                useCaseForHiveImpl.getValueByKey(box, "role");
+                            var userDetailIdSuccessOrFailed = useCaseForHiveImpl
+                                .getValueByKey(box, "user_detail_id");
+
+                            var roleIdSuccessOrFailed =
+                                useCaseForHiveImpl.getValueByKey(box, "roleId");
+                            var emailSuccessOrFailed =
+                                useCaseForHiveImpl.getValueByKey(box, "email");
+                            var phoneNumberSuccessOrFailed = useCaseForHiveImpl
+                                .getValueByKey(box, "phoneNumber");
+
+                            useridSuccessOrFailed.fold((l) => {print("failed")},
+                                (r) => {userid = r!, print(r.toString())});
+                            roleNameSuccessOrFailed.fold(
+                                (l) => {print("failed")},
+                                (r) => {roleName = r!, print(r.toString())});
+                            userDetailIdSuccessOrFailed.fold(
+                                (l) => {print("failed")},
+                                (r) =>
+                                    {userDetailId = r!, print(r.toString())});
+                            roleIdSuccessOrFailed.fold((l) => {print("failed")},
+                                (r) => {roleId = r!, print(r.toString())});
+                            emailSuccessOrFailed.fold((l) => {print("failed")},
+                                (r) => {email = r!, print(r.toString())});
+                            phoneNumberSuccessOrFailed.fold(
+                                (l) => {print("failed")},
+                                (r) => {phoneNumber = r!, print(r.toString())});
+
+                            BlocProvider.of<ProfileBloc>(context).add(
+                              SaveUserDetailsEvent(
+                                saveUserDetailsDataModel:
+                                    SaveUserDetailsDataModel(
+                                  id: userid,
+                                  //userid
+                                  roleId: roleId,
+                                  email: email,
+                                  phoneNumber: phoneNumber,
+                                  roleName: roleName,
+                                  userDetail: UserDetailsModel(
+                                    id: userDetailId,
+                                    fullName: (_userNameController.text == "")
+                                        ? widget.getProfileState.userDetail!
+                                            .fullName
+                                        : _userNameController.text,
+                                    gender: (selectedValue == "")
+                                        ? widget
+                                            .getProfileState.userDetail!.gender
+                                        : selectedValue,
+                                    dob: (_dateOfBirthController.text == "")
+                                        ? widget.getProfileState.userDetail!.dob
+                                        : _dateOfBirthController.text,
+                                    permanentAddress:
+                                        _permanentAddressController.text == ""
+                                            ? widget.getProfileState.userDetail!
+                                                .permanentAddress
+                                            : _permanentAddressController.text,
+                                    temporaryAddress:
+                                        _temporaryAddressController.text == ""
+                                            ? widget.getProfileState.userDetail!
+                                                .temporaryAddress
+                                            : _temporaryAddressController.text,
+                                    contactNumber2:
+                                        _phoneNumberController.text == ""
+                                            ? widget.getProfileState.userDetail!
+                                                .contactNumber2
+                                            : _phoneNumberController.text,
+                                    userDocument: imageId, //image id
                                   ),
-                                );
-                              } else if (Imagestate is SaveImageFailedState) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Image upload Error.')));
-                              } // Prints after 1 second.
-                            });
+                                ),
+                              ),
+                            );
+                            BlocProvider.of<ProfileBloc>(context)
+                                .add(GetProfileEvent());
                           },
                               (Imagestate is SaveImageLoadingState
                                   ? (Profilestate is SaveUserDetailsLoadedState

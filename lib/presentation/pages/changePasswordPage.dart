@@ -65,7 +65,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         return null;
                       }
                     },
-                    controller: _oldPasswordController,
+                    controller: _newPasswordController,
                     obsecureText: obsecureTextNewPassword,
                     hintText: 'Password',
                     obsecureText1: () {
@@ -85,7 +85,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         return null;
                       }
                     },
-                    controller: _newPasswordController,
+                    controller: _oldPasswordController,
                     obsecureText: obsecureTextOldPassword,
                     hintText: 'new Password',
                     obsecureText1: () {
@@ -100,7 +100,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     showObsecureIcon: true,
                     validator: (value) {
                       if (!Validators.isValidConfirmPassword(
-                          _newPasswordController.text,
+                          _oldPasswordController.text,
                           _reTypePasswordController.text)) {
                         return "Confirm password does not match";
                       } else {

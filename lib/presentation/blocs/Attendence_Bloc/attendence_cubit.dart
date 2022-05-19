@@ -28,7 +28,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
     String userId = "";
     Box box = await Hive.openBox(HiveConstants.userdata);
     var failureOrSuccess = useCaseForHiveImpl.getValueByKey(box, "userid");
-    failureOrSuccess.fold((l) => {emit(UserGetFailed())}, (r) => {userId = r});
+    failureOrSuccess.fold((l) => {emit(UserGetFailed())}, (r) => {userId = r!});
 
     return userId;
   }

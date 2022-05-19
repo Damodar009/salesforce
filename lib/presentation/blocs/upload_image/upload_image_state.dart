@@ -15,7 +15,7 @@ class SaveImageLoadingState extends UploadImageState{
 }
 
 class SaveImageLoadedState extends UploadImageState{
-  final ImageResponse imageResponse;
+  final String imageResponse;
 
   const SaveImageLoadedState({required this.imageResponse});
   @override

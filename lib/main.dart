@@ -76,8 +76,7 @@ class _MyAppState extends State<MyApp> {
             create: (context) => AttendenceCubit(useCaseForAttendenceImpl)),
         BlocProvider(
             create: (context) =>
-                ProfileBloc(useCaseForRemoteSourceImpl, useCaseForHiveImpl)
-                  ..add(GetProfileEvent())),
+                ProfileBloc(useCaseForRemoteSourceImpl, useCaseForHiveImpl)),
         BlocProvider(
             create: (context) => UploadImageBloc(useCaseForUploadImageImpl)),
         // BlocProvider(

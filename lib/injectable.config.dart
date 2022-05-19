@@ -20,11 +20,11 @@ import 'data/repository/salesPersonRepositoryImpl.dart' as _i12;
 import 'data/repository/uploading_image_repository_impl.dart' as _i14;
 import 'domain/repositories/repository.dart' as _i4;
 import 'domain/usecases/hiveUseCases/hiveUseCases.dart' as _i16;
-import 'domain/usecases/userCaseForUploadImageSave.dart' as _i20;
 import 'domain/usecases/useCaseForAttebdenceSave.dart' as _i15;
 import 'domain/usecases/useCaseForSalesDataTrackCollection.dart' as _i18;
 import 'domain/usecases/useCaseForSalesPerson.dart' as _i19;
 import 'domain/usecases/usecasesForRemoteSource.dart' as _i17;
+import 'domain/usecases/userCaseForUploadImageSave.dart' as _i20;
 import 'utils/geolocation.dart' as _i6; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars
