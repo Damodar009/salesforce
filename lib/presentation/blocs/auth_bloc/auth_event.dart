@@ -8,7 +8,8 @@ abstract class AuthEvent extends Equatable {
 }
 
 class LoginAttemptEvent extends AuthEvent {
-  const LoginAttemptEvent({required this.username, required this.password});
+  const LoginAttemptEvent(
+      {required this.username, required this.password});
 
   final String username;
   final String password;
@@ -21,7 +22,9 @@ class ChangePasswordEvent extends AuthEvent {
   final String oldPassword;
   final String newPassword;
 
-  ChangePasswordEvent({required this.oldPassword, required this.newPassword});
+  const ChangePasswordEvent(
+      {required this.oldPassword, required this.newPassword});
+
   @override
   // TODO: implement props
   List<Object> get props => [oldPassword, newPassword];
@@ -31,6 +34,7 @@ class ResetPasswordEvent extends AuthEvent {
   final String newPassword;
 
   ResetPasswordEvent({required this.newPassword});
+
   @override
   // TODO: implement props
   List<Object> get props => [newPassword];

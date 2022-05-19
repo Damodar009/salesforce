@@ -138,6 +138,7 @@ class RemoteSourceImplementation implements RemoteSource {
         throw ServerException();
       }
     } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }
@@ -178,7 +179,10 @@ class RemoteSourceImplementation implements RemoteSource {
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
+      print("this is change passowrd");
+      print(response.statusCode);
       if (response.data["status"] == true) {
+        print("print(response.statusCode);");
         return Future.value('Success');
       } else {
         throw ServerException();

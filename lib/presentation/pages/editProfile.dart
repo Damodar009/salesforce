@@ -40,14 +40,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   File? image;
 
-  openHiveBox() async {
-    Box box = await Hive.openBox(HiveConstants.userdata);
-    return box;
-  }
-
   String selectedValue = "";
 
-  void selectValueRadioButton(String selectValue) {
+  void selectValueRadioButton(
+    String selectValue,
+  ) {
     setState(() {
       selectedValue = selectValue;
     });
@@ -92,7 +89,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    openHiveBox();
+    // String? selectedValue = widget.getProfileState.userDetail?.gender;
+    // selectValueRadioButton("",selectedValue: selectedValue!);
     super.initState();
   }
 
