@@ -62,6 +62,7 @@ dependencies:
   mac_address: ^1.0.0
   # background_location: ^0.8.1
   uuid: ^3.0.6
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

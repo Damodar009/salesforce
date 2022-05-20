@@ -5,7 +5,6 @@ import '../../utils/app_colors.dart';
 import '../widgets/individualOrderDetail.dart';
 
 class ListOfOrderAndOutletDetailScreen extends StatelessWidget {
-
   ListOfOrderAndOutletDetailScreen({Key? key}) : super(key: key);
   String text = "1234567890m";
 
@@ -19,7 +18,8 @@ class ListOfOrderAndOutletDetailScreen extends StatelessWidget {
       body: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraint.maxHeight),
+            constraints:
+                BoxConstraints(minHeight: constraint.maxHeight),
             child: Column(
               // mainAxisSize: MainAxisSize.min,
               children: [

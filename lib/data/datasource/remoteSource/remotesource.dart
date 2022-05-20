@@ -82,7 +82,7 @@ class RemoteSourceImplementation implements RemoteSource {
           },
         ),
       );
-      if (response.statusCode == 200) {
+      if (response.data["status"] == true) {
         UserData userData = UserDataModel.fromJson(response.data);
 
         print(response.data);
@@ -164,12 +164,13 @@ class RemoteSourceImplementation implements RemoteSource {
     successOrFailed.fold(
         (l) => {print("failed")}, (r) => {userid = r!, print(r.toString())});
     print("this is password");
+
     print(oldpassword);
     print(newPassword);
-
+    print(ApiUrl.changePassword ,);
     try {
       Response response = await dio.post(
-        ApiUrl.changePassword,
+        ApiUrl.changePassword ,
         data: <String, String>{
           'oldPassword': oldpassword,
           'newPassword': newPassword,
@@ -182,6 +183,7 @@ class RemoteSourceImplementation implements RemoteSource {
       print("this is change passowrd");
       print(response.statusCode);
       if (response.data["status"] == true) {
+        print(response.data);
         print("print(response.statusCode);");
         return Future.value('Success');
       } else {

@@ -308,7 +308,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     SizedBox(
                       height: heightBetweenTextField,
                     ),
-                    image != null ? Image.file(image!) : Container(),
+                    // image != null ? Image.file(image!) : Container(),
                     const Text('Upload Identification Document'),
                     SizedBox(
                       height: heightBetweenTextField,
@@ -322,7 +322,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           decoration: InputDecoration(
                               fillColor: Colors.white,
                               errorStyle:
-                                  TextStyle(color: AppColors.primaryColor),
+                                  const TextStyle(color: AppColors.primaryColor),
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(15.0),

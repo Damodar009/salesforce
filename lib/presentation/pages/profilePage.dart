@@ -38,10 +38,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 13, vertical: 20),
           child: LayoutBuilder(builder: (context, constraints) {
             return ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+              constraints:
+                  BoxConstraints(maxHeight: constraints.maxHeight),
               child: BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, getProfilestate) {
                   if (getProfilestate is GetProfileLoadedState) {
@@ -50,11 +52,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(
                           height: 430,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
                             children: [
                               Text(
-                                getProfilestate
-                                        .userDetailsdata.userDetail?.fullName ??
+                                getProfilestate.userDetailsdata
+                                        .userDetail?.fullName ??
                                     "No name",
                                 style: Theme.of(context)
                                     .textTheme
@@ -65,7 +68,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                               ),
                               Text(
-                                getProfilestate.userDetailsdata.email!,
+                                getProfilestate
+                                    .userDetailsdata.email!,
                               ),
                               SizedBox(
                                 height: mediaQueryHeight * 0.07,
@@ -75,18 +79,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     horizontal: 20, vertical: 20),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius:
+                                      BorderRadius.circular(12),
                                   boxShadow: const [
                                     BoxShadow(
-                                      color: AppColors.backgroundColor,
+                                      color:
+                                          AppColors.backgroundColor,
                                       blurRadius: 70,
                                       spreadRadius: 1,
-                                      offset: Offset(0, 80), // Shadow position
+                                      offset: Offset(
+                                          0, 80), // Shadow position
                                     ),
                                   ],
                                 ),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                   children: [
                                     const Text(
                                       'Contact No.',
@@ -95,8 +103,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       height: mediaQueryHeight * 0.01,
                                     ),
                                     Text(
-                                      getProfilestate.userDetailsdata
-                                              .userDetail!.contactNumber2 ??
+                                      getProfilestate
+                                              .userDetailsdata
+                                              .userDetail!
+                                              .contactNumber2 ??
                                           "No phone number",
                                     ),
                                     SizedBox(
@@ -109,8 +119,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       height: mediaQueryHeight * 0.01,
                                     ),
                                     Text(
-                                      getProfilestate.userDetailsdata
-                                              .userDetail!.permanentAddress ??
+                                      getProfilestate
+                                              .userDetailsdata
+                                              .userDetail!
+                                              .permanentAddress ??
                                           "No Address",
                                     ),
                                     SizedBox(
@@ -120,34 +132,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment
+                                              .spaceBetween,
                                       children: [
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment
+                                                  .start,
                                           children: [
                                             const Text(
                                               'Date of Birth',
                                             ),
                                             SizedBox(
-                                              height: mediaQueryHeight * 0.01,
+                                              height:
+                                                  mediaQueryHeight *
+                                                      0.01,
                                             ),
                                             Text(
-                                              getProfilestate.userDetailsdata
-                                                      .userDetail!.dob ??
+                                              getProfilestate
+                                                      .userDetailsdata
+                                                      .userDetail!
+                                                      .dob ??
                                                   "No dob".toString(),
                                             ),
                                           ],
                                         ),
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment
+                                                  .start,
                                           children: [
                                             const Text(
                                               'Temporary Address',
                                             ),
                                             SizedBox(
-                                              height: mediaQueryHeight * 0.01,
+                                              height:
+                                                  mediaQueryHeight *
+                                                      0.01,
                                             ),
                                             Text(
                                               getProfilestate
@@ -183,41 +204,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(
                           height: mediaQueryHeight * 0.04,
                         ),
-                        GridView.count(
-                            shrinkWrap: true,
-                            primary: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 2,
-                            children: List.generate(4, (index) {
-                              return Center(
-                                child: Column(children: [
-                                  const Text(
-                                    'CitizenShip',
-                                  ),
-                                  Stack(
-                                    children: const [
-                                      Icon(
-                                        Icons.image,
-                                        size: 100,
-                                      ),
-                                      Positioned(
-                                          right: 17,
-                                          top: 6,
-                                          child: Text(
-                                            'x',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold),
-                                          )),
-                                    ],
-                                  ),
-                                  const Text(
-                                    'view',
-                                  )
-                                ]),
-                              );
-                            })),
+                        Row(
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                              getProfilestate
+                                                      .userDetailsdata
+                                                      .userDetail!
+                                                      .userDocument ??
+                                                  ""))),
+                                ),
+                                const Positioned(
+                                    right: 17,
+                                    child: Text(
+                                  'x',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        // GridView.count(
+                        //     shrinkWrap: true,
+                        //     primary: true,
+                        //     physics:
+                        //         const NeverScrollableScrollPhysics(),
+                        //     crossAxisCount: 2,
+                        //     children: List.generate(4, (index) {
+                        //       return Center(
+                        //         child: Column(children: [
+                        //           const Text(
+                        //             'CitizenShip',
+                        //           ),
+                        //           Stack(
+                        //             children: const [
+                        //               Icon(
+                        //                 Icons.image,
+                        //                 size: 100,
+                        //               ),
+                        //               Positioned(
+                        //                   right: 17,
+                        //                   top: 6,
+                        //                   child: Text(
+                        //                     'x',
+                        //                     style: TextStyle(
+                        //                         color: Colors.white,
+                        //                         fontSize: 24,
+                        //                         fontWeight:
+                        //                             FontWeight.bold),
+                        //                   )),
+                        //             ],
+                        //           ),
+                        //           const Text(
+                        //             'view',
+                        //           )
+                        //         ]),
+                        //       );
+                        //     })),
+                        //
                         SizedBox(
                           height: mediaQueryHeight * 0.04,
                         ),
@@ -227,8 +280,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       EditProfileScreen(
-                                          getProfileState: getProfilestate
-                                              .userDetailsdata)));
+                                          getProfileState:
+                                              getProfilestate
+                                                  .userDetailsdata)));
                         }, false, AppColors.buttonColor),
                         SizedBox(
                           height: mediaQueryHeight * 0.01,
@@ -242,8 +296,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }, false, const Color(0xfffa8b7cb)),
                       ],
                     );
+                  } else if (getProfilestate
+                      is GetProfileFailedState) {
+                    return const Center(child: Text('No data found'));
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator());
                   }
                 },
               ),

@@ -19,9 +19,12 @@ class NewOrderScreen extends StatefulWidget {
 
 class _NewOrderScreenState extends State<NewOrderScreen> {
   String dropdownvalue = '';
-  double? textbuttonSize ;
+  double? textbuttonSize;
+
   final TextEditingController _outletName = TextEditingController();
-  final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController =
+      TextEditingController();
+
   // final TextEditingController _textEditingController = TextEditingController();
   bool showEditBUtton = false;
   bool showSaveBUtton = false;
@@ -51,7 +54,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-   textbuttonSize =  MediaQuery.of(context).size.width * 0.9 ;
+    textbuttonSize = MediaQuery.of(context).size.width * 0.9;
     Widget newOrderScreenBody() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,8 +98,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
           returnPressed
               ? returnsWidget()
-              : textButton(
-                  "Return", MediaQuery.of(context).size.width * 0.9, true, () {
+              : textButton("Return",
+                  MediaQuery.of(context).size.width * 0.9, true, () {
                   setState(() {
                     returnPressed = true;
                     availabilityPressed = false;
@@ -109,9 +112,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
           availabilityPressed
               ? availabilityWidget()
-              : textButton(
-                  "Availability", MediaQuery.of(context).size.width * 0.9, true,
-                  () {
+              : textButton("Availability",
+                  MediaQuery.of(context).size.width * 0.9, true, () {
                   setState(() {
                     returnPressed = false;
                     availabilityPressed = true;
@@ -123,8 +125,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ),
           salesPressed
               ? salesWidet()
-              : textButton(
-                  "Sales", textbuttonSize!, true, () {
+              : textButton("Sales", textbuttonSize!, true, () {
                   setState(() {
                     returnPressed = false;
                     availabilityPressed = false;
@@ -157,8 +158,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               //           visitedOutlets: visitedOutlets,
               //         )));
 
-              Navigator.of(context)
-                  .pushNamed(Routes.visitedOutlets, arguments: visitedOutlets);
+              Navigator.of(context).pushNamed(Routes.visitedOutlets,
+                  arguments: visitedOutlets);
             } else {
               setState(() {
                 ignorePointer = true;
@@ -229,7 +230,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         child: LayoutBuilder(builder: (context, constraint) {
           return SingleChildScrollView(
             child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraint.maxHeight),
+                constraints:
+                    BoxConstraints(minHeight: constraint.maxHeight),
                 child: ignorePointer
                     ? IgnorePointer(child: newOrderScreenBody())
                     : newOrderScreenBody()),
@@ -345,44 +347,58 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         const SizedBox(
           height: 12,
         ),
+        Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 8.0, vertical: 13.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              shape: BoxShape.rectangle,
+              border: Border.all(color: AppColors.primaryColor)),
+          child: Column(
+            children: [
+              title("Product Name"),
+              const SizedBox(
+                height: 12,
+              ),
+              textFormField(
+                  controller: _textEditingController,
+                  validator: (string) {},
+                  obsecureText1: () {},
+                  hintText: 'Rc cola '),
+              const SizedBox(
+                height: 12,
+              ),
 
-        //todo
-        title("Product Name"),
-        const SizedBox(
-          height: 12,
-        ),
-        textFormField(
-            controller: _textEditingController,
-            validator: (string) {},
-            obsecureText1: () {},
-            hintText: 'Rc cola '),
-        const SizedBox(
-          height: 12,
-        ),
+              title("Types of Product"),
+              const SizedBox(
+                height: 12,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    child: textFeildWithDropDown(
+                        validator: (string) {},
+                        hintText: 'Frank miller ',
+                        item: []),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    //   child: textFormFeildIncreAndDecre(
+                    //       hintText: '9999',
+                    //       controller: _textEditingController,
+                    //       validator: (string) {}),
+                  ),
+                  circleContainer()
+                ],
+              ),
 
-        title("Types of Product"),
-        const SizedBox(
-          height: 12,
-        ),
-        Row(
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.35,
-              child: textFeildWithDropDown(
-                  validator: (string) {}, hintText: 'Frank miller ', item: []),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.35,
-              //   child: textFormFeildIncreAndDecre(
-              //       hintText: '9999',
-              //       controller: _textEditingController,
-              //       validator: (string) {}),
-            ),
-            circleContainer()
-          ],
+              //todo
+            ],
+          ),
         ),
       ],
     );
@@ -409,26 +425,38 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         const SizedBox(
           height: 12,
         ),
-        title("Product Name"),
-        const SizedBox(
-          height: 12,
+        Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 8.0, vertical: 13.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              shape: BoxShape.rectangle,
+              border: Border.all(color: AppColors.primaryColor)),
+          child: Column(
+            children: [
+              title("Product Name"),
+              const SizedBox(
+                height: 12,
+              ),
+              textFormField(
+                  controller: _textEditingController,
+                  validator: (string) {},
+                  obsecureText1: () {},
+                  hintText: 'Rc cola '),
+              const SizedBox(
+                height: 12,
+              ),
+              title("Types of Product"),
+              const SizedBox(
+                height: 12,
+              ),
+              // textFeildWithDropDown(
+              //     controller: _textEditingController,
+              //     validator: (string) {},
+              //     hintText: 'Frank miller '),
+            ],
+          ),
         ),
-        textFormField(
-            controller: _textEditingController,
-            validator: (string) {},
-            obsecureText1: () {},
-            hintText: 'Rc cola '),
-        const SizedBox(
-          height: 12,
-        ),
-        title("Types of Product"),
-        const SizedBox(
-          height: 12,
-        ),
-        // textFeildWithDropDown(
-        //     controller: _textEditingController,
-        //     validator: (string) {},
-        //     hintText: 'Frank miller '),
         const SizedBox(
           height: 12,
         ),
@@ -461,8 +489,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         ),
         for (var i = 0; i < 3; i++)
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 8.0, vertical: 13.0),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -470,8 +498,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 shape: BoxShape.rectangle,
               ),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0, vertical: 13.0),
                 child: Column(
                   children: [
                     title("Product Name"),
@@ -497,7 +525,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           child: textFeildWithDropDown(
                               controller: _textEditingController,
                               validator: (string) {},
-                              hintText: 'Frank miller ', item: []),
+                              hintText: 'Frank miller ',
+                              item: []),
                         ),
 
                         //todo
@@ -509,9 +538,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ),
             ),
           ),
-
         textButton(
-             "Add mmore Prodeucts", textbuttonSize! , false, (){})
+            "Add mmore Prodeucts", textbuttonSize!, false, () {})
       ],
     );
   }
