@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
+import 'package:salesforce/data/models/Userdata.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
@@ -17,11 +22,12 @@ import '../datasource/remoteSource/remotesource.dart';
 class RepositoryImplementation implements Repository {
   var remoteSource = getIt<RemoteSource>();
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  final signInLocalDataSource = getIt<SignInLocalDataSource>();
 
   RepositoryImplementation({required this.remoteSource});
 
   @override
-  Future<Either<Failure, UserData>> login(
+  Future<Either<Failure, UserDataModel>> login(
       String username, String password) async {
     try {
       final question = await remoteSource.login(username, password);
@@ -29,8 +35,6 @@ class RepositoryImplementation implements Repository {
       print('you are inside repository impl');
 
       Box box = await Hive.openBox(HiveConstants.userdata);
-
-
 
       // useCaseForHiveImpl.saveValueByKey(
       //     box, "access_token", question.access_token);
@@ -44,14 +48,16 @@ class RepositoryImplementation implements Repository {
       useCaseForHiveImpl.saveValueByKey(box, "userid", question.userid);
       useCaseForHiveImpl.saveValueByKey(box, "name", question.name);
       useCaseForHiveImpl.saveValueByKey(box, "token_type", question.token_type);
-      useCaseForHiveImpl.saveValueByKey(box, "user_detail_id", question.userDetailId);
+      useCaseForHiveImpl.saveValueByKey(
+          box, "user_detail_id", question.userDetailId);
 
       String access_token =
           useCaseForHiveImpl.getValueByKey(box, "access_token").toString();
 
       print(" this is access_token hahhah $access_token");
 
-      print(box.keys);
+      await signInLocalDataSource.saveUserDataToLocal(question);
+      await signInLocalDataSource.getUserDataFromLocal();
 
       return Right(question);
     } catch (e) {
@@ -153,13 +159,13 @@ class RepositoryImplementation implements Repository {
 
       useCaseForHiveImpl.saveValueByKey(box, "roleId", response.roleId);
       useCaseForHiveImpl.saveValueByKey(box, "email", response.email);
-      useCaseForHiveImpl.saveValueByKey(box, "phoneNumber", response.phoneNumber);
+      useCaseForHiveImpl.saveValueByKey(
+          box, "phoneNumber", response.phoneNumber);
 
       String roleId =
-      useCaseForHiveImpl.getValueByKey(box, "roleId").toString();
+          useCaseForHiveImpl.getValueByKey(box, "roleId").toString();
 
       print("your role id is $roleId");
-
 
       return Right(response);
     } catch (e) {
@@ -171,7 +177,6 @@ class RepositoryImplementation implements Repository {
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
     SaveUserDetailsDataModel saveUserDetailsDataModel,
   ) async {
-    
     try {
       final response =
           await remoteSource.saveUserDetails(saveUserDetailsDataModel);

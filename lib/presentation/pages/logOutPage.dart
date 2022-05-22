@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 
 import '../../utils/app_colors.dart';
 import '../widgets/buttonWidget.dart';
@@ -63,8 +64,14 @@ class LogOutPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: button("Log off", () async {
-                  await SaveLocally().deletetoken();
-                  await SaveLocally().showtoken();
+
+                  print("log out button clicked");
+
+                  Box box = await Hive.openBox(HiveConstants.userdata);
+
+                  box.deleteFromDisk();
+                  // await SaveLocally().deletetoken();
+                  // await SaveLocally().showtoken();
                   Navigator.push(
                       context,
                       MaterialPageRoute(

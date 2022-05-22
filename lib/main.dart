@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:salesforce/data/datasource/local_data_sources.dart';
+import 'package:salesforce/data/models/Userdata.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/domain/usecases/userCaseForUploadImageSave.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
@@ -103,17 +105,31 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  final signInLocalDataSource = getIt<SignInLocalDataSource>();
 
   bool isLoggedIn = false;
   checkUserLoggedIn() async {
     try {
-      Box box = await Hive.openBox(HiveConstants.userdata);
+      // String? accessToken;
 
-      String checkUserAccessToken =
-          useCaseForHiveImpl.getValueByKey(box, "access_token").toString();
+      // Box box = await Hive.openBox(HiveConstants.userdata);
+
+      // var checkUserAccessToken =
+      //     useCaseForHiveImpl.getValueByKey(box, "access_token");
+
+      // checkUserAccessToken.fold((l) => {print("failed")},
+      //     (r) => {accessToken = r!, print(r.toString())});
+
+      // currentUserInfo.
+      print("this below is access toke hai ");
+      print("this is main page and the keys are below");
+
+      UserDataModel? userInfo =
+          await signInLocalDataSource.getUserDataFromLocal();
+      print(userInfo!.access_token);
 
       setState(() {
-        if (checkUserAccessToken.isNotEmpty) {
+        if (userInfo.access_token != null) {
           isLoggedIn = true;
         } else {
           isLoggedIn = false;

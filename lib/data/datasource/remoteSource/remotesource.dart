@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
-import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/data/models/RetailerPojo.dart';
 import 'package:salesforce/data/models/SalesDataCollection.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
@@ -27,7 +26,7 @@ import '../../models/RetailerType.dart';
 import '../../models/userDetailModel.dart';
 
 abstract class RemoteSource {
-  Future<UserData> login(String username, String password);
+  Future<UserDataModel> login(String username, String password);
 
   Future<String> changePassword(String oldpassword, String newPassword);
 
@@ -62,7 +61,7 @@ class RemoteSourceImplementation implements RemoteSource {
   RemoteSourceImplementation();
 
   @override
-  Future<UserData> login(String username, String password) async {
+  Future<UserDataModel> login(String username, String password) async {
     const String _clientId = 'clientId';
     const String _clientSecret = 'secret';
 
@@ -82,10 +81,10 @@ class RemoteSourceImplementation implements RemoteSource {
           },
         ),
       );
-      if (response.data["status"] == true) {
-        UserData userData = UserDataModel.fromJson(response.data);
+      if (response.statusCode == 200) {
+        UserDataModel userData = UserDataModel.fromJson(response.data);
 
-        print(response.data);
+        // jsonEncode(userData.to)
 
         return userData;
       } else {
@@ -167,10 +166,12 @@ class RemoteSourceImplementation implements RemoteSource {
 
     print(oldpassword);
     print(newPassword);
-    print(ApiUrl.changePassword ,);
+    print(
+      ApiUrl.changePassword,
+    );
     try {
       Response response = await dio.post(
-        ApiUrl.changePassword ,
+        ApiUrl.changePassword,
         data: <String, String>{
           'oldPassword': oldpassword,
           'newPassword': newPassword,
@@ -379,6 +380,10 @@ class RemoteSourceImplementation implements RemoteSource {
         useCaseForHiveImpl.getValueByKey(box, "access_token");
     accessTokenSuccessOrFailed.fold((l) => {print("failed")},
         (r) => {accessToken = r!, print(r.toString())});
+
+    print("this is access token");
+
+    print(accessToken);
 
     SaveUserDetailsDataModel saveUserDetailsData = SaveUserDetailsDataModel(
       id: saveUserDetailsDataModel.id,

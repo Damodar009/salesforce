@@ -229,6 +229,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       },
                       onSaved: (val) => print(val),
                     ),
+
                     SizedBox(
                       height: heightBetweenTextField,
                     ),
@@ -321,8 +322,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         TextField(
                           decoration: InputDecoration(
                               fillColor: Colors.white,
-                              errorStyle:
-                                  const TextStyle(color: AppColors.primaryColor),
+                              errorStyle: const TextStyle(
+                                  color: AppColors.primaryColor),
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(15.0),
@@ -405,42 +406,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                             //edit profile event
 
-                            String? userid;
-                            String? roleName;
-                            String? roleId;
-                            String? userDetailId;
-                            String? email;
                             String? phoneNumber;
 
                             Box box =
                                 await Hive.openBox(HiveConstants.userdata);
-                            var useridSuccessOrFailed =
-                                useCaseForHiveImpl.getValueByKey(box, "userid");
-                            var roleNameSuccessOrFailed =
-                                useCaseForHiveImpl.getValueByKey(box, "role");
-                            var userDetailIdSuccessOrFailed = useCaseForHiveImpl
-                                .getValueByKey(box, "user_detail_id");
 
-                            var roleIdSuccessOrFailed =
-                                useCaseForHiveImpl.getValueByKey(box, "roleId");
-                            var emailSuccessOrFailed =
-                                useCaseForHiveImpl.getValueByKey(box, "email");
                             var phoneNumberSuccessOrFailed = useCaseForHiveImpl
                                 .getValueByKey(box, "phoneNumber");
 
-                            useridSuccessOrFailed.fold((l) => {print("failed")},
-                                (r) => {userid = r!, print(r.toString())});
-                            roleNameSuccessOrFailed.fold(
-                                (l) => {print("failed")},
-                                (r) => {roleName = r!, print(r.toString())});
-                            userDetailIdSuccessOrFailed.fold(
-                                (l) => {print("failed")},
-                                (r) =>
-                                    {userDetailId = r!, print(r.toString())});
-                            roleIdSuccessOrFailed.fold((l) => {print("failed")},
-                                (r) => {roleId = r!, print(r.toString())});
-                            emailSuccessOrFailed.fold((l) => {print("failed")},
-                                (r) => {email = r!, print(r.toString())});
                             phoneNumberSuccessOrFailed.fold(
                                 (l) => {print("failed")},
                                 (r) => {phoneNumber = r!, print(r.toString())});
@@ -449,14 +422,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               SaveUserDetailsEvent(
                                 saveUserDetailsDataModel:
                                     SaveUserDetailsDataModel(
-                                  id: userid,
+                                  id: widget.getProfileState.id,
                                   //userid
-                                  roleId: roleId,
-                                  email: email,
+                                  roleId: widget.getProfileState.roleId,
+                                  email: widget.getProfileState.email,
                                   phoneNumber: phoneNumber,
-                                  roleName: roleName,
+                                  roleName: widget.getProfileState.roleName,
                                   userDetail: UserDetailsModel(
-                                    id: userDetailId,
+                                    id: widget.getProfileState.userDetail!
+                                        .user_detail_id,
                                     fullName: (_userNameController.text == "")
                                         ? widget.getProfileState.userDetail!
                                             .fullName
@@ -488,8 +462,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                               ),
                             );
-                            BlocProvider.of<ProfileBloc>(context)
-                                .add(GetProfileEvent());
+
+                            // Navigator.pushNamed(context, Routes.menuScreen);
+                            // BlocProvider.of<ProfileBloc>(context)
+                            //     .add(GetProfileEvent());
                           },
                               (Imagestate is SaveImageLoadingState
                                   ? (Profilestate is SaveUserDetailsLoadedState
