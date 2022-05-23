@@ -19,8 +19,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     // TODO: implement initState
     print("your are in profile page");
-    BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
+    
     super.initState();
+    BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
   }
 
   @override

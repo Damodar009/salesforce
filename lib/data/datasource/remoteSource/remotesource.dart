@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/RetailerPojo.dart';
 import 'package:salesforce/data/models/SalesDataCollection.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
@@ -57,6 +58,7 @@ abstract class RemoteSource {
 class RemoteSourceImplementation implements RemoteSource {
   Dio dio = Dio();
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  final signInLocalDataSource = getIt<SignInLocalDataSource>();
 
   RemoteSourceImplementation();
 

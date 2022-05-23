@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,27 +50,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  bool hasImage = false;
-  Future getImage() async {
-    final ImagePicker _picker = ImagePicker();
-    try {
-      final image = await _picker.pickImage(source: ImageSource.gallery);
-      print("dfgsadg");
-      if (image == null) return;
-      print(image.name);
-      _pickImageController.text = image.name;
-      final imageTemporary = File(image.path);
-      print("this is path of image ");
-      print(imageTemporary);
-      setState(() {
-        this.image = imageTemporary;
-        hasImage = true;
-      });
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick image: $e');
-    }
-  }
-
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
 
   final TextEditingController _userNameController = TextEditingController();
@@ -84,7 +64,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController();
 
   final TextEditingController _genderController = TextEditingController();
-  final TextEditingController _pickImageController = TextEditingController();
 
   String dobOnChangeValue = "";
 
@@ -332,13 +311,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     //image
 
                     Stack(
+                      // textDirection: TextDirection.rtl,
                       children: [
-                        TextField(
+                        const TextField(
                           decoration: InputDecoration(
                               fillColor: Colors.white,
-                              errorStyle: const TextStyle(
-                                  color: AppColors.primaryColor),
-                              border: const OutlineInputBorder(
+                              errorStyle:
+                                  TextStyle(color: AppColors.primaryColor),
+                              border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(15.0),
                                 ),
@@ -346,25 +326,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     color: AppColors.textFeildINputBorder),
                               ),
                               filled: true,
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                 color: Colors.grey,
                                 fontFamily: 'Inter',
                                 fontSize: 12,
                               ),
-                              hintText: (widget.getProfileState.userDetail!
-                                          .userDocument ==
-                                      null)
-                                  ? "Upload Image"
-                                  : widget
-                                      .getProfileState.userDetail!.userDocument,
-                              contentPadding: const EdgeInsets.symmetric(
+                              hintText: "Upload Image",
+                              contentPadding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 5),
-                              focusedBorder: const OutlineInputBorder(
+                              focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.blue),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(30.0),
                                   )),
-                              enabledBorder: const OutlineInputBorder(
+                              enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.blue),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(30.0),
@@ -409,6 +384,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             print("object99999");
 
                             //image event
+
                             BlocProvider.of<UploadImageBloc>(context)
                                 .add(SaveImageEvent(imageName: image!.path));
 
@@ -416,7 +392,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                             String? imageId = Imagestate is SaveImageLoadedState
                                 ? Imagestate.imageResponse
-                                : "Image unable to upload";
+                                : null;
 
                             //edit profile event
 
@@ -477,7 +453,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                             );
 
-                            // Navigator.pushNamed(context, Routes.menuScreen);
+                            Navigator.pushNamed(context, Routes.profileRoute);
                             // BlocProvider.of<ProfileBloc>(context)
                             //     .add(GetProfileEvent());
                           },
