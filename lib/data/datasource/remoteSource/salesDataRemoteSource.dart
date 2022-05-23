@@ -53,7 +53,8 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
     List<dynamic> images = [];
     List<String> uuids = [];
     for (var i = 0; i < salesData.length; i++) {
-      var fromFile = await MultipartFile.fromFile(salesData[i].paymentdocument);
+      var fromFile =
+          await MultipartFile.fromFile(salesData[i].paymentdocument!);
       images.add(fromFile);
       String v4 = uuid.v4();
       uuids.add(v4);
@@ -73,7 +74,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
           headers: <String, String>{
             'Accept': 'application/json',
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer a4064e38-7cbf-4a86-8235-1a00deb4e702'
+            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
           },
         ),
       );
@@ -90,66 +91,71 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
 
   @override
   Future<String> saveSalesData(
-      List<SalesData> salesData, List<String> uuids) async {
-    Dio dio = Dio();
-    List<SalesDataModel> salesDataModelList = [];
-    for (var i = 0; i < salesData.length; i++) {
-      SalesData saleData = salesData[i];
-      SalesDataModel salesDataModel = SalesDataModel(
-          sales: saleData.sales,
-          availability: saleData.availability,
-          returns: saleData.returns,
-          salesDescription: saleData.salesDescription,
-          returnedDescription: saleData.returnedDescription,
-          stockDescription: saleData.stockDescription,
-          availabilityDescription: saleData.availabilityDescription,
-          assignedDepot: saleData.assignedDepot,
-          collectionDate: saleData.collectionDate,
-          latitude: saleData.latitude,
-          longitude: saleData.longitude,
-          paymentType: saleData.paymentType,
-          paymentdocument: uuids[i],
-          userId: saleData.userId,
-          retiler: saleData.retiler);
-
-      salesDataModelList.add(salesDataModel);
-    }
-
-    var salesTrackInJson = salesDataModelList
-        .map((salesLocationTrackModel) => salesLocationTrackModel.toJson())
-        .toList();
-
-    var jsonEncodedAnswer = jsonEncode(salesTrackInJson);
-
-    try {
-      Response response = await dio.post(
-        ApiUrl.salesData,
-        data: jsonEncodedAnswer,
-        options: Options(
-          headers: <String, String>{
-            'Accept': 'application/json',
-            'Authorization': 'Bearer a4064e38-7cbf-4a86-8235-1a00deb4e702'
-          },
-        ),
-      );
-      if (response.data["status"] == true) {
-
-
-        // List<SalesLocationTrack> salesLocationTrack =
-        //     (response.data["data"] as List).map((salesLoctionTrack) {
-        //   return SalesLocationTrackModel.fromJson(salesLoctionTrack);
-        // }).toList();
-
-        // print('oleoleoleoleoleoeloel');
-
-        return "gf";
-      } else {
-        throw ServerException();
-      }
-    } on DioError catch (e) {
-      print(e);
-      throw ServerException();
-    }
+      List<SalesDataModel> salesData, List<String> uuids) {
+    // TODO: implement saveSalesData
+    throw UnimplementedError();
   }
+
+  // @override
+//  Future<String> saveSalesData(
+  //   List<SalesData> salesData, List<String> uuids) async {
+  // Dio dio = Dio();
+  // List<SalesDataModel> salesDataModelList = [];
+  // for (var i = 0; i < salesData.length; i++) {
+  //   SalesData saleData = salesData[i];
+  //   SalesDataModel salesDataModel = SalesDataModel(
+  //       sales: saleData.sales,
+  //       availability: saleData.availability,
+  //       returns: saleData.returns,
+  //       salesDescription: saleData.salesDescription,
+  //       returnedDescription: saleData.returnedDescription,
+  //       stockDescription: saleData.stockDescription,
+  //       availabilityDescription: saleData.availabilityDescription,
+  //       assignedDepot: saleData.assignedDepot,
+  //       collectionDate: saleData.collectionDate,
+  //       latitude: saleData.latitude,
+  //       longitude: saleData.longitude,
+  //       paymentType: saleData.paymentType,
+  //       paymentdocument: uuids[i],
+  //       userId: saleData.userId,
+  //       retiler: saleData.retiler);
+  //
+  //   salesDataModelList.add(salesDataModel);
+  // }
+  //
+  // var salesTrackInJson = salesDataModelList
+  //     .map((salesLocationTrackModel) => salesLocationTrackModel.toJson())
+  //     .toList();
+  //
+  // var jsonEncodedAnswer = jsonEncode(salesTrackInJson);
+  //
+  // try {
+  //   Response response = await dio.post(
+  //     ApiUrl.salesData,
+  //     data: jsonEncodedAnswer,
+  //     options: Options(
+  //       headers: <String, String>{
+  //         'Accept': 'application/json',
+  //         'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+  //       },
+  //     ),
+  //   );
+  //   if (response.data["status"] == true) {
+  //     // List<SalesLocationTrack> salesLocationTrack =
+  //     //     (response.data["data"] as List).map((salesLoctionTrack) {
+  //     //   return SalesLocationTrackModel.fromJson(salesLoctionTrack);
+  //     // }).toList();
+  //
+  //     print('oleoleoleoleoleoeloel');
+  //
+  //     return "gf";
+  //   } else {
+  //     throw ServerException();
+  //   }
+  // } on DioError catch (e) {
+  //   print(e);
+  //   throw ServerException();
+  // }
+  //}
 }
       

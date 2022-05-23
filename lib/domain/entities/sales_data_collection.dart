@@ -24,7 +24,7 @@ class SalesDataCollection extends Equatable {
   final RetailerPojoModel retailerPojo;
 
   const SalesDataCollection(
-    this.retailer,  {
+    this.retailer, {
     required this.collectionData,
     required this.sales,
     required this.salesDescription,

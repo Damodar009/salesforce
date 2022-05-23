@@ -35,7 +35,7 @@ import 'package:salesforce/utils/app_colors.dart';
 
 Widget cancleWidget(Function() onClick) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal:8.0),
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: InkWell(
       onTap: onClick,
       child: Container(
@@ -50,6 +50,25 @@ Widget cancleWidget(Function() onClick) {
           Icons.arrow_drop_down,
           color: Colors.white,
         ),
+      ),
+    ),
+  );
+}
+
+Widget circleContainer() {
+  return Padding(
+    padding: const EdgeInsets.only(left: 8.0),
+    child: Container(
+      height: 40,
+      width: 40,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(
+        Icons.delete,
+        size: 20,
+        color: AppColors.buttonColor,
       ),
     ),
   );

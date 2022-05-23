@@ -1,4 +1,10 @@
 class Validators {
+   static String? validator(String? string) {
+    if (string == null || string.isEmpty) {
+      return 'this cannot be empty';
+    }
+    return null;
+  }
   static final RegExp _emailRegExp = RegExp(
     r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
   );

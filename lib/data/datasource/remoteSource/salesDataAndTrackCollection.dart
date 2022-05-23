@@ -47,7 +47,7 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer 6c737f4e-45a1-4938-b559-4ee60f403dcc'
+            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
           },
         ),
       );

@@ -24,7 +24,8 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
             ),
             layers: [
               TileLayerOptions(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 subdomains: ['a', 'b', 'c'],
                 attributionBuilder: (_) {
                   return const Text("© OpenStreetMap contributors");
@@ -45,7 +46,8 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
             ],
           ),
           Visibility(
-              visible: showAttendence, child: Center(child: attendenceWidget(context))),
+              visible: showAttendence,
+              child: Center(child: attendenceWidget(context))),
         ],
       ),
     );

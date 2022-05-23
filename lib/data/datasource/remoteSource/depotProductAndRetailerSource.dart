@@ -18,17 +18,14 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
     try {
-      print("staeting ");
       Response response = await dio.post(
         ApiUrl.depotProductAndRetailor,
-
-        // options: Options(
-        //   contentType: "application/x-www-form-urlencoded",
-        //   headers: <String, String>{
-        //     'Authorization': 'Basic ' +
-        //         base64Encode(utf8.encode('$_clientId:$_clientSecret'))
-        //   },
-        // ),
+        options: Options(
+          contentType: "application/x-www-form-urlencoded",
+          headers: <String, String>{
+            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+          },
+        ),
       );
       if (response.data["status"] == true) {
         DepotProductRetailer depotProductRetailer;
@@ -44,9 +41,14 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
         List<Depot> depots = (response.data["data"]["depotDetails"] as List)
             .map((sectorModel) => DepotModel.fromJson(sectorModel))
             .toList();
-
+//todo
         depotProductRetailer = DepotProductRetailer(
-            products: products, retailerType: retailerTypes, depots: depots);
+            products: products,
+            retailerType: retailerTypes,
+            depots: depots,
+            retailerDropDown: [],
+            merchandise: [],
+            region: []);
 
         return depotProductRetailer;
       } else {

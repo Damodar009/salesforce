@@ -20,35 +20,71 @@ class _DoughnutChartState extends State<DoughnutChart> {
 
   @override
   Widget build(BuildContext context) {
-    return SfCircularChart(
-      annotations: <CircularChartAnnotation>[
-        CircularChartAnnotation(
-            widget: Container(
-          child: PhysicalModel(
-            color: const Color.fromRGBO(230, 20, 230, 1),
-            child: Container(),
-            shape: BoxShape.circle,
-            elevation: 1,
-            shadowColor: Colors.black,
-          ),
-        )),
-        CircularChartAnnotation(
-            widget: const Text(
-          "71% \n attendence",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black, fontSize: 20),
-        ))
+    return Column(
+      children: [
+        SfCircularChart(
+          annotations: <CircularChartAnnotation>[
+            CircularChartAnnotation(
+                widget: Container(
+              child: PhysicalModel(
+                color: const Color.fromRGBO(230, 20, 230, 1),
+                child: Container(),
+                shape: BoxShape.circle,
+                elevation: 1,
+                shadowColor: Colors.black,
+              ),
+            )),
+            CircularChartAnnotation(
+                widget: const Text(
+              "71% \n attendence",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black, fontSize: 20),
+            ))
+          ],
+          // legend:
+          //     Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+          series: <CircularSeries>[
+            DoughnutSeries<GDPdata, String>(
+                innerRadius: "70%",
+                dataSource: _chartDAta,
+                pointColorMapper: (GDPdata data, _) => data.color,
+                xValueMapper: (GDPdata data, _) => data.continent,
+                yValueMapper: (GDPdata data, _) => data.gdp,
+                radius: "90%"),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            indicater("Present", true),
+            const SizedBox(
+              width: 17,
+            ),
+            indicater("Absence", false),
+          ],
+        )
       ],
-      // legend:
-      //     Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
-      series: <CircularSeries>[
-        DoughnutSeries<GDPdata, String>(
-            innerRadius: "70%",
-            dataSource: _chartDAta,
-            pointColorMapper: (GDPdata data, _) => data.color,
-            xValueMapper: (GDPdata data, _) => data.continent,
-            yValueMapper: (GDPdata data, _) => data.gdp,
-            radius: "90%"),
+    );
+  }
+
+  Widget indicater(String title, isPresence) {
+    return Row(
+      children: [
+        Container(
+          height: 20,
+          width: 20,
+          decoration: BoxDecoration(
+              color:
+                  isPresence ? AppColors.buttonColor : AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(2.5)),
+        ),
+        const SizedBox(
+          width: 5,
+        ),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 18),
+        )
       ],
     );
   }

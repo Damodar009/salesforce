@@ -297,7 +297,12 @@ class RemoteSourceImplementation implements RemoteSource {
             .toList();
 
         depotProductRetailer = DepotProductRetailer(
-            products: products, retailerType: retailerTypes, depots: depots);
+            products: products,
+            retailerType: retailerTypes,
+            depots: depots,
+            merchandise: [],
+            retailerDropDown: [],
+            region: []);
 
         return depotProductRetailer;
       } else {

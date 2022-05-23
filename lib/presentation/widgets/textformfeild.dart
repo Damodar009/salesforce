@@ -181,29 +181,98 @@ Widget textFeildWithMultipleLines({
 }
 
 Widget textFormFeildIncreAndDecre({
-  required String hintText,
-  required TextEditingController controller,
+  required String initialValue,
   required String? Function(String?) validator,
+  required String? Function(String?) onChanged,
 }) {
   return TextFormField(
-    controller: controller,
+    initialValue: initialValue,
+    onChanged: onChanged,
     keyboardType: TextInputType.number,
     style: const TextStyle(
       fontFamily: 'Inter',
       fontSize: 15,
     ),
-    decoration: InputDecoration(
-        prefix: const InkWell(
+    decoration: const InputDecoration(
+        prefix: InkWell(
           child: Icon(
             Icons.minimize_outlined,
             color: AppColors.primaryColor,
           ),
         ),
-        suffixIcon: const InkWell(
+        suffixIcon: InkWell(
           child: Icon(
             Icons.add,
             color: AppColors.primaryColor,
           ),
+        ),
+        fillColor: Colors.white,
+        errorStyle: TextStyle(color: AppColors.primaryColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(30.0),
+          ),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
+        ),
+        filled: true,
+        hintStyle: TextStyle(
+          color: Colors.grey,
+          fontFamily: 'Inter',
+          fontSize: 15,
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue),
+            borderRadius: BorderRadius.all(
+              Radius.circular(30.0),
+            )),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue),
+            borderRadius: BorderRadius.all(
+              Radius.circular(30.0),
+            ))),
+  );
+}
+
+Widget textFeildWithDropDownFor(
+    {required String initialText,
+    TextInputType textInputType = TextInputType.text,
+    required String? Function(String?) validator,
+    required List<String> item,
+    required Function(String) onselect}) {
+  return TextFormField(
+    key: Key(initialText),
+    initialValue: initialText,
+    validator: (val) => validator(val),
+    keyboardType: textInputType,
+    style: const TextStyle(
+      fontFamily: 'Inter',
+      fontSize: 15,
+    ),
+    decoration: InputDecoration(
+        suffixIcon: PopupMenuButton<String>(
+          icon: Container(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.amber,
+            ),
+            child: const Icon(
+              Icons.arrow_downward,
+              size: 20,
+              color: Colors.white,
+            ),
+          ),
+          onSelected: (string){
+            print("this is clicked ");
+
+
+            onselect(string);},
+          itemBuilder: (BuildContext context) {
+            return item.map<PopupMenuItem<String>>((String value) {
+              return PopupMenuItem(child: Text(value), value: value);
+            }).toList();
+          },
         ),
         fillColor: Colors.white,
         errorStyle: const TextStyle(color: AppColors.primaryColor),
@@ -216,11 +285,10 @@ Widget textFormFeildIncreAndDecre({
         ),
         filled: true,
         hintStyle: const TextStyle(
-          color: Colors.grey,
+          color: Colors.blue,
           fontFamily: 'Inter',
           fontSize: 15,
         ),
-        hintText: hintText,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         focusedBorder: const OutlineInputBorder(

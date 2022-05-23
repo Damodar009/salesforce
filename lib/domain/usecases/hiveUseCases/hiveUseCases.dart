@@ -5,7 +5,7 @@ import '../../../error/failure.dart';
 
 abstract class UseCaseForHive {
   Either<Failure, List<dynamic>> getAllValuesFromHiveBox(Box box);
-  Either<Failure, List<dynamic>> getAllKeysFromTheHiveBox(Box box, String key);
+  Either<Failure, List<dynamic>> getAllKeysFromTheHiveBox(Box box);
   Either<Failure, List<dynamic>> getValuesByKey(Box box, String key);
   Either<Failure, String?> getValueByKey(Box box, String key);
   Either<Failure, String> saveValuestoHiveBox(Box box, dynamic values);
@@ -15,7 +15,7 @@ abstract class UseCaseForHive {
 @lazySingleton
 class UseCaseForHiveImpl implements UseCaseForHive {
   @override
-  Either<Failure, List<dynamic>> getAllKeysFromTheHiveBox(Box box, String key) {
+  Either<Failure, List<dynamic>> getAllKeysFromTheHiveBox(Box box) {
     try {
       return Right(box.keys.toList());
     } catch (e) {

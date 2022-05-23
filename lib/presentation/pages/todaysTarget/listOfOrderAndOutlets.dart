@@ -1,12 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 
-import '../../utils/app_colors.dart';
-import '../widgets/individualOrderDetail.dart';
+import '../../../utils/app_colors.dart';
+import '../../widgets/individualOrderDetail.dart';
 
-class ListOfOrderAndOutletDetailScreen extends StatelessWidget {
+class ListOfOrderAndOutletDetailScreen extends StatefulWidget {
   ListOfOrderAndOutletDetailScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ListOfOrderAndOutletDetailScreen> createState() =>
+      _ListOfOrderAndOutletDetailScreenState();
+}
+
+class _ListOfOrderAndOutletDetailScreenState
+    extends State<ListOfOrderAndOutletDetailScreen> {
   String text = "1234567890m";
+  List<dynamic> data = [];
+
+  getDataFromHiveFor(String routes) {
+    switch (routes) {
+      case "totalOutlets":
+        break;
+      case "newOutlet":
+        break;
+      case "totalOutLetsVisited":
+        break;
+      case "totalSales":
+        break;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,6 +49,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
+  bool hasImage = false;
+  Future getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    try {
+      final image = await _picker.pickImage(source: ImageSource.gallery);
+      print("dfgsadg");
+      if (image == null) return;
+      print(image.name);
+      _pickImageController.text = image.name;
+      final imageTemporary = File(image.path);
+      print("this is path of image ");
+      print(imageTemporary);
+      setState(() {
+        this.image = imageTemporary;
+        hasImage = true;
+      });
+    } on PlatformException catch (e) {
+      debugPrint('Failed to pick image: $e');
+    }
+  }
+
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
 
   final TextEditingController _userNameController = TextEditingController();
@@ -64,6 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController();
 
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _pickImageController = TextEditingController();
 
   String dobOnChangeValue = "";
 
@@ -117,10 +138,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             // TODO: implement listener
           },
           child: Scaffold(
-            appBar: appBar(
-                navTitle: 'EDIT PROFILE',
-                context: context
-                ),
+            appBar: appBar(navTitle: 'EDIT PROFILE', context: context),
             body: SingleChildScrollView(
               child: Padding(
                 padding:

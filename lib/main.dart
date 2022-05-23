@@ -17,6 +17,7 @@ import 'package:salesforce/utils/hiveConstant.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/depot.dart';
 import 'domain/entities/products.dart';
+import 'domain/entities/retailer.dart';
 import 'domain/entities/retailerType.dart';
 import 'domain/entities/saleslocationTrack.dart';
 import 'domain/usecases/useCaseForAttebdenceSave.dart';
@@ -38,7 +39,8 @@ Future<void> main() async {
     ..registerAdapter(DepotAdapter())
     ..registerAdapter(ProductsAdapter())
     ..registerAdapter(RetailerTypeAdapter())
-    ..registerAdapter(SalesLocationTrackAdapter());
+    ..registerAdapter(SalesLocationTrackAdapter())
+    ..registerAdapter(RetailerAdapter());
 
   runApp(const MyApp());
 }

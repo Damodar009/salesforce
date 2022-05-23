@@ -20,6 +20,7 @@ class HiveConstants {
   static const String attendenceCheckOutKey = "chekOut";
 
   //newRetailer
+  static const String  newRetailerKey= "newRetailer";
 
   //salesPersonLOcationTracking
 

@@ -3,7 +3,7 @@ import 'package:salesforce/main.dart';
 import 'package:salesforce/presentation/pages/attendance_page.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/editProfile.dart';
-import 'package:salesforce/presentation/pages/listOfOrderAndOutlets.dart';
+import 'package:salesforce/presentation/pages/todaysTarget/listOfOrderAndOutlets.dart';
 import 'package:salesforce/presentation/pages/logOutPage.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/presentation/pages/menuPage.dart';

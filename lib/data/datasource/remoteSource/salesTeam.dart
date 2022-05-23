@@ -34,7 +34,7 @@ class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer 13d1786f-1bde-4bd7-8ae9-d9b603fe97d6'
+            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
           },
         ),
       );
