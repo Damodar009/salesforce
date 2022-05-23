@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/initialData.dart';
+import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/geolocation.dart';
+import '../../../utils/hiveConstant.dart';
 import 'card.dart';
 import 'doughnatChart.dart';
 
@@ -18,6 +22,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final InitialData _initialData = InitialData();
+  final geoLocation = getIt<GeoLocationData>();
+  bool loading = false;
+  DateTime todayDateTime = DateTime.now();
   List<String> title = [
     "Total Outlets",
     "New Outlets",
@@ -30,12 +37,18 @@ class _HomeScreenState extends State<HomeScreen> {
     "assets/icons/cardOutlets.png",
     "assets/icons/cardOutlets.png",
   ];
-
   String distanceTraveled = "12 km";
+  String userName = "";
+  getUserName() async {
+    Box box = await Hive.openBox(HiveConstants.userdata);
+    String tempname = await box.get("name");
+    setState(() {
+      userName = tempname;
+    });
+  }
 
   @override
   void initState() {
-    print("initstate");
     _initialData.getAndSaveInitalData();
     super.initState();
   }
@@ -51,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           if (state is HiveSaveFailed) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Gettting dat from hive is failed')));
+                content: Text('Gettting data from hive is failed')));
           }
         },
         child: SingleChildScrollView(
@@ -93,8 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(
                         height: 60,
                       ),
-                      const Text("Hello Frank!",
-                          style: TextStyle(
+                      Text("Hello $userName!",
+                          style: const TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primaryColor)),
@@ -147,13 +160,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
-                                  children: const [
-                                    Text("ATTENDENCE"),
-                                    SizedBox(
+                                  children: [
+                                    const Text("ATTENDENCE"),
+                                    const SizedBox(
                                       height: 5,
                                     ),
-                                    Text("Today,Thus 28 \n 2022/01/01",
-                                        style: TextStyle(fontSize: 12))
+                                    Text(todayDateTime.toString(),
+                                        style: const TextStyle(fontSize: 12))
                                   ],
                                 ),
                                 Row(
@@ -166,23 +179,45 @@ class _HomeScreenState extends State<HomeScreen> {
                                       width: 10,
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        Routes.attendanceRoute;
-                                        Navigator.of(context)
-                                            .pushNamed(Routes.attendanceRoute);
+                                      onTap: () async {
+                                        setState(() {
+                                          loading = true;
+                                        });
+
+                                        bool check =
+                                            await attendenceCubit.checkIn();
+                                        if (!check) {
+                                          Navigator.of(context).pushNamed(
+                                              Routes.attendanceRoute);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'Please go to depot first')));
+                                        }
+
+                                        setState(() {
+                                          loading = false;
+                                        });
                                       },
-                                      child: Container(
-                                        height: 40,
-                                        width: 40,
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xffF29F05),
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: const Icon(
-                                          Icons.arrow_forward,
-                                          size: 20,
-                                        ),
-                                      ),
+                                      child: loading
+                                          ? const CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            )
+                                          : Container(
+                                              height: 40,
+                                              width: 40,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xffF29F05),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: const Icon(
+                                                Icons.arrow_forward,
+                                                size: 20,
+                                              ),
+                                            ),
                                     ),
                                   ],
                                 )
@@ -211,29 +246,33 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               switch (index) {
                                 case 0:
+                                  //todo get all  retailer  data from hive
                                   Navigator.of(context)
                                       .pushNamed(Routes.totalOutletsRoute);
                                   break;
                                 case 1:
+                                  //todo get new retailer  data from hive
                                   Navigator.of(context)
                                       .pushNamed(Routes.newOutletRoute);
                                   break;
                                 case 2:
+                                  // todo get data from hive for today visited outlet
                                   Navigator.of(context).pushNamed(
                                       Routes.totalOutLetsVisitedRoute);
                                   break;
                                 case 3:
+                                  //todo get data from hive for total sales report
                                   Navigator.of(context)
                                       .pushNamed(Routes.totalSalesRoute);
                                   break;
                                 default:
                               }
                             },
-                            child:
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: card(icons[index], title[index], 34, context),
-                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child:
+                                  card(icons[index], title[index], 34, context),
+                            )),
                         itemCount: 4,
                       )),
                     ],

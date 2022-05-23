@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/domain/entities/depotProductRetailer.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/utils/macAddress.dart';
@@ -10,7 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../domain/usecases/useCaseForAttebdenceSave.dart';
 import '../../../domain/usecases/usecasesForRemoteSource.dart';
-import '../../../error/failure.dart';
+
 import '../../../utils/geolocation.dart';
 import '../../../utils/hiveConstant.dart';
 part 'attendence_state.dart';
@@ -65,6 +66,8 @@ class AttendenceCubit extends Cubit<AttendenceState> {
               c(latitude2 * p) *
               (1 - c((longitude - longitude2) * p)) /
               2;
+
+      print(12742 * asin(sqrt(a)));
       if (12742 * asin(sqrt(a)) <= minimunDistance) {
         isIndepot = true;
         break;
@@ -96,19 +99,22 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
   /// save attendence to api or local database
   saveDataToApiOrHive(Attendence attendence, isCheckIn) async {
-    //todo check internet implementation
-    if (2 == 3) {
+    bool result = await InternetConnectionChecker().hasConnection;
+    if (result) {
       var failureOrsucess =
           await useCaseForAttendenceImpl.attendenceSave(attendence);
 
       failureOrsucess.fold(
           (l) => {
-                if (l is ServerFailure)
-                  emit(AttendenceFailed())
-                else if (l is CacheFailure)
-                  emit(AttendenceFailed())
+                // if (l is ServerFailure)
+                //   emit(AttendenceFailed())
+                // else if (l is CacheFailure)
+                //   emit(AttendenceFailed())
               },
-          (r) => emit(AttendenceSucess()));
+          (r) => {}
+
+          //emit(AttendenceSucess())
+          );
     } else {
       if (!isCheckIn) {
         Box box = await Hive.openBox(HiveConstants.attendence);
@@ -117,16 +123,16 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
         failureOrsucess.fold(
             (l) => {
-                  if (l is ServerFailure)
-                    emit(AttendenceFailed())
-                  else if (l is CacheFailure)
-                    emit(AttendenceFailed())
+                  // if (l is ServerFailure)
+                  //   emit(AttendenceFailed())
+                  // else if (l is CacheFailure)
+                  //   emit(AttendenceFailed())
                 },
             (r) => {
-                  if (r.toString() == "Success")
-                    emit(AttendenceSucess())
-                  else
-                    emit(AttendenceFailed())
+                  // if (r.toString() == "Success")
+                  //   //emit(AttendenceSucess())
+                  // else
+                  //   emit(AttendenceFailed())
                 });
       } else {
         emit(AttendenceFailed());
@@ -186,10 +192,11 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   }
 
   /// check in
-  checkIn() async {
+  Future<bool> checkIn() async {
     bool isInternet;
+    bool failed = false;
 
-    emit(AttendenceLoading());
+    //emit(AttendenceLoading());
     // todo check for internet
     Position? position = await geolocator.getCurrentLocation();
     List<dynamic>? depots = await getDepotList();
@@ -198,6 +205,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
           depots, position.latitude, position.longitude);
 
       if (isInDepot) {
+        print(true);
         MacAddress macAddress = MacAddress();
         String dateTime = DateTime.now().toString();
         String macAddresss = await macAddress.getMacAddress();
@@ -206,11 +214,12 @@ class AttendenceCubit extends Cubit<AttendenceState> {
             position.latitude, position.longitude, null, null, null, userId);
 
         saveDataToApiOrHive(checkInAttendence, true);
-        emit(AttendenceSucess());
+        //  emit(AttendenceSucess());
       } else {
-        //todo not in depot state
+        failed = true;
       }
     }
+    return failed;
   }
 
   checkOut() async {

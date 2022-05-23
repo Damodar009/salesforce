@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:salesforce/domain/entities/availability.dart';
-import 'package:salesforce/domain/entities/returns.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:hive/hive.dart';
+import 'package:salesforce/presentation/pages/newOrderPage/returnAndSale.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/wid.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
-import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 import 'package:salesforce/routes.dart';
-import '../../../domain/entities/sales.dart';
+import 'package:salesforce/utils/geolocation.dart';
+import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
+import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/hiveConstant.dart';
+import '../../../utils/validators.dart';
 import '../../widgets/buttonWidget.dart';
 import '../../widgets/textformfeild.dart';
+import '../../widgets/visitedOutletWidget.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({Key? key}) : super(key: key);
@@ -18,11 +23,35 @@ class NewOrderScreen extends StatefulWidget {
 }
 
 class _NewOrderScreenState extends State<NewOrderScreen> {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  String nameOfOutlet = "";
+
+  ///availability
+  List<Availability> availability = [];
+
+  //list for getting value
+  List<RerturnAndSale> sales = [];
+  List<RerturnAndSale> returns = [];
+
+  ////end here
+  List<String> productName = [];
+  List<String> returnParentProduct = [];
+  List<String> availabilityParentProduct = [];
+  List<String> salesParentProduct = [];
+  List<dynamic> products = [];
+
+  ///retailer
+  List<String> retailerList = [];
+  List<String> retailerIdList = [];
+
   String dropdownvalue = '';
-  double? textbuttonSize ;
-  final TextEditingController _outletName = TextEditingController();
-  final TextEditingController _textEditingController = TextEditingController();
-  // final TextEditingController _textEditingController = TextEditingController();
+  double? textbuttonSize;
+  double? boolbuttonSize;
+
+  final TextEditingController _returnRemarks = TextEditingController();
+  final TextEditingController _salesRemarks = TextEditingController();
+  final TextEditingController _availabilityRemarks = TextEditingController();
+
   bool showEditBUtton = false;
   bool showSaveBUtton = false;
   bool outletsCreated = true;
@@ -30,16 +59,17 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   bool editCheckBoxValue = false;
   bool showXlsButton = false;
 
-  ///returned pressed
+  // to show the items full view
   bool returnPressed = false;
   bool availabilityPressed = false;
   bool salesPressed = false;
-  int returnLength = 1;
-  int availabilityLength = 1;
-  int salesLength = 1;
-  List<Returns> returns = [];
-  List<Availability> availability = [];
-  List<Sales> sales = [];
+
+  // length of these widgets list
+  late int returnLength;
+  late int availabilityLength;
+  late int salesLength;
+
+  List<String> returnProductNames = [];
 
   var items = [
     'Item 1',
@@ -48,10 +78,69 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     'Item 4',
     'Item 5',
   ];
+  bool checkIndex(List as, int i) {
+    return as.asMap().containsKey(i);
+  }
+
+  //get types of product from parent products
+
+  List<String> getChildProducts(String parentProduct) {
+    List<String> childProducts = [];
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].name == parentProduct) {
+        for (var j = 0; j < products[i].childProducts.length; j++) {
+          childProducts.add(products[i].childProducts[j]["name"]);
+        }
+      }
+    }
+    return childProducts;
+  }
+
+//todo do retiler in another page
+  getRetailerList() async {
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    var sucessOrNot = useCaseForHiveImpl.getValuesByKey(box, "retailerTypes");
+    sucessOrNot.fold(
+        (l) => {print("no success")},
+        (r) => {
+              for (var i = 0; i < r.length; i++)
+                {
+                  print(r[i].id),
+                  print(r[i].name),
+                  retailerList.add(r[i].name),
+                  retailerIdList.add(r[i].id),
+                },
+            });
+  }
+
+  @override
+  void initState() {
+    getRetailerList();
+    getProductsFromHiveBox();
+    super.initState();
+  }
+
+  getProductsFromHiveBox() async {
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    var sucessOrNot = useCaseForHiveImpl.getValuesByKey(
+      box,
+      HiveConstants.productKey,
+    );
+    sucessOrNot.fold(
+        (l) => {print("no success")},
+        (r) => {
+              products = r,
+              for (var i = 0; i < products.length; i++)
+                {
+                  productName.add(products[i].name),
+                },
+            });
+  }
 
   @override
   Widget build(BuildContext context) {
-   textbuttonSize =  MediaQuery.of(context).size.width * 0.9 ;
+    textbuttonSize = MediaQuery.of(context).size.width * 0.9;
+    boolbuttonSize = MediaQuery.of(context).size.width * 0.2;
     Widget newOrderScreenBody() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,20 +173,24 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           const SizedBox(
             height: 12,
           ),
-          textFormField(
-              controller: _outletName,
+          textFeildWithDropDownFor(
               validator: (string) {},
-              obsecureText1: () {},
-              hintText: 'Frank miller '),
+              item: retailerList,
+              onselect: (string) {
+                setState(() {
+                  nameOfOutlet = string;
+                });
+              },
+              initialText: nameOfOutlet),
           const SizedBox(
             height: 35,
           ),
-
           returnPressed
               ? returnsWidget()
               : textButton(
                   "Return", MediaQuery.of(context).size.width * 0.9, true, () {
                   setState(() {
+                    returnLength = returns.length;
                     returnPressed = true;
                     availabilityPressed = false;
                     salesPressed = false;
@@ -106,13 +199,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           const SizedBox(
             height: 15,
           ),
-
           availabilityPressed
               ? availabilityWidget()
               : textButton(
                   "Availability", MediaQuery.of(context).size.width * 0.9, true,
                   () {
                   setState(() {
+                    availabilityLength = availability.length;
                     returnPressed = false;
                     availabilityPressed = true;
                     salesPressed = false;
@@ -122,27 +215,60 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 15,
           ),
           salesPressed
-              ? salesWidet()
-              : textButton(
-                  "Sales", textbuttonSize!, true, () {
+              ? salesWidget()
+              : textButton("Sales", textbuttonSize!, true, () {
                   setState(() {
                     returnPressed = false;
                     availabilityPressed = false;
                     salesPressed = true;
+                    salesLength = sales.length;
                   });
                 }),
-
           const SizedBox(
             height: 12,
           ),
-          // textButton("Add More Product", MediaQuery.of(context).size.width),
+          button("Save Order", () async {
+            print("it going to be awesome");
+            int i = retailerList.indexOf(nameOfOutlet);
+            String retailerId = retailerIdList[i];
+            GeoLocationData geoLocationData = GeoLocationData();
+            Position? position = await geoLocationData.getCurrentLocation();
+            double latitude = position!.latitude;
+            double longitude = position.longitude;
+            DateTime dateTimeNow = DateTime.now();
 
-          // textFeildWithMultipleLines(
-          //     validator: (string) {},
-          //     hintText: 'Remark',
-          //     controller: _textEditingController),
+            //todo get assigned depot
 
-          button("Save Order", () {
+            // todo  payment type
+
+            // todo user id
+            //todo get payment document
+
+            print(_availabilityRemarks.text);
+            print(_salesRemarks.text);
+            print(_returnRemarks.text);
+
+            for (var i = 0; i < returns.length; i++) {
+              print(returns[i].getReturn());
+              print(returns[i].getProduct());
+            }
+            for (var i = 0; i < availability.length; i++) {
+              print(availability[i].getStock());
+              print(availability[i].getproduct());
+              print(availability[i].getavailability());
+            }
+            for (var i = 0; i < sales.length; i++) {
+              print(sales[i].getReturn());
+              print(sales[i].getProduct());
+            }
+
+            setState(() {
+              if (returns.isNotEmpty) returnPressed = true;
+
+              if (availability.isNotEmpty) availabilityPressed = true;
+              if (sales.isNotEmpty) salesPressed = true;
+            });
+
             if (showXlsButton) {
               final VistedOutlets visitedOutlets = VistedOutlets(
                 navTitle: 'TOTAL',
@@ -174,7 +300,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ? button("Save Order in XLS", () {
                   Navigator.of(context).pushNamed(Routes.xlsOrder);
                 }, false, AppColors.buttonColor)
-              : SizedBox(),
+              : const SizedBox(),
           const SizedBox(
             height: 10,
           )
@@ -273,32 +399,14 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         });
   }
 
-  Widget circleContainer() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: Container(
-        height: 40,
-        width: 40,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.delete,
-          size: 20,
-          color: AppColors.buttonColor,
-        ),
-      ),
-    );
-  }
-
-  Widget textButton(
-      String title, double width, bool isbold, Function() onClick) {
+  Widget textButton(String title, double width, bool isbold, Function() onClick,
+      {Color? color}) {
     return InkWell(
       onTap: onClick,
       child: Container(
         width: width,
         decoration: BoxDecoration(
+            color: color,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: AppColors.primaryColor)),
         child: Padding(
@@ -323,17 +431,18 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   }
 
   ///sales
-
-  Widget salesWidet() {
+  Widget salesWidget() {
     return Column(
-      children: <Widget>[
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Spacer(),
             titles("Sales"),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.27,
+              width: MediaQuery.of(context).size.width * 0.36,
             ),
             cancleWidget(() {
               setState(() {
@@ -345,45 +454,141 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         const SizedBox(
           height: 12,
         ),
+        //todo if empty show 1 else list length
+        for (var i = 0; i < salesLength + 1; i++)
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey),
+                shape: BoxShape.rectangle,
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title("Product Name"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    textFeildWithDropDownFor(
+                        validator: (string) {},
+                        item: productName,
+                        onselect: (string) {
+                          setState(() {
+                            if (checkIndex(salesParentProduct, i)) {
+                              salesParentProduct[i] = string;
+                              print(salesParentProduct[i]);
+                            } else {
+                              salesParentProduct.add(string);
+                            }
+                          });
+                        },
+                        initialText: checkIndex(salesParentProduct, i)
+                            ? salesParentProduct[i]
+                            : ""),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    title("Types of Product"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                            width: 150,
+                            //todo unchanged
+                            child: textFeildWithDropDownFor(
+                                validator: (string) {},
+                                item: checkIndex(salesParentProduct, i)
+                                    ? getChildProducts(salesParentProduct[i])
+                                    : [],
+                                onselect: (string) {
+                                  setState(() {
+                                    if (checkIndex(sales, i)) {
+                                      sales[i].setProduct(string);
+                                    } else {
+                                      RerturnAndSale saless = RerturnAndSale();
+                                      saless.setProduct(string);
 
-        //todo
-        title("Product Name"),
-        const SizedBox(
-          height: 12,
-        ),
-        textFormField(
-            controller: _textEditingController,
-            validator: (string) {},
-            obsecureText1: () {},
-            hintText: 'Rc cola '),
-        const SizedBox(
-          height: 12,
-        ),
+                                      sales.add(saless);
+                                    }
+                                  });
+                                },
+                                initialText: checkIndex(sales, i)
+                                    ? sales[i].getProduct()
+                                    : "")),
+                        SizedBox(
+                          width: 140,
+                          child: textFormFeildIncreAndDecre(
+                              validator: (string) {},
+                              initialValue: checkIndex(sales, i)
+                                  ? sales[i].getReturn().toString()
+                                  : "",
+                              onChanged: (string) {
+                                setState(() {
+                                  if (checkIndex(sales, i)) {
+                                    sales[i].setReturn(int.parse(string!));
+                                  } else {
+                                    RerturnAndSale saless = RerturnAndSale();
+                                    saless.setReturn(int.parse(string!));
 
-        title("Types of Product"),
+                                    sales.add(saless);
+                                  }
+                                });
+                              }),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              print("the delete is clicked");
+                              print("weewewe $i");
+                              setState(() {
+                                if (sales.isNotEmpty) {
+                                  print("this is niot what i want");
+                                  setState(() {
+                                    if (checkIndex(sales, i)) {
+                                      sales.removeAt(i);
+                                      salesLength = sales.length;
+                                    } else {
+                                      salesLength = salesLength - 1;
+                                    }
+                                  });
+                                } else {
+                                  print("no way what");
+                                  salesLength = sales.length;
+                                }
+                              });
+                            },
+                            child: circleContainer())
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        textButton("Add more Products", textbuttonSize!, false, () {
+          setState(() {
+            print("the return length ${sales.length}");
+
+            salesLength = sales.length;
+            print(sales);
+          });
+        }),
         const SizedBox(
           height: 12,
         ),
-        Row(
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.35,
-              child: textFeildWithDropDown(
-                  validator: (string) {}, hintText: 'Frank miller ', item: []),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.35,
-              //   child: textFormFeildIncreAndDecre(
-              //       hintText: '9999',
-              //       controller: _textEditingController,
-              //       validator: (string) {}),
-            ),
-            circleContainer()
-          ],
-        ),
+        textFeildWithMultipleLines(
+            hintText: 'Remarks',
+            controller: _salesRemarks,
+            validator: (string) {
+              Validators.validator(string);
+            })
       ],
     );
   }
@@ -409,29 +614,159 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         const SizedBox(
           height: 12,
         ),
-        title("Product Name"),
+        for (var i = 0; i < availabilityLength + 1; i++)
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey),
+                shape: BoxShape.rectangle,
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title("Product Name"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    textFeildWithDropDownFor(
+                        validator: (string) {},
+                        item: productName,
+                        onselect: (string) {
+                          setState(() {
+                            if (checkIndex(availabilityParentProduct, i)) {
+                              availabilityParentProduct[i] = string;
+                              print(availabilityParentProduct[i]);
+                            } else {
+                              availabilityParentProduct.add(string);
+                            }
+                          });
+                        },
+                        initialText: checkIndex(availabilityParentProduct, i)
+                            ? availabilityParentProduct[i]
+                            : "choose"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    title("Types of Product"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    textFeildWithDropDownFor(
+                        validator: (string) {},
+                        item: checkIndex(availabilityParentProduct, i)
+                            ? getChildProducts(availabilityParentProduct[i])
+                            : items,
+                        onselect: (string) {
+                          setState(() {
+                            if (checkIndex(availability, i)) {
+                              availability[i].setproduct(string);
+                            } else {
+                              //todo
+                              Availability available = Availability();
+                              available.setproduct(string);
+
+                              availability.add(available);
+                            }
+                          });
+                        },
+                        initialText: checkIndex(availability, i)
+                            ? availability[i].getproduct()!
+                            : ""),
+                    const SizedBox(
+                      height: 12,
+                    ),
+
+                    //todo true and false
+                    Row(
+                      children: [
+                        textButton("True", boolbuttonSize!, false, () {
+                          setState(() {
+                            if (checkIndex(availability, i)) {
+                              availability[i].setavailability(true);
+                            } else {
+                              Availability availabilitsy = Availability();
+                              availabilitsy.availability = true;
+                              availability.add(availabilitsy);
+                            }
+                          });
+                        },
+                            color: checkIndex(availability, i) &&
+                                    availability[i].getavailability() != null
+                                ? availability[i].getavailability()
+                                    ? AppColors.buttonColor
+                                    : null
+                                : null),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        textButton("False", boolbuttonSize!, false, () {
+                          setState(() {
+                            if (checkIndex(availability, i)) {
+                              availability[i].setavailability(false);
+                            } else {
+                              Availability availabilitsy = Availability();
+                              availabilitsy.availability = false;
+                              availability.add(availabilitsy);
+                            }
+                          });
+                        },
+                            color: checkIndex(availability, i) &&
+                                    availability[i].getavailability() != null
+                                ? availability[i].getavailability()
+                                    ? null
+                                    : AppColors.buttonColor
+                                : null),
+                        InkWell(
+                            onTap: () {
+                              if (availability.isNotEmpty) {
+                                print("this is niot what i want");
+                                setState(() {
+                                  if (checkIndex(availability, i)) {
+                                    availability.removeAt(i);
+                                    availabilityLength = availability.length;
+                                  } else {
+                                    availabilityLength = availabilityLength - 1;
+                                  }
+                                });
+                              } else {
+                                print("no way what");
+                                availabilityLength = availability.length;
+                              }
+                            },
+                            child: circleContainer())
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         const SizedBox(
           height: 12,
         ),
-        textFormField(
-            controller: _textEditingController,
-            validator: (string) {},
-            obsecureText1: () {},
-            hintText: 'Rc cola '),
+        textButton("Add more Products", textbuttonSize!, false, () {
+          setState(() {
+            print("the return length ${returns.length}");
+
+            availabilityLength = availability.length;
+            print(returns);
+          });
+        }),
         const SizedBox(
           height: 12,
         ),
-        title("Types of Product"),
-        const SizedBox(
-          height: 12,
-        ),
-        // textFeildWithDropDown(
-        //     controller: _textEditingController,
-        //     validator: (string) {},
-        //     hintText: 'Frank miller '),
-        const SizedBox(
-          height: 12,
-        ),
+        textFeildWithMultipleLines(
+            hintText: 'Remarks',
+            controller: _availabilityRemarks,
+            validator: (string) {
+              Validators.validator(string);
+            })
       ],
     );
   }
@@ -459,7 +794,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         const SizedBox(
           height: 12,
         ),
-        for (var i = 0; i < 3; i++)
+        //todo if empty show 1 else list length
+        for (var i = 0; i < returnLength + 1; i++)
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
@@ -473,16 +809,28 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     title("Product Name"),
                     const SizedBox(
                       height: 12,
                     ),
-                    textFormField(
-                        controller: _textEditingController,
+                    textFeildWithDropDownFor(
                         validator: (string) {},
-                        obsecureText1: () {},
-                        hintText: 'Rc cola '),
+                        item: productName,
+                        onselect: (string) {
+                          setState(() {
+                            if (checkIndex(returnParentProduct, i)) {
+                              returnParentProduct[i] = string;
+                              print(returnParentProduct[i]);
+                            } else {
+                              returnParentProduct.add(string);
+                            }
+                          });
+                        },
+                        initialText: checkIndex(returnParentProduct, i)
+                            ? returnParentProduct[i]
+                            : ""),
                     const SizedBox(
                       height: 12,
                     ),
@@ -493,15 +841,67 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     Row(
                       children: [
                         SizedBox(
-                          width: 200,
-                          child: textFeildWithDropDown(
-                              controller: _textEditingController,
-                              validator: (string) {},
-                              hintText: 'Frank miller ', item: []),
-                        ),
+                            width: 150,
+                            //todo unchanged
+                            child: textFeildWithDropDownFor(
+                                validator: (string) {},
+                                item: checkIndex(returnParentProduct, i)
+                                    ? getChildProducts(returnParentProduct[i])
+                                    : [],
+                                onselect: (string) {
+                                  print(string);
+                                  setState(() {
+                                    if (checkIndex(returns, i)) {
+                                      returns[i].setProduct(string);
+                                    } else {
+                                      RerturnAndSale returna = RerturnAndSale();
+                                      returna.setProduct(string);
 
-                        //todo
-                        circleContainer()
+                                      returns.add(returna);
+                                    }
+                                  });
+                                },
+                                initialText: checkIndex(returns, i)
+                                    ? returns[i].getProduct()
+                                    : "")),
+                        SizedBox(
+                          width: 140,
+                          child: textFormFeildIncreAndDecre(
+                              validator: (string) {},
+                              initialValue: checkIndex(returns, i)
+                                  ? returns[i].getReturn().toString()
+                                  : "",
+                              onChanged: (string) {
+                                setState(() {
+                                  if (checkIndex(returns, i)) {
+                                    returns[i].setReturn(int.parse(string!));
+                                  } else {
+                                    RerturnAndSale returna = RerturnAndSale();
+                                    returna.setReturn(int.parse(string!));
+
+                                    returns.add(returna);
+                                  }
+                                });
+                              }),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              if (returns.isNotEmpty) {
+                                print("this is niot what i want");
+                                setState(() {
+                                  if (checkIndex(returns, i)) {
+                                    returns.removeAt(i);
+                                    returnLength = returns.length;
+                                  } else {
+                                    returnLength = returnLength - 1;
+                                  }
+                                });
+                              } else {
+                                print("no way what");
+                                returnLength = returns.length;
+                              }
+                            },
+                            child: circleContainer())
                       ],
                     ),
                   ],
@@ -509,9 +909,23 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ),
             ),
           ),
+        textButton("Add more Products", textbuttonSize!, false, () {
+          setState(() {
+            print("the return length ${returns.length}");
 
-        textButton(
-             "Add mmore Prodeucts", textbuttonSize! , false, (){})
+            returnLength = returns.length;
+            print(returns);
+          });
+        }),
+        const SizedBox(
+          height: 12,
+        ),
+        textFeildWithMultipleLines(
+            hintText: 'Remarks',
+            controller: _returnRemarks,
+            validator: (string) {
+              Validators.validator(string);
+            })
       ],
     );
   }

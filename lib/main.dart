@@ -13,6 +13,7 @@ import 'package:salesforce/utils/appTheme.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/depot.dart';
 import 'domain/entities/products.dart';
+import 'domain/entities/retailer.dart';
 import 'domain/entities/retailerType.dart';
 import 'domain/entities/saleslocationTrack.dart';
 import 'domain/usecases/hiveUseCases/hiveUseCases.dart';
@@ -24,13 +25,14 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureInjection();
 
-await  Hive
+  Hive
     ..initFlutter()
     ..registerAdapter(AttendenceAdapter())
     ..registerAdapter(DepotAdapter())
     ..registerAdapter(ProductsAdapter())
     ..registerAdapter(RetailerTypeAdapter())
-    ..registerAdapter(SalesLocationTrackAdapter());
+    ..registerAdapter(SalesLocationTrackAdapter())
+    ..registerAdapter(RetailerAdapter());
 
   runApp(const MyApp());
 }
@@ -51,8 +53,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    print("this is logged in") ;
-     checkUserLoggedIn();
+    print("this is logged in");
+    checkUserLoggedIn();
     super.initState();
   }
 
@@ -93,8 +95,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   bool isLoggedIn = false;
   checkUserLoggedIn() async {
-
-    
     final String checkUserAccessToken;
 
     Box box = await SaveLocally().openBox();

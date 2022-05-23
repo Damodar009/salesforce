@@ -206,7 +206,7 @@ class RemoteSourceImplementation implements RemoteSource {
         ApiUrl.saveSalesDataCollection,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer 2c0f2635-6d0a-46af-b822-0a6cf55df729'
+            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
           },
         ),
       );
@@ -236,7 +236,7 @@ class RemoteSourceImplementation implements RemoteSource {
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer bb81196a-bc85-4c26-b3af-abae634a3795'
+            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
           },
         ),
       );
@@ -256,7 +256,12 @@ class RemoteSourceImplementation implements RemoteSource {
             .toList();
 
         depotProductRetailer = DepotProductRetailer(
-            products: products, retailerType: retailerTypes, depots: depots);
+            products: products,
+            retailerType: retailerTypes,
+            depots: depots,
+            merchandise: [],
+            retailerDropDown: [],
+            region: []);
 
         return depotProductRetailer;
       } else {
@@ -343,7 +348,6 @@ class RemoteSourceImplementation implements RemoteSource {
     print('hello hello');
 
     UserDetailsModel userDetailsModel = UserDetailsModel(
-        
         fullName: userDetails.fullName,
         gender: userDetails.gender,
         dob: userDetails.dob,

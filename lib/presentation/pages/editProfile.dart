@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/injectable.dart';
@@ -26,6 +29,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
+  bool hasImage = false;
+  File? image;
+
+  Future getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    try {
+      final image = await _picker.pickImage(source: ImageSource.gallery);
+      print("dfgsadg");
+      if (image == null) return;
+      print(image.name);
+      _pickImageController.text = image.name;
+      final imageTemporary = File(image.path);
+      print("this is path of image ");
+      print(imageTemporary);
+      setState(() {
+        this.image = imageTemporary;
+        hasImage = true;
+      });
+    } on PlatformException catch (e) {
+      debugPrint('Failed to pick image: $e');
+    }
+  }
+
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
 
   final TextEditingController _userNameController = TextEditingController();
@@ -40,6 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController();
 
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _pickImageController = TextEditingController();
 
   List<String> items = [
     'CitizenShip',
@@ -86,7 +113,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       textFormField(
-                          // obsecureTextOldPassword: false,
                           validator: (value) {},
                           controller: _userNameController,
                           hintText: 'Username',
@@ -198,7 +224,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(
                         height: heightBetweenTextField,
                       ),
-                      const Text('Upload Identification Document'),
                       SizedBox(
                         height: heightBetweenTextField,
                       ),
@@ -210,6 +235,55 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             validator: (string) {},
                             hintText: 'Choose',
                             item: items),
+                      ),
+                      SizedBox(
+                        height: heightBetweenTextField,
+                      ),
+                      const Text('Upload Identification Document'),
+                      SizedBox(
+                        height: heightBetweenTextField,
+                      ),
+                      TextField(
+                        controller: _pickImageController,
+                        decoration: InputDecoration(
+                            suffixIcon: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: SizedBox(
+                                width: 115,
+                                child: button("upload", () {
+                                  getImage();
+                                }, false, AppColors.buttonColor),
+                              ),
+                            ),
+                            fillColor: Colors.white,
+                            errorStyle:
+                                const TextStyle(color: AppColors.primaryColor),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15.0),
+                              ),
+                              borderSide: BorderSide(
+                                  color: AppColors.textFeildINputBorder),
+                            ),
+                            filled: true,
+                            hintStyle: const TextStyle(
+                              color: Colors.grey,
+                               fontFamily: 'Inter',
+                              fontSize: 15,
+                            ),
+                            hintText: 'Upload Image',
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30.0),
+                                )),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30.0),
+                                ))),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(13),

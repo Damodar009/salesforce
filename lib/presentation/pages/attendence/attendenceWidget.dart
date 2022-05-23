@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../utils/app_colors.dart';
 
-Widget attendenceWidget(BuildContext context) {
+Widget attendenceWidget(
+  BuildContext context,
+) {
+  DateTime dataeTime = DateTime.now();
   return Container(
       height: 280,
       width: 200,
@@ -44,15 +47,16 @@ Widget attendenceWidget(BuildContext context) {
             const SizedBox(
               height: 12,
             ),
-            customText("today, thus 28 \n 2022/1/1"),
+            customText("today:${dataeTime.day},may\n${dataeTime.year}"),
             const SizedBox(
               height: 12,
             ),
-            customText("check in time \n 04:05 AM"),
+            customText(
+                "checkin time: \n ${dataeTime.hour}:${dataeTime.minute}"),
             const SizedBox(
               height: 12,
             ),
-            customText("Address: solakhumbu \n kathmandu , nepal"),
+            customText("Address:Kathmandu,Nepal"),
           ],
         ),
       ));
