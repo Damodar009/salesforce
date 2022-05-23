@@ -37,10 +37,12 @@ class VisitedOutletWidget extends StatelessWidget {
     return Scaffold(
       appBar: appBar(
           navTitle: visitedOutlets.navTitle ?? "",
-          icon: Icons.arrow_back,
-          backNavigate: () {
-            Navigator.pop(context);
-          }),
+          context: context
+          // icon: Icons.arrow_back,
+          // backNavigate: () {
+          //   Navigator.pop(context);
+          // },
+          ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

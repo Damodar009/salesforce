@@ -9,7 +9,10 @@ class CalenderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
-          icon: Icons.arrow_back, navTitle: "Attendence", backNavigate: () {}),
+          // icon: Icons.arrow_back,
+          navTitle: "Attendence",
+          //  backNavigate: () {},
+          context: context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SfCalendar(

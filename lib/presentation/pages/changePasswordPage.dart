@@ -36,7 +36,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         if (state is ChangePasswordSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('Password has been successfull updated.')));
-          Navigator.pop(context);    
+          Navigator.pop(context);
         } else if (state is ChangePasswordFailedState) {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text('Error occured.')));
@@ -45,11 +45,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       },
       child: Scaffold(
         appBar: appBar(
-            icon: Icons.arrow_back_ios_new_outlined,
+            context: context,
+            // icon: Icons.arrow_back_ios_new_outlined,
             navTitle: 'CHANGE PASSWORD',
-            backNavigate: () {
-              Navigator.pop(context);
-            }),
+            // backNavigate: () {
+            //   Navigator.pop(context);
+            // },
+            ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
           child: Form(
@@ -126,7 +128,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ChangePasswordEvent(
                                 oldPassword: _oldPasswordController.text,
                                 newPassword: _newPasswordController.text));
-                        
                       } else {}
                     }, state is ChangePasswordLoadingState ? true : false,
                         AppColors.buttonColor);

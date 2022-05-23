@@ -367,7 +367,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     return Scaffold(
       appBar: appBar(
           navTitle: 'NEW ORDER',
-          icon: Icons.arrow_back,
+          // icon: Icons.arrow_back,
+          context: context,
           settingTitle: showEditBUtton
               ? showSaveBUtton
                   ? 'save'
@@ -405,7 +406,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               )
             ],
           ),
-          backNavigate: () {}),
+          // backNavigate: () {},
+          ),
       body: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           child: ConstrainedBox(

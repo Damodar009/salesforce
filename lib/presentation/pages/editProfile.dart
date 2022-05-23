@@ -118,12 +118,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
           child: Scaffold(
             appBar: appBar(
-                icon: Icons.arrow_back_ios_new_outlined,
                 navTitle: 'EDIT PROFILE',
-                backNavigate: () {
-                  print('Navigator.pop(context);');
-                  Navigator.pushNamed(context, Routes.profileRoute);
-                }),
+                context: context
+                ),
             body: SingleChildScrollView(
               child: Padding(
                 padding:
@@ -317,7 +314,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     //image
 
                     Stack(
-                      // textDirection: TextDirection.rtl,
                       children: [
                         TextField(
                           decoration: InputDecoration(

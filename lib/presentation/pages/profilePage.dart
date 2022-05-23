@@ -31,11 +31,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: appBar(
-          icon: Icons.arrow_back_ios_new_outlined,
+          // icon: Icons.arrow_back_ios_new_outlined,
           navTitle: 'PROFILE',
-          backNavigate: () {
-            Navigator.pop(context);
-          }),
+          context: context
+          // backNavigate: () {
+          //   Navigator.pop(context);
+          // },
+          ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),

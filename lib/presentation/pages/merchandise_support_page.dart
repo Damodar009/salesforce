@@ -62,11 +62,13 @@ class _MerchandiseSupportScreenState
 
     return Scaffold(
       appBar: appBar(
-          icon: Icons.arrow_back_ios_new_outlined,
+          // icon: Icons.arrow_back_ios_new_outlined,
           navTitle: 'MERCHANDISE SUPPORT',
-          backNavigate: () {
-            Navigator.pop(context);
-          }),
+          context: context
+          // backNavigate: () {
+          //   Navigator.pop(context);
+          // },
+          ),
       body: Padding(
         padding: const EdgeInsets.all(13),
         child: SingleChildScrollView(

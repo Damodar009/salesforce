@@ -12,6 +12,7 @@ import 'package:salesforce/presentation/pages/newOrderPage/newOrderPage.dart';
 import 'package:salesforce/presentation/pages/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/payment_page.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
+import 'package:salesforce/presentation/pages/today_target_new_outlets_screen.dart';
 import 'package:salesforce/presentation/pages/xlsOrderPage.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 
@@ -60,7 +61,7 @@ class RouteGenerator {
       case Routes.salesDataCollection:
         return MaterialPageRoute(builder: (_) => Container());
       case Routes.logOUtRoutes:
-        return MaterialPageRoute(builder: (_) => const LogOutPage());
+        return MaterialPageRoute(builder: (_) => LogOutPage());
       case Routes.menuScreen:
         return MaterialPageRoute(builder: (_) => const MenuScreen());
       case Routes.paymentScreen:
@@ -84,7 +85,7 @@ class RouteGenerator {
 
       case Routes.newOutletRoute:
         return MaterialPageRoute(
-            builder: (_) => ListOfOrderAndOutletDetailScreen());
+            builder: (_) => const NewTargetNewOutletsScreen());
 
       case Routes.totalOutLetsVisitedRoute:
         return MaterialPageRoute(

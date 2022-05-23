@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/data/datasource/hive.dart';
+import 'package:salesforce/injectable.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/app_colors.dart';
 import '../widgets/buttonWidget.dart';
 
 class LogOutPage extends StatelessWidget {
-  const LogOutPage({Key? key}) : super(key: key);
+  LogOutPage({Key? key}) : super(key: key);
+
+  final prefs = getIt<SharedPreferences>();
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +68,13 @@ class LogOutPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: button("Log off", () async {
-
                   print("log out button clicked");
+
+                  prefs.clear();
 
                   Box box = await Hive.openBox(HiveConstants.userdata);
 
                   box.deleteFromDisk();
-                  // await SaveLocally().deletetoken();
-                  // await SaveLocally().showtoken();
                   Navigator.push(
                       context,
                       MaterialPageRoute(

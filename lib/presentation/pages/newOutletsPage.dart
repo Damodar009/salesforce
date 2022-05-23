@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:salesforce/domain/entities/retailer.dart';
+import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import '../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../injectable.dart';
 import '../../utils/app_colors.dart';
@@ -60,41 +61,14 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Row(
-            children: [
-              Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                    color: AppColors.buttonColor,
-                    borderRadius: BorderRadius.circular(5)),
-                child: const Icon(
-                  Icons.edit,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(
-                width: 15,
-              ),
-              const Text(
-                "Edit",
-                style: TextStyle(color: AppColors.primaryColor),
-              ),
-              const SizedBox(
-                width: 25,
-              ),
-            ],
-          )
-        ],
-        leading: const BackButton(),
-        title: const Text(
-          "NEW ORDER",
-          style: TextStyle(color: AppColors.primaryColor),
-        ),
-        centerTitle: false,
-      ),
+      appBar: appBar(
+          // icon: Icons.arrow_back_ios_new_outlined,
+          navTitle: 'NEW OUTLETS',
+          context: context
+          // backNavigate: () {
+          //   Navigator.pop(context);
+          // },
+          ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: LayoutBuilder(builder: (context, constraint) {
@@ -140,12 +114,12 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                           return validator(string);
                         },
                         obsecureText1: () {},
-                        hintText: 'Frank miller '),
+                        hintText: ''),
 
                     const SizedBox(
                       height: 12,
                     ),
-                    title("Contact Person"),
+                    title("Email"),
                     const SizedBox(
                       height: 12,
                     ),
@@ -158,7 +132,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                           return validator(string);
                         },
                         obsecureText1: () {},
-                        hintText: 'milller.frank@gmail.com '),
+                        hintText: ''),
                     const SizedBox(
                       height: 12,
                     ),
@@ -174,7 +148,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                           return phoneValidator(string);
                         },
                         obsecureText1: () {},
-                        hintText: '977 - 9845392323 '),
+                        hintText: ''),
                     const SizedBox(
                       height: 12,
                     ),
@@ -190,7 +164,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                           return validator(string);
                         },
                         obsecureText1: () {},
-                        hintText: 'swoyambhu, kathmandu'),
+                        hintText: ''),
 
                     const SizedBox(
                       height: 12,
@@ -292,7 +266,19 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                         controller: _typesofOutlet,
                         validator: (string) {
                           return validator(string);
-                        }, item: []),
+                        },
+                        item: []),
+
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    title("Region"),
+
+                    textFormField(
+                        controller: _location,
+                        validator: (string) {},
+                        obsecureText1: () {},
+                        hintText: ''),
 
                     const SizedBox(
                       height: 20,

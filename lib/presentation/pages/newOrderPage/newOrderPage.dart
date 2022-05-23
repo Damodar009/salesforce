@@ -22,8 +22,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   double? textbuttonSize;
 
   final TextEditingController _outletName = TextEditingController();
-  final TextEditingController _textEditingController =
-      TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
 
   // final TextEditingController _textEditingController = TextEditingController();
   bool showEditBUtton = false;
@@ -98,8 +97,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
           returnPressed
               ? returnsWidget()
-              : textButton("Return",
-                  MediaQuery.of(context).size.width * 0.9, true, () {
+              : textButton(
+                  "Return", MediaQuery.of(context).size.width * 0.9, true, () {
                   setState(() {
                     returnPressed = true;
                     availabilityPressed = false;
@@ -112,8 +111,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
           availabilityPressed
               ? availabilityWidget()
-              : textButton("Availability",
-                  MediaQuery.of(context).size.width * 0.9, true, () {
+              : textButton(
+                  "Availability", MediaQuery.of(context).size.width * 0.9, true,
+                  () {
                   setState(() {
                     returnPressed = false;
                     availabilityPressed = true;
@@ -158,8 +158,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               //           visitedOutlets: visitedOutlets,
               //         )));
 
-              Navigator.of(context).pushNamed(Routes.visitedOutlets,
-                  arguments: visitedOutlets);
+              Navigator.of(context)
+                  .pushNamed(Routes.visitedOutlets, arguments: visitedOutlets);
             } else {
               setState(() {
                 ignorePointer = true;
@@ -185,53 +185,54 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
     return Scaffold(
       appBar: appBar(
-          navTitle: 'NEW ORDER',
-          icon: Icons.arrow_back,
-          settingTitle: showEditBUtton
-              ? showSaveBUtton
-                  ? 'save'
-                  : "Edit"
-              : "",
-          settingIcon: Row(
-            children: [
-              showEditBUtton
-                  ? StatefulBuilder(builder: (context, state) {
-                      return Checkbox(
-                          fillColor: MaterialStateColor.resolveWith(
-                              (states) => AppColors.buttonColor),
-                          value: editCheckBoxValue,
-                          onChanged: (value) {
-                            state(() {
-                              editCheckBoxValue = value!;
-                            });
-                            setState(() {
-                              // editCheckBoxValue = value!;
-                              showEditBUtton = false;
-                              ignorePointer = false;
-                              showSaveBUtton = true;
-                              showXlsButton = true;
-                            });
+        navTitle: 'NEW ORDER',
+        // icon: Icons.arrow_back,
+        context: context,
+        settingTitle: showEditBUtton
+            ? showSaveBUtton
+                ? 'save'
+                : "Edit"
+            : "",
+        settingIcon: Row(
+          children: [
+            showEditBUtton
+                ? StatefulBuilder(builder: (context, state) {
+                    return Checkbox(
+                        fillColor: MaterialStateColor.resolveWith(
+                            (states) => AppColors.buttonColor),
+                        value: editCheckBoxValue,
+                        onChanged: (value) {
+                          state(() {
+                            editCheckBoxValue = value!;
                           });
-                    })
-                  : SizedBox(),
-              Text(showEditBUtton || showSaveBUtton
-                  ? showSaveBUtton
-                      ? 'save'
-                      : "Edit"
-                  : ""),
-              const SizedBox(
-                width: 10,
-              )
-            ],
-          ),
-          backNavigate: () {}),
+                          setState(() {
+                            // editCheckBoxValue = value!;
+                            showEditBUtton = false;
+                            ignorePointer = false;
+                            showSaveBUtton = true;
+                            showXlsButton = true;
+                          });
+                        });
+                  })
+                : SizedBox(),
+            Text(showEditBUtton || showSaveBUtton
+                ? showSaveBUtton
+                    ? 'save'
+                    : "Edit"
+                : ""),
+            const SizedBox(
+              width: 10,
+            )
+          ],
+        ),
+        // backNavigate: () {}
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(builder: (context, constraint) {
           return SingleChildScrollView(
             child: ConstrainedBox(
-                constraints:
-                    BoxConstraints(minHeight: constraint.maxHeight),
+                constraints: BoxConstraints(minHeight: constraint.maxHeight),
                 child: ignorePointer
                     ? IgnorePointer(child: newOrderScreenBody())
                     : newOrderScreenBody()),
@@ -348,8 +349,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           height: 12,
         ),
         Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 8.0, vertical: 13.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               shape: BoxShape.rectangle,
@@ -426,8 +426,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           height: 12,
         ),
         Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 8.0, vertical: 13.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               shape: BoxShape.rectangle,
@@ -489,8 +488,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         ),
         for (var i = 0; i < 3; i++)
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 8.0, vertical: 13.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -498,8 +497,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 shape: BoxShape.rectangle,
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0, vertical: 13.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
                 child: Column(
                   children: [
                     title("Product Name"),
@@ -538,8 +537,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               ),
             ),
           ),
-        textButton(
-            "Add mmore Prodeucts", textbuttonSize!, false, () {})
+        textButton("Add mmore Prodeucts", textbuttonSize!, false, () {})
       ],
     );
   }

@@ -19,7 +19,11 @@ class _XlsOrderState extends State<XlsOrder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
-          icon: Icons.arrow_back, navTitle: "ORDER", backNavigate: () {}),
+          // icon: Icons.arrow_back, 
+          navTitle: "ORDER", 
+          // backNavigate: () {},
+          context: context
+          ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

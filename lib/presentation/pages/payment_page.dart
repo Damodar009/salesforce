@@ -54,11 +54,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     return Scaffold(
       appBar: appBar(
-          icon: Icons.arrow_back_ios_new_outlined,
+          // icon: Icons.arrow_back_ios_new_outlined,
           navTitle: 'PAYMENT',
-          backNavigate: () {
-            Navigator.pop(context);
-          }),
+          context: context
+          // backNavigate: () {
+          //   Navigator.pop(context);
+          // },
+          ),
       body: Padding(
         padding: const EdgeInsets.all(13),
         child: Column(

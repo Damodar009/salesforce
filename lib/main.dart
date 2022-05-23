@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     print("this is logged in");
-    checkUserLoggedIn();
+    // checkUserLoggedIn();
     super.initState();
   }
 
