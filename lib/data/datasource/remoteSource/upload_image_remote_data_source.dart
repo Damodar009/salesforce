@@ -54,6 +54,7 @@ class UploadImageRemoteDataSourceImpl implements UploadImageRemoteDataSource {
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
+      print("you have reached here man");
       print(response.data);
 
       print(response.statusCode);

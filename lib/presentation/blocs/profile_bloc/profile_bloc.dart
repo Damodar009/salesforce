@@ -54,14 +54,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       (event, emit) async {
         print("you are in bloc hai tah kta ho ");
 
-        emit(SaveUserDetailsLoadingState());
+        //emit(SaveUserDetailsLoadingState());
 
         // uploadImageStreamSubscription = UploadImageBloc().stream.listen((event) {
         //   print(state);
         // });
 
-        final isSuccessful = await useCaseForRemoteSourceimpl
-            .saveUserDetails(event.saveUserDetailsDataModel);
+        print("you are below loadin");
+
+        final isSuccessful =
+            await saveEditProfileDatas(event.saveUserDetailsDataModel);
 
         isSuccessful.fold((l) {
           if (l is ServerFailure) {
@@ -74,24 +76,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     );
   }
 
-  saveEditProfileData(SaveUserDetailsDataModel user) async {
+  saveEditProfileDatas(SaveUserDetailsDataModel user) async {
+    print("you are inside the function");
     if (user.userDetail!.userDocument != null) {
+      print("images ");
       String imageId = "";
       final isSuccesfull = await useCaseForUploadImageImpl
           .uploadImageSave(user.userDetail!.userDocument!);
 
-      isSuccesfull.fold((l) {
-        if (l is ServerFailure) {
-          print("l is ServerFailure");
-          emit(GetImageIdFailedState());
-        } else if (l is CacheFailure) {
-          print("l is CacheFailure");
-          emit(GetImageIdFailedState());
-        }
-      }, (r) {
-        print("SaveImageLoadedState");
-        imageId = r;
-      });
       SaveUserDetailsDataModel saveUserDetailsDataModelData =
           SaveUserDetailsDataModel(
               id: user.userDetail!.user_detail_id,
@@ -112,6 +104,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       saveEditProfileDataWithoutImage(saveUserDetailsDataModelData);
       //implement code to post image
     } else {
+      print("you are in else");
       saveEditProfileDataWithoutImage(user);
 
       // implement code to send data
@@ -119,6 +112,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   saveEditProfileDataWithoutImage(SaveUserDetailsDataModel user) async {
-    await useCaseForRemoteSourceimpl.saveUserDetails(user);
+    final isSuccesfull = await useCaseForRemoteSourceimpl.saveUserDetails(user);
+
+    isSuccesfull.fold((l) {
+      if (l is ServerFailure) {
+        print("l is ServerFailure");
+        emit(SaveUserDetailsFailedState());
+      } else if (l is CacheFailure) {
+        print("l is CacheFailure");
+        emit(SaveUserDetailsFailedState());
+      }
+    }, (r) {
+      emit(SaveUserDetailsLoadedState());
+    });
   }
 }

@@ -377,95 +377,85 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     SizedBox(
                       height: heightBetweenTextField,
                     ),
-                    BlocBuilder<UploadImageBloc, UploadImageState>(
-                      builder: (context, Imagestate) {
-                        return Padding(
-                          padding: const EdgeInsets.all(13),
-                          child: button('Save', () async {
-                            print("object99999");
+                    Padding(
+                      padding: const EdgeInsets.all(13),
+                      child: button('Save', () async {
+                        print("object99999");
 
-                            //image event
+                        //image event
 
-                            // BlocProvider.of<UploadImageBloc>(context)
-                            //     .add(SaveImageEvent(imageName: image!.path));
+                        // BlocProvider.of<UploadImageBloc>(context)
+                        //     .add(SaveImageEvent(imageName: image!.path));
 
-                            // //image state check
+                        // //image state check
 
-                            // String? imageId = Imagestate is SaveImageLoadedState
-                            //     ? Imagestate.imageResponse
-                            //     : null;
+                        // String? imageId = Imagestate is SaveImageLoadedState
+                        //     ? Imagestate.imageResponse
+                        //     : null;
 
-                            String? phoneNumber;
+                        String? phoneNumber;
 
-                            Box box =
-                                await Hive.openBox(HiveConstants.userdata);
+                        Box box = await Hive.openBox(HiveConstants.userdata);
 
-                            var phoneNumberSuccessOrFailed = useCaseForHiveImpl
-                                .getValueByKey(box, "phoneNumber");
+                        var phoneNumberSuccessOrFailed = useCaseForHiveImpl
+                            .getValueByKey(box, "phoneNumber");
 
-                            phoneNumberSuccessOrFailed.fold(
-                                (l) => {print("failed")},
-                                (r) => {phoneNumber = r!, print(r.toString())});
+                        phoneNumberSuccessOrFailed.fold(
+                            (l) => {print("failed")},
+                            (r) => {phoneNumber = r!, print(r.toString())});
 
-                            BlocProvider.of<ProfileBloc>(context).add(
-                              SaveUserDetailsEvent(
-                                saveUserDetailsDataModel:
-                                    SaveUserDetailsDataModel(
-                                  id: widget.getProfileState.id,
-                                  //userid
-                                  roleId: widget.getProfileState.roleId,
-                                  email: widget.getProfileState.email,
-                                  phoneNumber: phoneNumber,
-                                  roleName: widget.getProfileState.roleName,
-                                  userDetail: UserDetailsModel(
-                                    id: widget.getProfileState.userDetail!
-                                        .user_detail_id,
-                                    fullName: (_userNameController.text == "")
+                        BlocProvider.of<ProfileBloc>(context).add(
+                          SaveUserDetailsEvent(
+                            saveUserDetailsDataModel: SaveUserDetailsDataModel(
+                              id: widget.getProfileState.id,
+                              //userid
+                              roleId: widget.getProfileState.roleId,
+                              email: widget.getProfileState.email,
+                              phoneNumber: phoneNumber,
+                              roleName: widget.getProfileState.roleName,
+                              userDetail: UserDetailsModel(
+                                id: widget
+                                    .getProfileState.userDetail!.user_detail_id,
+                                fullName: (_userNameController.text == "")
+                                    ? widget
+                                        .getProfileState.userDetail!.fullName
+                                    : _userNameController.text,
+                                gender: (selectedValue == "")
+                                    ? widget.getProfileState.userDetail!.gender
+                                    : selectedValue,
+                                dob: (_dateOfBirthController.text == "")
+                                    ? widget.getProfileState.userDetail!.dob
+                                    : _dateOfBirthController.text,
+                                permanentAddress:
+                                    _permanentAddressController.text == ""
                                         ? widget.getProfileState.userDetail!
-                                            .fullName
-                                        : _userNameController.text,
-                                    gender: (selectedValue == "")
-                                        ? widget
-                                            .getProfileState.userDetail!.gender
-                                        : selectedValue,
-                                    dob: (_dateOfBirthController.text == "")
-                                        ? widget.getProfileState.userDetail!.dob
-                                        : _dateOfBirthController.text,
-                                    permanentAddress:
-                                        _permanentAddressController.text == ""
-                                            ? widget.getProfileState.userDetail!
-                                                .permanentAddress
-                                            : _permanentAddressController.text,
-                                    temporaryAddress:
-                                        _temporaryAddressController.text == ""
-                                            ? widget.getProfileState.userDetail!
-                                                .temporaryAddress
-                                            : _temporaryAddressController.text,
-                                    contactNumber2:
-                                        _phoneNumberController.text == ""
-                                            ? widget.getProfileState.userDetail!
-                                                .contactNumber2
-                                            : _phoneNumberController.text,
-                                    userDocument: image !=null ? image!.path:null, //image id
-                                  ),
-                                ),
+                                            .permanentAddress
+                                        : _permanentAddressController.text,
+                                temporaryAddress:
+                                    _temporaryAddressController.text == ""
+                                        ? widget.getProfileState.userDetail!
+                                            .temporaryAddress
+                                        : _temporaryAddressController.text,
+                                contactNumber2:
+                                    _phoneNumberController.text == ""
+                                        ? widget.getProfileState.userDetail!
+                                            .contactNumber2
+                                        : _phoneNumberController.text,
+                                userDocument: image != null
+                                    ? image!.path
+                                    : null, //image id
                               ),
-                            );
-
-                            //edit profile event
-
-                            Navigator.pushNamed(context, Routes.profileRoute);
-                            // BlocProvider.of<ProfileBloc>(context)
-                            //     .add(GetProfileEvent());
-                          },
-                              (Imagestate is SaveImageLoadingState
-                                  ? (Profilestate is SaveUserDetailsLoadedState
-                                      ? true
-                                      : false)
-                                  : false),
-                              AppColors.buttonColor),
+                            ),
+                          ),
                         );
-                      },
+
+                        //edit profile event
+
+                        // Navigator.pushNamed(context, Routes.profileRoute);
+                        // BlocProvider.of<ProfileBloc>(context)
+                        //     .add(GetProfileEvent());
+                      }, (Profilestate is SaveImageLoadingState ? true : false),
+                          AppColors.buttonColor),
                     )
                   ],
                 ),
