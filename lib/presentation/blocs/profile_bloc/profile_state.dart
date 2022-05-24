@@ -31,3 +31,8 @@ class SaveUserDetailsLoadedState extends ProfileState {}
 
 class SaveUserDetailsFailedState extends ProfileState {}
 
+class GetImageIdLoadingState extends ProfileState {}
+
+class GetImageIdLoadedState extends ProfileState {}
+
+class GetImageIdFailedState extends ProfileState {}

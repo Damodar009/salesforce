@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:salesforce/domain/entities/image.dart';
@@ -10,7 +12,9 @@ part 'upload_image_state.dart';
 
 class UploadImageBloc extends Bloc<UploadImageEvent, UploadImageState> {
   var useCaseForUploadImageImpl = getIt<UseCaseForUploadImageImpl>();
-  UploadImageBloc(this.useCaseForUploadImageImpl)
+  
+  UploadImageBloc(
+      this.useCaseForUploadImageImpl)
       : super(UploadImageInitial()) {
     on<UploadImageEvent>((event, emit) async {
       // TODO: implement event handler
@@ -18,12 +22,15 @@ class UploadImageBloc extends Bloc<UploadImageEvent, UploadImageState> {
 
     on<SaveImageEvent>(
       (event, emit) async {
+        // imageUploadStreamSubscription
         await mapEventToState(event, emit);
       },
     );
   }
 
   mapEventToState(SaveImageEvent event, Emitter<UploadImageState> emit) async {
+
+    if(event.imageName != null){}
     final isSuccesfull =
         await useCaseForUploadImageImpl.uploadImageSave(event.imageName);
 
@@ -37,7 +44,7 @@ class UploadImageBloc extends Bloc<UploadImageEvent, UploadImageState> {
       }
     }, (r) {
       print("SaveImageLoadedState");
-      return r;
+      emit(SaveImageLoadedState(imageResponse: r));
     });
   }
 }

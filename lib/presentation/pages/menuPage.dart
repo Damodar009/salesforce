@@ -120,8 +120,8 @@ class _MenuScreenState extends State<MenuScreen> {
                             ),
                           ),
                           Icon(showAnswer
-                              ? Icons.arrow_upward_sharp
-                              : Icons.arrow_downward_sharp)
+                              ? Icons.arrow_downward_outlined
+                              : Icons.arrow_forward_ios_outlined)
                         ],
                       ),
                     ),

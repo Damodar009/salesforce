@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 
 import '../../../utils/app_colors.dart';
@@ -38,15 +39,11 @@ class _ListOfOrderAndOutletDetailScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("data"),
-        centerTitle: false,
-      ),
+      appBar: appBar(navTitle: 'Data', context: context),
       body: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           child: ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: constraint.maxHeight),
+            constraints: BoxConstraints(minHeight: constraint.maxHeight),
             child: Column(
               // mainAxisSize: MainAxisSize.min,
               children: [

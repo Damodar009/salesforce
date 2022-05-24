@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:salesforce/domain/entities/image.dart';
 import 'package:salesforce/domain/repositories/repository.dart';
 import 'package:salesforce/error/failure.dart';
 import 'package:salesforce/injectable.dart';

@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     "assets/icons/cardOutlets.png",
     "assets/icons/cardOutlets.png",
   ];
-  String distanceTraveled = "12 km";
+  String distanceTraveled = "0 km";
   String userName = "";
   getUserName() async {
     Box box = await Hive.openBox(HiveConstants.userdata);
@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     _initialData.getAndSaveInitalData();
+    getUserName();
     super.initState();
   }
 
@@ -271,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  card(icons[index], title[index], 34, context),
+                                  card(icons[index], title[index], 0, context),
                             )),
                         itemCount: 4,
                       )),

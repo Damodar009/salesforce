@@ -4,7 +4,7 @@ abstract class UploadImageState extends Equatable {
   const UploadImageState();
   
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class UploadImageInitial extends UploadImageState {}
@@ -15,11 +15,11 @@ class SaveImageLoadingState extends UploadImageState{
 }
 
 class SaveImageLoadedState extends UploadImageState{
-  final String imageResponse;
+  final String? imageResponse;
 
   const SaveImageLoadedState({required this.imageResponse});
   @override
-  List<Object> get props => [imageResponse];
+  List<Object?> get props => [imageResponse];
 }
 
 class SaveImageFailedState extends UploadImageState{

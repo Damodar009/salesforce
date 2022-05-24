@@ -88,6 +88,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
+    selectedValue = widget.getProfileState.userDetail!.gender!;
     // TODO: implement initState
     // String? selectedValue = widget.getProfileState.userDetail?.gender;
     // selectValueRadioButton("",selectedValue: selectedValue!);
@@ -385,16 +386,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                             //image event
 
-                            BlocProvider.of<UploadImageBloc>(context)
-                                .add(SaveImageEvent(imageName: image!.path));
+                            // BlocProvider.of<UploadImageBloc>(context)
+                            //     .add(SaveImageEvent(imageName: image!.path));
 
-                            //image state check
+                            // //image state check
 
-                            String? imageId = Imagestate is SaveImageLoadedState
-                                ? Imagestate.imageResponse
-                                : null;
-
-                            //edit profile event
+                            // String? imageId = Imagestate is SaveImageLoadedState
+                            //     ? Imagestate.imageResponse
+                            //     : null;
 
                             String? phoneNumber;
 
@@ -447,11 +446,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             ? widget.getProfileState.userDetail!
                                                 .contactNumber2
                                             : _phoneNumberController.text,
-                                    userDocument: imageId, //image id
+                                    userDocument: image !=null ? image!.path:null, //image id
                                   ),
                                 ),
                               ),
                             );
+
+                            //edit profile event
 
                             Navigator.pushNamed(context, Routes.profileRoute);
                             // BlocProvider.of<ProfileBloc>(context)

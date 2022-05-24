@@ -61,7 +61,7 @@ class UploadImageRemoteDataSourceImpl implements UploadImageRemoteDataSource {
       if (response.data["status"] == true) {
         print(response.data);
         String imageResponse = response.data["data"]["id"];
-            // ImageResponseModel.fromJson(response.data);
+        // ImageResponseModel.fromJson(response.data);
 
         print(" this is image response haaah$imageResponse");
         return imageResponse;

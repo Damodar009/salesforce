@@ -4,7 +4,7 @@ abstract class UploadImageEvent extends Equatable {
   const UploadImageEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class SaveImageEvent extends UploadImageEvent {
@@ -12,5 +12,5 @@ class SaveImageEvent extends UploadImageEvent {
 
   const SaveImageEvent({required this.imageName});
   @override
-  List<Object> get props => [imageName];
+  List<Object?> get props => [imageName];
 }
