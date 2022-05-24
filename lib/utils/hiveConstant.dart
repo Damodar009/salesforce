@@ -6,6 +6,7 @@ class HiveConstants {
   static const String attendence = "attendence";
   static const String newRetailer = "newretailer";
   static const String salesPersonLocationTrack = "salespersonlocationtrack";
+  static const String salesDataCollection = "salesDataCollection";
   //
 
   /// hivebox key names
@@ -18,9 +19,10 @@ class HiveConstants {
   //attendence
   static const String attendenceCheckinKey = "chekIn";
   static const String attendenceCheckOutKey = "chekOut";
+  static const String assignedDepot = "assignedDepot";
 
   //newRetailer
-  static const String  newRetailerKey= "newRetailer";
+  static const String newRetailerKey = "newRetailer";
 
   //salesPersonLOcationTracking
 

@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 @singleton
 class GeoLocationData {
   Future<Position?> getCurrentLocation() async {
-
     Position? position;
     //final Geolocator geolocator = Geolocator();
     bool servicEnabled;

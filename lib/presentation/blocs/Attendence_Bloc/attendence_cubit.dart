@@ -11,7 +11,6 @@ import 'package:geolocator/geolocator.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../domain/usecases/useCaseForAttebdenceSave.dart';
 import '../../../domain/usecases/usecasesForRemoteSource.dart';
-
 import '../../../utils/geolocation.dart';
 import '../../../utils/hiveConstant.dart';
 part 'attendence_state.dart';
@@ -49,8 +48,8 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   }
 
   /// check current location with deppot list location
-  bool checkCurrentLocationWithDepots(
-      List<dynamic> depots, double latitude, double longitude) {
+  Future<bool> checkCurrentLocationWithDepots(
+      List<dynamic> depots, double latitude, double longitude) async {
     bool isIndepot = false;
     int minimunDistance = 20; // in meters
     var p = 0.017453292519943295;
@@ -70,6 +69,11 @@ class AttendenceCubit extends Cubit<AttendenceState> {
       print(12742 * asin(sqrt(a)));
       if (12742 * asin(sqrt(a)) <= minimunDistance) {
         isIndepot = true;
+
+        Box box = await Hive.openBox(HiveConstants.attendence);
+        var failureOrsucess = useCaseForHiveImpl.saveValueByKey(
+            box, HiveConstants.assignedDepot, [latitude2, longitude2]);
+
         break;
       } else {}
     }
@@ -201,7 +205,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
     Position? position = await geolocator.getCurrentLocation();
     List<dynamic>? depots = await getDepotList();
     if (position != null && depots != null) {
-      bool isInDepot = checkCurrentLocationWithDepots(
+      bool isInDepot = await checkCurrentLocationWithDepots(
           depots, position.latitude, position.longitude);
 
       if (isInDepot) {

@@ -177,10 +177,6 @@ class _LOginScreenState extends State<LOginScreen> {
                                           return button(("Log in"), () {
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              print("is valid ");
-                                              print(_emailController.text);
-                                              print(_passwordController
-                                                      .text);
                                               authbloc.add(LoginAttemptEvent(
                                                   username:
                                                       _emailController.text,

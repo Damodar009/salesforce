@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
-import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/hive.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/error/failure.dart';

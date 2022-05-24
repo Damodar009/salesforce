@@ -7,6 +7,7 @@ import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
+import '../../data/models/SalesDataModel.dart';
 import '../../error/failure.dart';
 import '../entities/attendence.dart';
 import '../entities/depotProductRetailer.dart';
@@ -29,7 +30,7 @@ abstract class Repository {
   Future<Either<Failure, UserDetailsData>> getUserDetailsData();
 
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
-       SaveUserDetailsDataModel saveUserDetailsDataModel);
+      SaveUserDetailsDataModel saveUserDetailsDataModel);
 
   // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
 
@@ -52,4 +53,7 @@ abstract class SalesTeamRepository {
 
 abstract class UploadImageRepository {
   Future<Either<Failure, String>> uploadImageSave(String imageName);
+}
+abstract class SaveSalesDataRepository {
+  Future<Either<Failure, String?>> saveSalesData(List<SalesDataModel> salesDataModel);
 }

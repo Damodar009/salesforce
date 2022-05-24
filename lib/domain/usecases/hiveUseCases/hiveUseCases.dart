@@ -72,7 +72,6 @@ class UseCaseForHiveImpl implements UseCaseForHive {
 
   @override
   Either<Failure, String?> getValueByKey(Box box, String key) {
-
     print("inside hive hello");
     try {
       dynamic values = box.get(key);
