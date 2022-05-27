@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
-import 'package:salesforce/data/models/SalesDataModel.dart';
 import 'package:salesforce/data/models/Userdata.dart';
+import 'package:salesforce/domain/entities/availability.dart';
+import 'package:salesforce/domain/entities/returns.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/returnAndSale.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/newOutletsPage.dart';
@@ -17,6 +18,7 @@ import '../../../data/models/RetailerModel.dart';
 import '../../../data/models/SalesModel.dart';
 import '../../../data/models/returnModel.dart';
 import '../../../domain/entities/SalesData.dart';
+import '../../../domain/entities/sales.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
@@ -224,9 +226,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               loading = true;
             });
             print("it going to be awesome");
-            List<SalesModel> salessPojo = [];
-            List<ReturnsModel> returnspojo = [];
-            List<AvailabilityModel> availabilityPojo = [];
+            List<Sales> salessPojo = [];
+            List<Returns> returnspojo = [];
+            List<Availability> availabilityPojo = [];
             for (var i = 0; i < returns.length; i++) {
               ReturnsModel returnsmodel = ReturnsModel(
                   returned: sales[i].getReturn(),
