@@ -23,11 +23,14 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
         options: Options(
           contentType: "application/x-www-form-urlencoded",
           headers: <String, String>{
-            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+            'Authorization': 'Bearer 4ec360b3-5296-4d12-8719-4ae999679ec9'
           },
         ),
       );
       if (response.data["status"] == true) {
+
+
+        print("product retailer dropdown");
         DepotProductRetailer depotProductRetailer;
         List<RetailerType> retailerTypes =
             (response.data["data"]["retailerTypeDropDown"] as List)

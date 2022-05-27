@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
+import 'package:salesforce/data/models/SalesDataModel.dart';
 import 'package:salesforce/data/models/Userdata.dart';
+import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/returnAndSale.dart';
+import 'package:salesforce/presentation/pages/newOrderPage/widgets/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/wid.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/geolocation.dart';
 import '../../../data/datasource/local_data_sources.dart';
+import '../../../data/models/AvailabilityModel.dart';
+import '../../../data/models/RetailerModel.dart';
+import '../../../data/models/SalesModel.dart';
+import '../../../data/models/returnModel.dart';
+import '../../../domain/entities/SalesData.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
@@ -15,7 +24,6 @@ import '../../../utils/hiveConstant.dart';
 import '../../../utils/validators.dart';
 import '../../widgets/buttonWidget.dart';
 import '../../widgets/textformfeild.dart';
-import '../../widgets/visitedOutletWidget.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({Key? key}) : super(key: key);
@@ -28,9 +36,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   var sharedPreference = getIt<SignInLocalDataSource>();
   String nameOfOutlet = "";
+  bool loading = false;
 
   ///availability
-  List<Availability> availability = [];
+  List<OrderAvailability> availability = [];
 
   //list for getting value
   List<RerturnAndSale> sales = [];
@@ -69,13 +78,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   List<String> returnProductNames = [];
 
-  var items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
   bool checkIndex(List as, int i) {
     return as.asMap().containsKey(i);
   }
@@ -139,47 +141,39 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   Widget build(BuildContext context) {
     textbuttonSize = MediaQuery.of(context).size.width * 0.9;
     boolbuttonSize = MediaQuery.of(context).size.width * 0.2;
+    var newOrderCubit = BlocProvider.of<NewOrderCubit>(context);
+
     Widget newOrderScreenBody() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const Text(
-                'Outlets already created',
-                style: TextStyle(color: Color(0xFF003049)),
-              ),
-              StatefulBuilder(builder: (context, setStat) {
-                return Checkbox(
-                    value: outletsCreated,
-                    activeColor: AppColors.buttonColor,
-                    checkColor: Colors.white,
-                    fillColor: MaterialStateColor.resolveWith(
-                        (states) => AppColors.buttonColor),
-                    onChanged: (newValue) {
-                      //todo write code for outletsCreated
-                      setStat(() {
-                        outletsCreated = newValue!;
-                      });
-                    });
-              }),
-            ],
+          BlocBuilder<NewOrderCubit, NewOrderState>(
+            builder: (context, state) {
+              if (state is NewRetailerCreated) {
+                return const SizedBox();
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title("Name of Outlet"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    textFeildWithDropDownFor(
+                        validator: (string) {},
+                        item: retailerList,
+                        onselect: (string) {
+                          setState(() {
+                            nameOfOutlet = string;
+                          });
+                        },
+                        initialText: nameOfOutlet),
+                  ],
+                );
+              }
+            },
           ),
-          title("Name of Outlet"),
-          const SizedBox(
-            height: 12,
-          ),
-          textFeildWithDropDownFor(
-              validator: (string) {},
-              item: retailerList,
-              onselect: (string) {
-                setState(() {
-                  nameOfOutlet = string;
-                });
-              },
-              initialText: nameOfOutlet),
           const SizedBox(
             height: 35,
           ),
@@ -226,57 +220,115 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           button("Save Order", () async {
+            setState(() {
+              loading = true;
+            });
             print("it going to be awesome");
-            // int index = retailerList.indexOf(nameOfOutlet);
-            // String retailerId = retailerIdList[index];
-            // GeoLocationData geoLocationData = GeoLocationData();
-            // Position? position = await geoLocationData.getCurrentLocation();
-            // double latitude = position!.latitude;
-            // double longitude = position.longitude;
-            // DateTime dateTimeNow = DateTime.now();
-            // double assignedLatitude;
-            // double assignedlongitude;
-            //
-            // String userId;
-            //
-            // Box box = await Hive.openBox(HiveConstants.attendence);
-            // var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
-            //     box, HiveConstants.assignedDepot);
-            // failureOrsucess.fold((l) => {print("this is failed")},
-            //     (r) => {assignedLatitude = r[0], assignedlongitude = r[1]});
-            //
-            // UserDataModel? userDataModel =
-            //     await sharedPreference.getUserDataFromLocal();
-            // if (userDataModel != null) {
-            //   userId = userDataModel.userid!;
-            // }
-
-            // todo  payment type
-            //todo get payment document
-
-            print(_availabilityRemarks.text);
-            print(_salesRemarks.text);
-            print(_returnRemarks.text);
-
+            List<SalesModel> salessPojo = [];
+            List<ReturnsModel> returnspojo = [];
+            List<AvailabilityModel> availabilityPojo = [];
             for (var i = 0; i < returns.length; i++) {
-              print(returns[i].getReturn());
-              print(returns[i].getProduct());
+              ReturnsModel returnsmodel = ReturnsModel(
+                  returned: sales[i].getReturn(),
+                  product: sales[i].getProduct());
+              returnspojo.add(returnsmodel);
+
+              print(returnspojo[i]);
             }
             for (var i = 0; i < availability.length; i++) {
-              print(availability[i].getStock());
-              print(availability[i].getproduct());
-              print(availability[i].getavailability());
+              AvailabilityModel availabilityx = AvailabilityModel(
+                  availability: availability[i].getavailability(),
+                  stock: availability[i].getStock(),
+                  product: availability[i].getproduct());
+              availabilityPojo.add(availabilityx);
+              print(availabilityPojo[i]);
             }
             for (var i = 0; i < sales.length; i++) {
-              print(sales[i].getReturn());
-              print(sales[i].getProduct());
+              SalesModel salesmodel = SalesModel(
+                  sales: sales[i].getReturn(), product: sales[i].getProduct());
+              salessPojo.add(salesmodel);
+              print(salessPojo[i]);
             }
 
-            Navigator.of(context).pushNamed(Routes.paymentScreen);
+            SalesData salesDataModel;
 
-            // Navigator.of(context)
-            //     .pushNamed(Routes.visitedOutlets, arguments: visitedOutlets);
-          }, false, AppColors.buttonColor),
+            GeoLocationData geoLocationData = GeoLocationData();
+            Position? position = await geoLocationData.getCurrentLocation();
+            double latitude = position!.latitude;
+
+            double longitude = position.longitude;
+            DateTime dateTimeNow = DateTime.now();
+
+            String assignedDepots = "";
+            String userId = "";
+            Box box = await Hive.openBox(HiveConstants.attendence);
+            var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
+                box, HiveConstants.assignedDepot);
+
+            failureOrsucess.fold(
+                (l) => {
+                      //box.close(),
+                      print("this is failed")
+                    },
+                (r) => {
+                      //box.close(),
+
+                      assignedDepots = r[0]
+                    });
+
+            UserDataModel? userDataModel =
+                await sharedPreference.getUserDataFromLocal();
+            if (userDataModel != null) {
+              userId = userDataModel.userid!;
+            }
+
+            if (newOrderCubit.state is NewRetailerCreated) {
+              Object? sdm = newOrderCubit.state.props[0];
+              RetailerModel retailerModel;
+              if (sdm is RetailerModel) {
+                retailerModel = sdm;
+
+                salesDataModel = SalesData(
+                    sales: salessPojo,
+                    returns: returnspojo,
+                    availability: availabilityPojo,
+                    salesDescription: _salesRemarks.text,
+                    returnedDescription: _returnRemarks.text,
+                    availabilityDescription: _availabilityRemarks.text,
+                    userId: userId,
+                    assignedDepot: assignedDepots,
+                    longitude: longitude,
+                    collectionDate: dateTimeNow.toString(),
+                    latitude: latitude,
+                    retailerPojo: retailerModel);
+                newOrderCubit.getOrders(salesDataModel);
+                print("okay");
+              }
+            } else {
+              int index = retailerList.indexOf(nameOfOutlet);
+              String retailerId = retailerIdList[index];
+              salesDataModel = SalesData(
+                  sales: salessPojo,
+                  returns: returnspojo,
+                  availability: availabilityPojo,
+                  salesDescription: _salesRemarks.text,
+                  returnedDescription: _returnRemarks.text,
+                  availabilityDescription: _availabilityRemarks.text,
+                  retailer: retailerId,
+                  userId: userId,
+                  assignedDepot: assignedDepots,
+                  longitude: longitude,
+                  collectionDate: dateTimeNow.toString(),
+                  latitude: latitude);
+              newOrderCubit.getOrders(salesDataModel);
+              print("not okay");
+            }
+            setState(() {
+              loading = true;
+            });
+
+            Navigator.of(context).pushNamed(Routes.paymentScreen);
+          }, loading, AppColors.buttonColor),
           const SizedBox(
             height: 20,
           ),
@@ -302,7 +354,54 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           return SingleChildScrollView(
             child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraint.maxHeight),
-                child: newOrderScreenBody()),
+                child: Column(
+                  children: [
+                    BlocBuilder<NewOrderCubit, NewOrderState>(
+                      builder: (context, state) {
+                        if (state is NewRetailerCreated) {
+                          return const SizedBox();
+                        } else {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              const Text(
+                                'Outlets already created',
+                                style: TextStyle(color: Color(0xFF003049)),
+                              ),
+                              StatefulBuilder(builder: (context, setStat) {
+                                return Checkbox(
+                                    value: outletsCreated,
+                                    activeColor: AppColors.buttonColor,
+                                    checkColor: Colors.white,
+                                    fillColor: MaterialStateColor.resolveWith(
+                                        (states) => AppColors.buttonColor),
+                                    onChanged: (newValue) {
+                                      print(newValue);
+                                      setStat(() {
+                                        outletsCreated = newValue!;
+                                      });
+                                      setState(() {
+                                        outletsCreated = newValue!;
+                                      });
+                                    });
+                              }),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                    BlocBuilder<NewOrderCubit, NewOrderState>(
+                        builder: (context, state) {
+                      if (state is NewRetailerCreated) {
+                        return newOrderScreenBody();
+                      } else {
+                        return outletsCreated
+                            ? newOrderScreenBody()
+                            : const NewOutletsScreenOrder();
+                      }
+                    }),
+                  ],
+                )),
           );
         }),
       ),
@@ -324,23 +423,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         ),
       ),
     );
-  }
-
-  Widget dropDown() {
-    return DropdownButton(
-        value: dropdownvalue,
-        icon: const Icon(Icons.keyboard_arrow_down),
-        items: items.map((String items) {
-          return DropdownMenuItem<String>(
-            value: items,
-            child: Text(items),
-          );
-        }).toList(),
-        onChanged: (value) {
-          setState(() {
-            dropdownvalue = value.toString();
-          });
-        });
   }
 
   Widget textButton(String title, double width, bool isbold, Function() onClick,
@@ -398,7 +480,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         const SizedBox(
           height: 12,
         ),
-        //todo if empty show 1 else list length
         for (var i = 0; i < salesLength + 1; i++)
           Padding(
             padding:
@@ -465,14 +546,14 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   });
                                 },
                                 initialText: checkIndex(sales, i)
-                                    ? sales[i].getProduct()
+                                    ? sales[i].getProduct() ?? ""
                                     : "")),
                         SizedBox(
                           width: 140,
                           child: textFormFeildIncreAndDecre(
                               validator: (string) {},
                               initialValue: checkIndex(sales, i)
-                                  ? sales[i].getReturn().toString()
+                                  ? sales[i].getReturn().toString() ?? ""
                                   : "",
                               onChanged: (string) {
                                 setState(() {
@@ -496,6 +577,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   print("this is niot what i want");
                                   setState(() {
                                     if (checkIndex(sales, i)) {
+                                      salesParentProduct.removeAt(i);
                                       sales.removeAt(i);
                                       salesLength = sales.length;
                                     } else {
@@ -597,31 +679,93 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
+                    // title("Types of Product"),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
+                    // textFeildWithDropDownFor(
+                    //     validator: (string) {},
+                    //     item: checkIndex(availabilityParentProduct, i)
+                    //         ? getChildProducts(availabilityParentProduct[i])
+                    //         : items,
+                    //     onselect: (string) {
+                    //       setState(() {
+                    //         if (checkIndex(availability, i)) {
+                    //           availability[i].setproduct(string);
+                    //         } else {
+                    //           //todo
+                    //           Availability available = Availability();
+                    //           available.setproduct(string);
+                    //
+                    //           availability.add(available);
+                    //         }
+                    //       });
+                    //     },
+                    //     initialText: checkIndex(availability, i)
+                    //         ? availability[i].getproduct()!
+                    //         : ""),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
+
                     title("Types of Product"),
                     const SizedBox(
                       height: 12,
                     ),
-                    textFeildWithDropDownFor(
-                        validator: (string) {},
-                        item: checkIndex(availabilityParentProduct, i)
-                            ? getChildProducts(availabilityParentProduct[i])
-                            : items,
-                        onselect: (string) {
-                          setState(() {
-                            if (checkIndex(availability, i)) {
-                              availability[i].setproduct(string);
-                            } else {
-                              //todo
-                              Availability available = Availability();
-                              available.setproduct(string);
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 150,
+                          //todo unchanged
+                          child: textFeildWithDropDownFor(
+                              validator: (string) {},
+                              item: checkIndex(availabilityParentProduct, i)
+                                  ? getChildProducts(
+                                          availabilityParentProduct[i]) ??
+                                      []
+                                  : [],
+                              onselect: (string) {
+                                setState(() {
+                                  if (checkIndex(availability, i)) {
+                                    availability[i].setproduct(string);
+                                  } else {
+                                    //todo
+                                    OrderAvailability available =
+                                        OrderAvailability();
+                                    available.setproduct(string);
 
-                              availability.add(available);
-                            }
-                          });
-                        },
-                        initialText: checkIndex(availability, i)
-                            ? availability[i].getproduct()!
-                            : ""),
+                                    availability.add(available);
+                                  }
+                                });
+                              },
+                              initialText: checkIndex(availability, i)
+                                  ? availability[i].getproduct()!
+                                  : ""),
+                        ),
+                        SizedBox(
+                          width: 140,
+                          child: textFormFeildIncreAndDecre(
+                              validator: (string) {},
+                              initialValue: checkIndex(availability, i)
+                                  ? availability[i].getStock().toString() ?? ""
+                                  : "",
+                              onChanged: (string) {
+                                setState(() {
+                                  if (checkIndex(availability, i)) {
+                                    availability[i]
+                                        .setStock(int.parse(string!));
+                                  } else {
+                                    OrderAvailability available =
+                                        OrderAvailability();
+                                    available.setStock(int.parse(string!));
+
+                                    availability.add(available);
+                                  }
+                                });
+                              }),
+                        ),
+                      ],
+                    ),
                     const SizedBox(
                       height: 12,
                     ),
@@ -634,7 +778,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             if (checkIndex(availability, i)) {
                               availability[i].setavailability(true);
                             } else {
-                              Availability availabilitsy = Availability();
+                              OrderAvailability availabilitsy =
+                                  OrderAvailability();
                               availabilitsy.availability = true;
                               availability.add(availabilitsy);
                             }
@@ -654,7 +799,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             if (checkIndex(availability, i)) {
                               availability[i].setavailability(false);
                             } else {
-                              Availability availabilitsy = Availability();
+                              OrderAvailability availabilitsy =
+                                  OrderAvailability();
                               availabilitsy.availability = false;
                               availability.add(availabilitsy);
                             }
@@ -669,9 +815,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         InkWell(
                             onTap: () {
                               if (availability.isNotEmpty) {
-                                print("this is niot what i want");
+                                print("this is not what i want");
                                 setState(() {
                                   if (checkIndex(availability, i)) {
+                                    availabilityParentProduct.removeAt(i);
                                     availability.removeAt(i);
                                     availabilityLength = availability.length;
                                   } else {
@@ -697,9 +844,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         textButton("Add more Products", textbuttonSize!, false, () {
           setState(() {
             print("the return length ${returns.length}");
-
             availabilityLength = availability.length;
-            print(returns);
           });
         }),
         const SizedBox(
@@ -806,14 +951,14 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   });
                                 },
                                 initialText: checkIndex(returns, i)
-                                    ? returns[i].getProduct()
+                                    ? returns[i].getProduct() ?? ""
                                     : "")),
                         SizedBox(
                           width: 140,
                           child: textFormFeildIncreAndDecre(
                               validator: (string) {},
                               initialValue: checkIndex(returns, i)
-                                  ? returns[i].getReturn().toString()
+                                  ? returns[i].getReturn().toString() ?? ""
                                   : "",
                               onChanged: (string) {
                                 setState(() {
@@ -834,6 +979,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 print("this is niot what i want");
                                 setState(() {
                                   if (checkIndex(returns, i)) {
+                                    returnParentProduct.removeAt(i);
                                     returns.removeAt(i);
                                     returnLength = returns.length;
                                   } else {

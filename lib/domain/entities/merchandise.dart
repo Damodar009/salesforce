@@ -9,7 +9,7 @@ class MerchandiseDropDown extends Equatable {
   final String name;
   @HiveField(1)
   final String id;
-  MerchandiseDropDown({required this.name, required this.id});
+  const MerchandiseDropDown({required this.name, required this.id});
   @override
   // TODO: implement props
   List<Object?> get props => [name, id];

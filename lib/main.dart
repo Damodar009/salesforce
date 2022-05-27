@@ -7,6 +7,7 @@ import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/domain/usecases/userCaseForUploadImageSave.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:salesforce/presentation/blocs/upload_image/upload_image_bloc.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
@@ -14,11 +15,16 @@ import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
+import 'domain/entities/SalesData.dart';
 import 'domain/entities/attendence.dart';
+import 'domain/entities/availability.dart';
 import 'domain/entities/depot.dart';
+import 'domain/entities/merchndiseOrder.dart';
 import 'domain/entities/products.dart';
 import 'domain/entities/retailer.dart';
 import 'domain/entities/retailerType.dart';
+import 'domain/entities/returns.dart';
+import 'domain/entities/sales.dart';
 import 'domain/entities/saleslocationTrack.dart';
 import 'domain/usecases/useCaseForAttebdenceSave.dart';
 import 'domain/usecases/usecasesForRemoteSource.dart';
@@ -40,7 +46,12 @@ Future<void> main() async {
     ..registerAdapter(ProductsAdapter())
     ..registerAdapter(RetailerTypeAdapter())
     ..registerAdapter(SalesLocationTrackAdapter())
-    ..registerAdapter(RetailerAdapter());
+    ..registerAdapter(RetailerAdapter())
+    ..registerAdapter(SalesDataAdapter())
+    ..registerAdapter(AvailabilityAdapter())
+    ..registerAdapter(MerchandiseOrderAdapter())
+    ..registerAdapter(ReturnsAdapter())
+    ..registerAdapter(SalesAdapter());
 
   runApp(const MyApp());
 }
@@ -83,6 +94,7 @@ class _MyAppState extends State<MyApp> {
                 ProfileBloc(useCaseForRemoteSourceImpl, useCaseForHiveImpl)),
         BlocProvider(
             create: (context) => UploadImageBloc(useCaseForUploadImageImpl)),
+        BlocProvider(create: (context) => NewOrderCubit()),
         // BlocProvider(
         //   create: (context) => ),
         // ),

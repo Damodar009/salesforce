@@ -13,6 +13,7 @@ abstract class AttendenceRemoteSource {
 }
 
 @Injectable(as: AttendenceRemoteSource)
+
 class AttendenceSave implements AttendenceRemoteSource {
   Dio dio = Dio();
   @override

@@ -16,9 +16,7 @@ class _OutletScreenState extends State<OutletScreen> {
       SalesDataRemoteSourceImpl();
 
   @override
-  void initState() {
-    // TODO: implement initState
-  }
+  void initState() {}
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +45,7 @@ class _OutletScreenState extends State<OutletScreen> {
                 "Create new Outlets",
                 "To Create New Outlets and \nSave Outlets",
                 "Add now",
-                Routes.merchandiseSupportScreen),
+                Routes.newOutletsRoute),
             outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
                 "Check In", Routes.paymentScreen),
           ]),

@@ -54,6 +54,8 @@ abstract class SalesTeamRepository {
 abstract class UploadImageRepository {
   Future<Either<Failure, String>> uploadImageSave(String imageName);
 }
+
 abstract class SaveSalesDataRepository {
-  Future<Either<Failure, String?>> saveSalesData(List<SalesDataModel> salesDataModel);
+  Future<Either<Failure, String?>> saveSalesData(
+      List<SalesDataModel> salesDataModel);
 }
