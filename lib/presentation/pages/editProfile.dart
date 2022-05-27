@@ -451,9 +451,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                         //edit profile event
 
-                        // Navigator.pushNamed(context, Routes.profileRoute);
-                        // BlocProvider.of<ProfileBloc>(context)
-                        //     .add(GetProfileEvent());
+                        Navigator.pushNamed(context, Routes.profileRoute);
+                        BlocProvider.of<ProfileBloc>(context)
+                            .add(GetProfileEvent());
                       }, (Profilestate is SaveImageLoadingState ? true : false),
                           AppColors.buttonColor),
                     )

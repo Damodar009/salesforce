@@ -378,17 +378,29 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel) async {
+
+print(saveUserDetailsDataModel);
+
+
+
     print("saveUserDetailsRemoteDataSource");
 
-    
-
     String? accessToken;
-    Box box = await Hive.openBox(HiveConstants.userdata);
+    print("okay");
 
-    var accessTokenSuccessOrFailed =
-        useCaseForHiveImpl.getValueByKey(box, "access_token");
-    accessTokenSuccessOrFailed.fold((l) => {print("failed")},
-        (r) => {accessToken = r!, print(r.toString())});
+    UserDataModel? userInfo =
+        await signInLocalDataSource.getUserDataFromLocal();
+print("okay");
+
+
+    print(userInfo!.access_token);
+
+    accessToken = userInfo.access_token;
+
+    print("saveUserDetailsRemoteDataSource access token is $accessToken ");
+
+    print(userInfo);
+
 
     print("this is access token");
 

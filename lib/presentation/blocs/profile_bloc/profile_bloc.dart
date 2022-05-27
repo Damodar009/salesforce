@@ -77,6 +77,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   saveEditProfileDatas(SaveUserDetailsDataModel user) async {
+
+print(user.toJson()); 
+
+
+
+
     print("you are inside the function");
     if (user.userDetail!.userDocument != null) {
       print("images ");
@@ -84,9 +90,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final isSuccesfull = await useCaseForUploadImageImpl
           .uploadImageSave(user.userDetail!.userDocument!);
 
+          isSuccesfull.fold((l) => {print("sad")}, (r) => {
+            
+            
+            
+            imageId = r.toString(),
+            print("inside image upload "),
+            
+            print(user.userDetail!.user_detail_id)});
+
       SaveUserDetailsDataModel saveUserDetailsDataModelData =
           SaveUserDetailsDataModel(
-              id: user.userDetail!.user_detail_id,
+              id: user.id,
               roleId: user.roleId,
               email: user.email,
               roleName: user.roleName,
@@ -101,6 +116,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
                   contactNumber2: user.userDetail!.contactNumber2,
                   userDocument: imageId));
 
+print("user detail model");
+                  print(saveUserDetailsDataModelData.toJson());
+
       saveEditProfileDataWithoutImage(saveUserDetailsDataModelData);
       //implement code to post image
     } else {
@@ -112,6 +130,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   saveEditProfileDataWithoutImage(SaveUserDetailsDataModel user) async {
+
+    print("heloo whay are you donh");
     final isSuccesfull = await useCaseForRemoteSourceimpl.saveUserDetails(user);
 
     isSuccesfull.fold((l) {
