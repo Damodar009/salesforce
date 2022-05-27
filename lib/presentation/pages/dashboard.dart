@@ -60,40 +60,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (Platform.isAndroid) {
-          SystemNavigator.pop();
-        } else if (Platform.isIOS) {
-          exit(0);
-        }
-        return false;
-      },
-      child: Scaffold(
-        bottomNavigationBar: SizedBox(
-          child: BottomNavigationBar(
-            onTap: (value) {
-              setState(() {
-                selectedIndex = value;
-              });
-            },
-            currentIndex: selectedIndex,
-            elevation: 10,
-            selectedItemColor: Colors.red,
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            items: [
-              buildButtonNavigationBarItem('assets/icons/home.svg', "Home"),
-              buildButtonNavigationBarItem('assets/icons/sales.svg', "sales"),
-              buildButtonNavigationBarItem(
-                  'assets/icons/Attendence.svg', "attendence"),
-              buildButtonNavigationBarItem('assets/icons/menu.svg', "menu"),
-            ],
-          ),
+    return Scaffold(
+      bottomNavigationBar: SizedBox(
+        child: BottomNavigationBar(
+          onTap: (value) {
+            setState(() {
+              selectedIndex = value;
+            });
+          },
+          currentIndex: selectedIndex,
+          elevation: 10,
+          selectedItemColor: Colors.red,
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          items: [
+            buildButtonNavigationBarItem('assets/icons/home.svg', "Home"),
+            buildButtonNavigationBarItem('assets/icons/sales.svg', "sales"),
+            buildButtonNavigationBarItem(
+                'assets/icons/Attendence.svg', "attendence"),
+            buildButtonNavigationBarItem('assets/icons/menu.svg', "menu"),
+          ],
         ),
-        body: screens[selectedIndex],
       ),
+      body: screens[selectedIndex],
     );
   }
 }

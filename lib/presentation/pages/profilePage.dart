@@ -19,7 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     // TODO: implement initState
     print("your are in profile page");
-    
+
     super.initState();
     BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
   }
@@ -186,72 +186,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(
                           height: mediaQueryHeight * 0.04,
                         ),
-                        Row(
-                          children: [
-                            Stack(
-                              children: [
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: NetworkImage(getProfilestate
-                                                  .userDetailsdata
-                                                  .userDetail!
-                                                  .userDocument ??
-                                              ""))),
-                                ),
-                                const Positioned(
-                                    right: 17,
-                                    child: Text(
-                                      'x',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
-                                    )),
-                              ],
-                            ),
-                          ],
-                        ),
-                        // GridView.count(
-                        //     shrinkWrap: true,
-                        //     primary: true,
-                        //     physics:
-                        //         const NeverScrollableScrollPhysics(),
-                        //     crossAxisCount: 2,
-                        //     children: List.generate(4, (index) {
-                        //       return Center(
-                        //         child: Column(children: [
-                        //           const Text(
-                        //             'CitizenShip',
-                        //           ),
-                        //           Stack(
-                        //             children: const [
-                        //               Icon(
-                        //                 Icons.image,
-                        //                 size: 100,
-                        //               ),
-                        //               Positioned(
-                        //                   right: 17,
-                        //                   top: 6,
-                        //                   child: Text(
-                        //                     'x',
-                        //                     style: TextStyle(
-                        //                         color: Colors.white,
-                        //                         fontSize: 24,
-                        //                         fontWeight:
-                        //                             FontWeight.bold),
-                        //                   )),
-                        //             ],
-                        //           ),
-                        //           const Text(
-                        //             'view',
-                        //           )
-                        //         ]),
-                        //       );
-                        //     })),
-                        //
+                        getProfilestate
+                                    .userDetailsdata.userDetail!.userDocument !=
+                                null
+                            ? Row(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      Container(
+                                        height: 100,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                    getProfilestate
+                                                            .userDetailsdata
+                                                            .userDetail!
+                                                            .userDocument ??
+                                                        ""))),
+                                      ),
+                                      const Positioned(
+                                          right: 17,
+                                          child: Text(
+                                            'x',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : Row(),
                         SizedBox(
                           height: mediaQueryHeight * 0.04,
                         ),
@@ -264,16 +231,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           getProfileState: getProfilestate
                                               .userDetailsdata)));
                         }, false, AppColors.buttonColor),
-                        SizedBox(
-                          height: mediaQueryHeight * 0.01,
-                        ),
-                        button('Change password', () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const ChangePasswordScreen()));
-                        }, false, const Color(0xfffa8b7cb)),
+                        // SizedBox(
+                        //   height: mediaQueryHeight * 0.01,
+                        // ),
+                        // button('Change password', () {
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (BuildContext context) =>
+                        //               const ChangePasswordScreen()));
+                        // }, false, const Color(0xfffa8b7cb)),
                       ],
                     );
                   } else if (getProfilestate is GetProfileFailedState) {

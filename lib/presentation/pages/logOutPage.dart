@@ -75,10 +75,20 @@ class LogOutPage extends StatelessWidget {
                   Box box = await Hive.openBox(HiveConstants.userdata);
 
                   box.deleteFromDisk();
-                  Navigator.push(
+                  Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => LOginScreen()));
+                          builder: (BuildContext context) => LOginScreen()),
+                      (route) => false);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LOginScreen(),
+                      ));
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (BuildContext context) => LOginScreen()));
                 }, false, AppColors.primaryColor),
               )
             ],

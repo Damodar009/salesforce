@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +65,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController();
 
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _imageController = TextEditingController();
 
   String dobOnChangeValue = "";
 
@@ -80,7 +82,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final image = await picker.pickImage(source: ImageSource.camera);
       if (image == null) return;
       final imageTemporary = File(image.path);
-      setState(() => this.image = imageTemporary);
+      setState(() =>
+          {this.image = imageTemporary, _imageController.text = image.name});
     } on PlatformException catch (e) {
       print("Failed to pick image $e");
     }
@@ -88,10 +91,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
-    selectedValue = widget.getProfileState.userDetail!.gender!;
-    // TODO: implement initState
-    // String? selectedValue = widget.getProfileState.userDetail?.gender;
-    // selectValueRadioButton("",selectedValue: selectedValue!);
+    print(widget.getProfileState.userDetail);
+    selectedValue = widget.getProfileState.userDetail!.gender != null
+        ? widget.getProfileState.userDetail!.gender!
+        : "";
     super.initState();
   }
 
@@ -138,7 +141,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         validator: (value) {},
                         controller: _userNameController,
                         hintText:
-                            (widget.getProfileState.userDetail!.fullName) ?? "",
+                            widget.getProfileState.userDetail!.fullName != null
+                                ? widget.getProfileState.userDetail!.fullName!
+                                : "",
                         obsecureText1: () {
                           setState(() {});
                         }),
@@ -155,9 +160,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     textFormField(
                         validator: (value) {},
                         controller: _phoneNumberController,
-                        hintText: (widget
-                                .getProfileState.userDetail!.contactNumber2 ??
-                            ""),
+                        hintText: widget.getProfileState.userDetail!
+                                    .contactNumber2 !=
+                                null
+                            ? widget.getProfileState.userDetail!.contactNumber2!
+                            : "",
                         obsecureText1: () {
                           setState(() {});
                         }),
@@ -168,12 +175,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         enableTextField: false,
                         validator: (value) {},
                         controller: _emailController,
-                        hintText: widget.getProfileState.email ?? "Email",
+                        hintText:
+                            // widget.getProfileState.email ??
+                            "Email",
                         obsecureText1: () {
                           setState(() {});
                         }),
                     SizedBox(
                       height: heightBetweenTextField,
+                    ),
+                    Text(
+                      "Select DOB",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    const SizedBox(
+                      height: 5,
                     ),
                     DateTimePicker(
                       controller: _dateOfBirthController,
@@ -198,9 +214,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             fontSize: 15,
                           ),
                           hintText:
-                              (widget.getProfileState.userDetail!.dob == null)
-                                  ? "Choose your dob"
-                                  : widget.getProfileState.userDetail!.dob,
+                              widget.getProfileState.userDetail!.dob != null
+                                  ? widget.getProfileState.userDetail!.dob!
+                                  : "",
+                          // (widget.getProfileState.userDetail!.dob == null)
+                          //     ? "Choose your dob"
+                          //     : widget.getProfileState.userDetail!.dob,
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 5),
                           focusedBorder: const OutlineInputBorder(
@@ -238,9 +257,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     textFormField(
                         validator: (value) {},
                         controller: _permanentAddressController,
-                        hintText: (widget.getProfileState.userDetail!
-                                .permanentAddress) ??
-                            "",
+                        hintText: widget.getProfileState.userDetail!
+                                    .permanentAddress !=
+                                null
+                            ? widget
+                                .getProfileState.userDetail!.permanentAddress!
+                            : "",
                         obsecureText1: () {
                           setState(() {});
                         }),
@@ -257,9 +279,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     textFormField(
                         validator: (value) {},
                         controller: _temporaryAddressController,
-                        hintText: widget
-                                .getProfileState.userDetail!.temporaryAddress ??
-                            "",
+                        hintText: widget.getProfileState.userDetail!
+                                    .temporaryAddress !=
+                                null
+                            ? widget
+                                .getProfileState.userDetail!.temporaryAddress!
+                            : "",
+                        //  widget
+                        //         .getProfileState.userDetail!.temporaryAddress ??
+                        //     "",
                         obsecureText1: () {
                           setState(() {});
                         }),
@@ -314,8 +342,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Stack(
                       // textDirection: TextDirection.rtl,
                       children: [
-                        const TextField(
-                          decoration: InputDecoration(
+                        TextField(
+                          controller: _imageController,
+                          decoration: const InputDecoration(
                               fillColor: Colors.white,
                               errorStyle:
                                   TextStyle(color: AppColors.primaryColor),
@@ -382,17 +411,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: button('Save', () async {
                         print("object99999");
 
-                        //image event
-
-                        // BlocProvider.of<UploadImageBloc>(context)
-                        //     .add(SaveImageEvent(imageName: image!.path));
-
-                        // //image state check
-
-                        // String? imageId = Imagestate is SaveImageLoadedState
-                        //     ? Imagestate.imageResponse
-                        //     : null;
-
                         String? phoneNumber;
 
                         Box box = await Hive.openBox(HiveConstants.userdata);
@@ -451,10 +469,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                         //edit profile event
 
-                        Navigator.pushNamed(context, Routes.profileRoute);
+                        // Navigator.pushNamed(context, Routes.profileRoute);
                         BlocProvider.of<ProfileBloc>(context)
                             .add(GetProfileEvent());
-                      }, (Profilestate is SaveImageLoadingState ? true : false),
+                      },
+                          (Profilestate is SaveUserDetailsLoadingState
+                              ? true
+                              : false),
                           AppColors.buttonColor),
                     )
                   ],
