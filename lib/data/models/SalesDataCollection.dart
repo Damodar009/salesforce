@@ -5,7 +5,6 @@ import 'package:salesforce/domain/entities/sales_data_collection.dart';
 part 'SalesDataCollection.g.dart';
 
 @JsonSerializable()
-
 class SalesDataCollectionModel extends SalesDataCollection {
   SalesDataCollectionModel(String retailer,
       {required String collectionData,
@@ -47,5 +46,5 @@ class SalesDataCollectionModel extends SalesDataCollection {
   factory SalesDataCollectionModel.fromJson(Map<String, dynamic> json) =>
       _$SalesDataCollectionModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SalesDataCollectionModelToJson(this);             
+  Map<String, dynamic> toJson() => _$SalesDataCollectionModelToJson(this);
 }

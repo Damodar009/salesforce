@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
+import 'package:salesforce/data/models/Userdata.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/returnAndSale.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/wid.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/geolocation.dart';
+import '../../../data/datasource/local_data_sources.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
@@ -24,6 +26,7 @@ class NewOrderScreen extends StatefulWidget {
 
 class _NewOrderScreenState extends State<NewOrderScreen> {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  var sharedPreference = getIt<SignInLocalDataSource>();
   String nameOfOutlet = "";
 
   ///availability
@@ -52,12 +55,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   final TextEditingController _salesRemarks = TextEditingController();
   final TextEditingController _availabilityRemarks = TextEditingController();
 
-  bool showEditBUtton = false;
-  bool showSaveBUtton = false;
   bool outletsCreated = true;
-  bool ignorePointer = false;
-  bool editCheckBoxValue = false;
-  bool showXlsButton = false;
 
   // to show the items full view
   bool returnPressed = false;
@@ -229,19 +227,31 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ),
           button("Save Order", () async {
             print("it going to be awesome");
-            int i = retailerList.indexOf(nameOfOutlet);
-            String retailerId = retailerIdList[i];
-            GeoLocationData geoLocationData = GeoLocationData();
-            Position? position = await geoLocationData.getCurrentLocation();
-            double latitude = position!.latitude;
-            double longitude = position.longitude;
-            DateTime dateTimeNow = DateTime.now();
-
-            //todo get assigned depot
+            // int index = retailerList.indexOf(nameOfOutlet);
+            // String retailerId = retailerIdList[index];
+            // GeoLocationData geoLocationData = GeoLocationData();
+            // Position? position = await geoLocationData.getCurrentLocation();
+            // double latitude = position!.latitude;
+            // double longitude = position.longitude;
+            // DateTime dateTimeNow = DateTime.now();
+            // double assignedLatitude;
+            // double assignedlongitude;
+            //
+            // String userId;
+            //
+            // Box box = await Hive.openBox(HiveConstants.attendence);
+            // var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
+            //     box, HiveConstants.assignedDepot);
+            // failureOrsucess.fold((l) => {print("this is failed")},
+            //     (r) => {assignedLatitude = r[0], assignedlongitude = r[1]});
+            //
+            // UserDataModel? userDataModel =
+            //     await sharedPreference.getUserDataFromLocal();
+            // if (userDataModel != null) {
+            //   userId = userDataModel.userid!;
+            // }
 
             // todo  payment type
-
-            // todo user id
             //todo get payment document
 
             print(_availabilityRemarks.text);
@@ -262,45 +272,14 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               print(sales[i].getProduct());
             }
 
-            setState(() {
-              if (returns.isNotEmpty) returnPressed = true;
+            Navigator.of(context).pushNamed(Routes.paymentScreen);
 
-              if (availability.isNotEmpty) availabilityPressed = true;
-              if (sales.isNotEmpty) salesPressed = true;
-            });
-
-            if (showXlsButton) {
-              final VistedOutlets visitedOutlets = VistedOutlets(
-                navTitle: 'TOTAL',
-                imageUrl: 'assets/images/total_order_complete.png',
-                bodyTitle: 'Order Confirmed!',
-                bodySubTitle:
-                    'Your order has been confirmed, Order will send to distributor.',
-                buttonText: 'Go to Home',
-              );
-              // Navigator.of(context).push(MaterialPageRoute(
-              //     builder: (context) => VisitedOutletWidget(
-              //           visitedOutlets: visitedOutlets,
-              //         )));
-
-              Navigator.of(context)
-                  .pushNamed(Routes.visitedOutlets, arguments: visitedOutlets);
-            } else {
-              setState(() {
-                ignorePointer = true;
-                showEditBUtton = true;
-                showSaveBUtton = false;
-              });
-            }
+            // Navigator.of(context)
+            //     .pushNamed(Routes.visitedOutlets, arguments: visitedOutlets);
           }, false, AppColors.buttonColor),
           const SizedBox(
             height: 20,
           ),
-          showXlsButton
-              ? button("Save Order in XLS", () {
-                  Navigator.of(context).pushNamed(Routes.xlsOrder);
-                }, false, AppColors.buttonColor)
-              : const SizedBox(),
           const SizedBox(
             height: 10,
           )
@@ -310,57 +289,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
     return Scaffold(
       appBar: appBar(
-        navTitle: 'NEW ORDER',
-        // icon: Icons.arrow_back,
-        context: context,
-        settingTitle: showEditBUtton
-            ? showSaveBUtton
-                ? 'save'
-                : "Edit"
-            : "",
-        settingIcon: Row(
-          children: [
-            showEditBUtton
-                ? StatefulBuilder(builder: (context, state) {
-                    return Checkbox(
-                        fillColor: MaterialStateColor.resolveWith(
-                            (states) => AppColors.buttonColor),
-                        value: editCheckBoxValue,
-                        onChanged: (value) {
-                          state(() {
-                            editCheckBoxValue = value!;
-                          });
-                          setState(() {
-                            // editCheckBoxValue = value!;
-                            showEditBUtton = false;
-                            ignorePointer = false;
-                            showSaveBUtton = true;
-                            showXlsButton = true;
-                          });
-                        });
-                  })
-                : SizedBox(),
-            Text(showEditBUtton || showSaveBUtton
-                ? showSaveBUtton
-                    ? 'save'
-                    : "Edit"
-                : ""),
-            const SizedBox(
-              width: 10,
-            )
-          ],
-        ),
-        // backNavigate: () {}
-      ),
+          navTitle: 'NEW ORDER',
+          // icon: Icons.arrow_back,
+          context: context,
+          settingTitle: "",
+          settingIcon: const SizedBox()
+          // backNavigate: () {}
+          ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: LayoutBuilder(builder: (context, constraint) {
           return SingleChildScrollView(
             child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraint.maxHeight),
-                child: ignorePointer
-                    ? IgnorePointer(child: newOrderScreenBody())
-                    : newOrderScreenBody()),
+                child: newOrderScreenBody()),
           );
         }),
       ),

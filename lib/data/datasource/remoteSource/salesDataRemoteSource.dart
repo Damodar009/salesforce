@@ -1,36 +1,6 @@
-// import 'package:dartz/dartz.dart';
-// import 'package:dio/dio.dart';
-// import '../../../error/exception.dart';
-// import '../../../error/failure.dart';
-// import '../../../utils/apiUrl.dart';
-// import '../../models/SalesDataModel.dart';
-
-// abstract class SalesDataRemoteSource {
-//   Future<String> saveSalesData(SalesDataModel salesData);
-// }
-
-// class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
-//   @override
-//   Future<String> saveSalesData(SalesDataModel salesData) async {
-//     Dio dio = Dio();
-//     try {
-//       Response response = await dio.post(
-//         ApiUrl.salesData,
-//         data: jsonEncodedAnswer,
-//         options: Options(
-//           contentType: "application/json",
-//           headers: <String, String>{
-//             'Authorization': 'Bearer 6c737f4e-45a1-4938-b559-4ee60f403dcc'
-//           },
-//         ),
-//       );
-//       if (response.data["status"] == true) {
-//         List<SalesLocationTrack> salesLocationTrack =
-//             (response.data["data"] as List).map((salesLoctionTrack) {
-//           return SalesLocationTrackModel.fromJson(salesLoctionTrack);
-//         }).toList();
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:salesforce/data/models/merchandiseOrderModel.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
 import '../../../error/exception.dart';
 
@@ -39,25 +9,40 @@ import '../../models/SalesDataModel.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class SalesDataRemoteSource {
-  Future<String> saveSalesData(
-      List<SalesDataModel> salesData, List<String> uuids);
-  Future<String> postImage(List<SalesData> salesData);
+  Future<String?> saveSalesData(List<SalesDataModel> salesData);
 }
 
 class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
-  @override
-  Future<String> postImage(List<SalesData> salesData) async {
+  Future<String?> postImage(List<SalesData> salesData,
+      List<String?> paymentDocuments, List<String?> merchandiseType) async {
     Dio dio = Dio();
-    Uuid uuid = Uuid();
+    Uuid uuid = const Uuid();
 
     List<dynamic> images = [];
     List<String> uuids = [];
+
     for (var i = 0; i < salesData.length; i++) {
-      var fromFile =
-          await MultipartFile.fromFile(salesData[i].paymentdocument!);
-      images.add(fromFile);
-      String v4 = uuid.v4();
-      uuids.add(v4);
+      if (salesData[i].paymentdocument != null) {
+        var paymentDocument =
+            await MultipartFile.fromFile(salesData[i].paymentdocument!);
+        images.add(paymentDocument);
+        String v4 = uuid.v4();
+        uuids.add(v4);
+        paymentDocuments.add(v4);
+      } else {
+        paymentDocuments.add(null);
+      }
+
+      if (salesData[i].merchandiseOrderPojo != null) {
+        var merchandiseImage = await MultipartFile.fromFile(
+            salesData[i].merchandiseOrderPojo!.image);
+        images.add(merchandiseImage);
+        String v4 = uuid.v4();
+        uuids.add(v4);
+        merchandiseType.add(v4);
+      } else {
+        merchandiseType.add(null);
+      }
     }
 
     /// post images
@@ -67,6 +52,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
     });
 
     try {
+      //todo image
       Response response = await dio.post(
         ApiUrl.salesData,
         data: formImageData,
@@ -90,72 +76,75 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
   }
 
   @override
-  Future<String> saveSalesData(
-      List<SalesDataModel> salesData, List<String> uuids) {
-    // TODO: implement saveSalesData
-    throw UnimplementedError();
-  }
+  Future<String?> saveSalesData(List<SalesDataModel> salesData) async {
+    Dio dio = Dio();
+    List<String?> paymentDocuments = [];
+    List<String?> merchandiseType = [];
+    List<SalesDataModel> salesDataMOdel = [];
 
-  // @override
-//  Future<String> saveSalesData(
-  //   List<SalesData> salesData, List<String> uuids) async {
-  // Dio dio = Dio();
-  // List<SalesDataModel> salesDataModelList = [];
-  // for (var i = 0; i < salesData.length; i++) {
-  //   SalesData saleData = salesData[i];
-  //   SalesDataModel salesDataModel = SalesDataModel(
-  //       sales: saleData.sales,
-  //       availability: saleData.availability,
-  //       returns: saleData.returns,
-  //       salesDescription: saleData.salesDescription,
-  //       returnedDescription: saleData.returnedDescription,
-  //       stockDescription: saleData.stockDescription,
-  //       availabilityDescription: saleData.availabilityDescription,
-  //       assignedDepot: saleData.assignedDepot,
-  //       collectionDate: saleData.collectionDate,
-  //       latitude: saleData.latitude,
-  //       longitude: saleData.longitude,
-  //       paymentType: saleData.paymentType,
-  //       paymentdocument: uuids[i],
-  //       userId: saleData.userId,
-  //       retiler: saleData.retiler);
-  //
-  //   salesDataModelList.add(salesDataModel);
-  // }
-  //
-  // var salesTrackInJson = salesDataModelList
-  //     .map((salesLocationTrackModel) => salesLocationTrackModel.toJson())
-  //     .toList();
-  //
-  // var jsonEncodedAnswer = jsonEncode(salesTrackInJson);
-  //
-  // try {
-  //   Response response = await dio.post(
-  //     ApiUrl.salesData,
-  //     data: jsonEncodedAnswer,
-  //     options: Options(
-  //       headers: <String, String>{
-  //         'Accept': 'application/json',
-  //         'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
-  //       },
-  //     ),
-  //   );
-  //   if (response.data["status"] == true) {
-  //     // List<SalesLocationTrack> salesLocationTrack =
-  //     //     (response.data["data"] as List).map((salesLoctionTrack) {
-  //     //   return SalesLocationTrackModel.fromJson(salesLoctionTrack);
-  //     // }).toList();
-  //
-  //     print('oleoleoleoleoleoeloel');
-  //
-  //     return "gf";
-  //   } else {
-  //     throw ServerException();
-  //   }
-  // } on DioError catch (e) {
-  //   print(e);
-  //   throw ServerException();
-  // }
-  //}
+    String? success =
+        await postImage(salesData, paymentDocuments, merchandiseType);
+    if (success == "Success") {
+      List<SalesDataModel> salesDataModel = [];
+      for (var i = 0; i < salesData.length; i++) {
+        String? payment = paymentDocuments[i];
+        MerchandiseOrderModel? merchandiseOrderModel;
+        if (salesData[i].merchandiseOrderPojo != null) {
+          merchandiseOrderModel = MerchandiseOrderModel(
+              merchandise_id: salesData[i].merchandiseOrderPojo!.merchandise_id,
+              description: salesData[i].merchandiseOrderPojo!.description,
+              image: merchandiseType[i]!);
+        }
+
+        SalesDataModel salesModel = SalesDataModel(
+          salesPojo: salesData[i].sales,
+          availabilityPojo: salesData[i].availability,
+          returnsPojo: salesData[i].returns,
+          salesDescription: salesData[i].salesDescription,
+          returnedDescription: salesData[i].returnedDescription,
+          availabilityDescription: salesData[i].availabilityDescription,
+          assignedDepot: salesData[i].assignedDepot,
+          collectionDate: salesData[i].collectionDate,
+          latitude: salesData[i].latitude,
+          longitude: salesData[i].longitude,
+          retailer: salesData[i].retailer,
+          paymentType: salesData[i].paymentType,
+          paymentdocument: payment,
+          retailerPojo: salesData[i].retailerPojo,
+          userId: salesData[i].userId,
+          merchandiseOrderPojo: merchandiseOrderModel,
+        );
+
+        salesDataModel.add(salesModel);
+      }
+
+      var salesDataModeljson = salesDataMOdel.map((e) => {e.toJson(e)}).toList;
+
+      var jsonEncoded = json.encode(salesDataModeljson);
+      try {
+        Response response = await dio.post(
+          ApiUrl.salesData,
+          data: jsonEncoded,
+          options: Options(
+            headers: <String, String>{
+              'Accept': 'application/json',
+              'Content-Type': 'multipart/form-data',
+              'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+            },
+          ),
+        );
+        if (response.data["status"] == true) {
+          return "Success";
+        } else {
+          throw ServerException();
+        }
+      } on DioError catch (e) {
+        print(e);
+        throw ServerException();
+      }
+    } else {
+      //todo
+      print("image saving failed");
+    }
+  }
 }
-      

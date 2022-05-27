@@ -33,14 +33,10 @@ class SignInLocalDataSourceImpl extends SignInLocalDataSource {
 
   @override
   Future<UserDataModel?> getUserDataFromLocal() async {
-    print("SharedPreferences you are not null hai");
-
     String? userInfo = prefs.getString(HiveConstants.userdata);
     if (userInfo != null) {
       UserDataModel userInfoDecoded =
           UserDataModel.fromJson(jsonDecode(userInfo) as Map<String, dynamic>);
-
-      print("SharedPreferences you are not null hai");
 
       print(userInfoDecoded.access_token);
 

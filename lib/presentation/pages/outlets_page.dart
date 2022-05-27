@@ -12,7 +12,7 @@ class OutletScreen extends StatefulWidget {
 
 class _OutletScreenState extends State<OutletScreen> {
   // var useCaseForSalesPersonImpl = getIt<UseCaseForSalesPersonImpl>();
-  SalesDataRemoteSourceImpl _salesDataRemoteSourceImpl =
+  final SalesDataRemoteSourceImpl _salesDataRemoteSourceImpl =
       SalesDataRemoteSourceImpl();
 
   @override
@@ -25,112 +25,32 @@ class _OutletScreenState extends State<OutletScreen> {
     return Stack(
       children: [
         SingleChildScrollView(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 75,
-                ),
-                const Text(
-                  "Outlets",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                outletsCard(
-                    "Create new orders",
-                    "To create new Orders and \n send or save the data ",
-                    " Add now",
-                    Routes.newOrderRoute),
-                outletsCard(
-                    "Create new Outlets",
-                    "To Create New Outlets and \nSave Outlets",
-                    "Add now",
-                    Routes.merchandiseSupportScreen),
-                outletsCard(
-                    "Sales Data Collection",
-                    "From\n 2022/1/1/ to 2022/1/1",
-                    "Check In",
-                    Routes.paymentScreen),
-                // InkWell(
-                //   onTap: () async {
-                //     print("this is working");
-
-                // UserDetailsModel useDetailModel = UserDetailsModel(
-                //     contactNumber2: '33333333',
-                //     temporaryAddress: 'kathmandu',
-                //     dob: '1990-01-21',
-                //     fullName: 'raj chaudhary',
-                //     permanentAddress: 'butwal',
-                //     gender: 'Male', full_name: '');
-
-                // SalesPerson salesPerson = SalesPerson(
-                //     userDetails: useDetailModel,
-                //     id: 'r1szWT3fuMEWm4xeNQpGTw==',
-                //     email: 'test123999@gmail.com',
-                //     roleId: 'NGBifEuwYylJoyRt7a8bkA==',
-                //     password: 'test123',
-                //     phoneNumber: '0978678543');
-
-                // print("this is the snfsf");
-                // print(salesPerson) ;
-
-                // var dd =
-                //     await useCaseForSalesPersonImpl.saveSalesPerson(salesPerson);
-
-                // dd.fold(
-                //     (l) => {
-                //           if (l is ServerFailure)
-                //             {print("this is failure")}
-                //           else if (l is CacheFailure)
-                //             {print("this is failure")}
-                //         },
-                //     (r) => print(r));
-                //   },
-                //   child: outletsCardOutline(Padding(
-                //     padding: const EdgeInsets.all(16.0),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.start,
-                //       children: [
-                //         const Padding(
-                //           padding: EdgeInsets.all(8.0),
-                //           child: Image(
-                //               height: 50,
-                //               width: 50,
-                //               color: AppColors.buttonColor,
-                //               image: AssetImage(
-                //                   "assets/icons/outletsicon.png")),
-                //         ),
-                //         const SizedBox(
-                //           width: 25,
-                //         ),
-                //         Flexible(
-                //           child: Column(
-                //             crossAxisAlignment:
-                //                 CrossAxisAlignment.start,
-                //             children: const [
-                //               Text(
-                //                 "Request for Correction",
-                //                 style: TextStyle(
-                //                     fontWeight: FontWeight.bold,
-                //                     fontSize: 18),
-                //               ),
-                //               SizedBox(
-                //                 height: 10,
-                //               ),
-                //               Text(
-                //                   "Please enter your Queries or Issues ")
-                //             ],
-                //           ),
-                //         )
-                //       ],
-                //     ),
-                //   )),
-                // )
-              ]),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            const SizedBox(
+              height: 75,
+            ),
+            const Text(
+              "Outlets",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            outletsCard(
+                "Create new orders",
+                "To create new Orders and \n send or save the data ",
+                " Add now",
+                Routes.newOrderRoute),
+            outletsCard(
+                "Create new Outlets",
+                "To Create New Outlets and \nSave Outlets",
+                "Add now",
+                Routes.merchandiseSupportScreen),
+            outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
+                "Check In", Routes.paymentScreen),
+          ]),
         )
       ],
     );
@@ -154,8 +74,7 @@ class _OutletScreenState extends State<OutletScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(subtitle,
-                      style: const TextStyle(fontSize: 12)),
+                  child: Text(subtitle, style: const TextStyle(fontSize: 12)),
                 ),
                 const SizedBox(
                   height: 10,
@@ -183,8 +102,7 @@ class _OutletScreenState extends State<OutletScreen> {
               height: 70,
               width: 70,
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(40)),
+                  color: Colors.white, borderRadius: BorderRadius.circular(40)),
             )
           ],
         ),

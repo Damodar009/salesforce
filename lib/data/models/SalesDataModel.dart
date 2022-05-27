@@ -42,6 +42,8 @@ class SalesDataModel extends SalesData {
             retailerPojo: retailerPojo,
             merchandiseOrderPojo: merchandiseOrderPojo);
 
+
+
   factory SalesDataModel.fromJson(Map<String, dynamic> json) => SalesDataModel(
         salesPojo: (json["salesPojo"] as List)
             .map((e) => SalesModel.fromJson(e))
