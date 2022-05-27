@@ -246,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   } else if (getProfilestate is GetProfileFailedState) {
                     return const Center(child: Text('No data found'));
                   } else {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),

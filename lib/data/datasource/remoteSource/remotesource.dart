@@ -25,6 +25,7 @@ import '../../models/DepotModel.dart';
 import '../../models/Products.dart';
 import '../../models/RetailerType.dart';
 import '../../models/userDetailModel.dart';
+import '../local_data_sources.dart';
 
 abstract class RemoteSource {
   Future<UserDataModel> login(String username, String password);
@@ -274,16 +275,23 @@ class RemoteSourceImplementation implements RemoteSource {
     //todo implement authorization token
 
     Box box = await Hive.openBox(HiveConstants.userdata);
+    final signInLocalDataSource = getIt<SignInLocalDataSource>();
 
-    dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
+    //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
+
     try {
+      UserDataModel? userInfo =
+          await signInLocalDataSource.getUserDataFromLocal();
+      print(userInfo!.access_token);
       Response response = await dio.get(
         ApiUrl.depotProductAndRetailor,
         options: Options(
-          headers: <String, String>{'Authorization': 'Bearer ' + accessToken},
+          headers: <String, String>{
+            'Authorization': 'Bearer ' + userInfo.access_token!
+          },
         ),
       );
-
+//todo change bearer
       if (response.data["status"] == true) {
         DepotProductRetailer depotProductRetailer;
         List<RetailerType> retailerTypes =

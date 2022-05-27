@@ -5,7 +5,8 @@ import 'package:salesforce/utils/app_colors.dart';
 
 import '../../routes.dart';
 
-Widget popupWidget(BuildContext context, String text) {
+Widget popupWidget(BuildContext context, String text, String buttonText1,
+    String buttonText2, Function() buttonClicked1, Function() buttonClicked2) {
   return AlertDialog(
     title: Align(
       alignment: Alignment.topRight,
@@ -39,14 +40,19 @@ Widget popupWidget(BuildContext context, String text) {
         children: [
           SizedBox(
               height: 50,
-              child: button("Skip", () {
-                Navigator.of(context).pushNamed(Routes.merchandiseSupportScreen);
+              child: button(buttonText1, () {
+                buttonClicked1;
+                // Navigator.of(context)
+                //     .pushNamed(Routes.merchandiseSupportScreen);
               }, false, AppColors.buttonColor)),
-          textButton("cancel", () {
-            Navigator.of(context).pop();
+          textButton(buttonText2, () {
+            buttonClicked2;
+
           }),
         ],
       ),
     ],
   );
 }
+
+// , Function() buttonClicked1, Function() buttonClicked2

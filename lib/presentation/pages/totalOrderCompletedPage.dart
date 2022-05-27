@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/visitedOutletWidget.dart';
+//todo outletpage one
 
 class TotalOrderCompletedPage extends StatelessWidget {
   const TotalOrderCompletedPage({Key? key}) : super(key: key);

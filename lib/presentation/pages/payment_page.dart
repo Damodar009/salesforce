@@ -1,21 +1,23 @@
 import 'dart:io';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:salesforce/data/models/SalesDataModel.dart';
+import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
-
+import '../../domain/entities/SalesData.dart';
 import '../../routes.dart';
 import '../widgets/deleteTheoryTestPopupWidget.dart';
 import '../widgets/imageWidget.dart';
 import '../widgets/visitedOutletWidget.dart';
 
 class PaymentScreen extends StatefulWidget {
-  PaymentScreen({Key? key}) : super(key: key);
+  const PaymentScreen({Key? key}) : super(key: key);
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -31,9 +33,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   ];
 
   File? image;
-  TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _paymentController = TextEditingController();
-  TextEditingController _imageInputController = TextEditingController();
+  final TextEditingController _imageInputController = TextEditingController();
 
   Future pickImage() async {
     try {
@@ -53,9 +55,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     double mediaQueryHeight = MediaQuery.of(context).size.height;
-    TextStyle defaultStyle = TextStyle(color: Colors.grey, fontSize: 20.0);
+    TextStyle defaultStyle =
+        const TextStyle(color: Colors.grey, fontSize: 20.0);
+
     TextStyle linkStyle =
         const TextStyle(color: AppColors.buttonColor, fontSize: 23);
+
+    var newOrderCubit = BlocProvider.of<NewOrderCubit>(context);
 
     return Scaffold(
       appBar: appBar(
@@ -69,20 +75,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
       body: Padding(
         padding: const EdgeInsets.all(13),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // const Text(
-          //   'Name of Outlet',
-          // ),
-          // SizedBox(
-          //   height: mediaQueryHeight * 0.01,
-          // ),
-          // textFormField(
-          //   obsecureText: false,
-          //   showObsecureIcon: false,
-          //   validator: (value) {},
-          //   controller: _nameController,
-          //   hintText: 'Name of Outlet',
-          //   obsecureText1: () {},
-          // ),
           SizedBox(
             height: mediaQueryHeight * 0.04,
           ),
@@ -106,15 +98,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const Text(
             'Upload Document of Transaction',
           ),
-          SizedBox(
-            height: mediaQueryHeight * 0.01,
+          BlocBuilder<NewOrderCubit, NewOrderState>(
+            builder: (context, state) {
+              if (state is NewOrderLoaded) {}
+              return SizedBox(
+                height: mediaQueryHeight * 0.01,
+              );
+            },
           ),
           ImageWidget(pickImage, "image", _imageInputController),
-
           SizedBox(
             height: mediaQueryHeight * 0.2,
           ),
-
           RichText(
             text: TextSpan(
               children: <TextSpan>[
@@ -131,22 +126,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) => popupWidget(
-                                  context,
-                                  "You havenot completly filled a form ?"));
+                                      context,
+                                      "You have not filled payment detail.Do you want to fill?",
+                                      "Yes",
+                                      "No", () {
+                                    Navigator.of(context).pop();
+                                  }, () {
+                                    Navigator.of(context).pushNamed(
+                                        Routes.merchandiseSupportScreen);
+                                  }));
                         } else {
-                          print("this is running");
                           String awd = _paymentController.text;
-                          print(awd);
+
                           print(_imageInputController.text.length);
-                          //todo save payment
-                          Navigator.of(context)
-                              .pushNamed(Routes.merchandiseSupportScreen);
+                          //
+                          // Navigator.of(context)
+                          //     .pushNamed(Routes.merchandiseSupportScreen);
                         }
                       }),
               ],
             ),
           ),
-
           Spacer(),
           button(
             'Save Payment',
@@ -159,49 +159,66 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     'Your order has been confirmed, Order will send to distributor.',
                 buttonText: 'Go to Home',
               );
-
               if (_paymentController.text == "" &&
                   _imageInputController.text == "") {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) => popupWidget(
-                        context, "You havenot completly filled a form ?"));
+                            context,
+                            "Do you want to continue without filling payment details ?",
+                            "Yes",
+                            "No", () {
+                          Navigator.of(context).pop();
+                          late SalesData sales;
+
+                          if (newOrderCubit.state is NewOrderLoaded) {
+                            Object? sdm = newOrderCubit.state.props[0];
+                            if (sdm is SalesData) {
+                              sales = sdm;
+
+                              newOrderCubit.saveSalesDataToHive(sales);
+                              //todo replacement
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => VisitedOutletWidget(
+                                        visitedOutlets: visitedOutlets,
+                                      )));
+                            }
+                          }
+                        }, () {
+                          Navigator.of(context).pop();
+                        }));
+
+                //todo show snackbar
+
               } else {
-                print("this is running");
-                String awd = _paymentController.text;
-                print(awd);
-                print(_imageInputController.text.length);
-                //todo save payment
-                Navigator.of(context).pushNamed(Routes.visitedOutlets,
-                    arguments: visitedOutlets);
+                late SalesData sales;
+
+                if (newOrderCubit.state is NewOrderLoaded) {
+                  Object? sdm = newOrderCubit.state.props[0];
+                  if (sdm is SalesData) {
+                    sales = sdm;
+
+                    SalesData model = sales.copyWith(
+                        paymentType: _paymentController.text,
+                        paymentdocument: image!.path);
+
+                    newOrderCubit.getOrders(model);
+
+                    newOrderCubit.saveSalesDataToHive(model);
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => VisitedOutletWidget(
+                              visitedOutlets: visitedOutlets,
+                            )));
+                  }
+                }
               }
-
-              // Navigator.of(context).push(MaterialPageRoute(
-              //     builder: (context) => VisitedOutletWidget(
-              //           visitedOutlets: visitedOutlets,
-              //         )));
-
-              print(image!.path);
-              print(_paymentController.text);
-              print(_nameController.text);
             },
             false,
             AppColors.buttonColor,
           ),
           SizedBox(
-            height: mediaQueryHeight * 0.01,
-          ),
-          button(
-            'Skip',
-            () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => popupWidget(
-                    context, "Are you sure you want to skip Payment ?"),
-              );
-            },
-            false,
-            AppColors.buttonColor,
+            height: mediaQueryHeight * 0.03,
           ),
         ]),
       ),

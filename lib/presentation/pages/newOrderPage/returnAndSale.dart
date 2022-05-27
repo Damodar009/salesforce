@@ -1,9 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
-
-import '../../../data/models/SalesDataModel.dart';
-import '../../../domain/entities/sales_data_collection.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 
 class RerturnAndSale {
@@ -26,7 +23,7 @@ class RerturnAndSale {
   }
 }
 
-class Availability {
+class OrderAvailability {
   int? stock;
   bool? availability;
   String? product;
@@ -57,12 +54,6 @@ class Availability {
 }
 
 var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
-
-saveSalesDataToHive(SalesDataModel salesdata) async {
-  Box box = await Hive.openBox(HiveConstants.salesDataCollection);
-  var sucess = useCaseForHiveImpl.saveValuestoHiveBox(box, salesdata);
-  sucess.fold((l) => {box.close()}, (r) => {box.close()});
-}
 
 Future<List<dynamic>> getSalesDataFromHive() async {
   List<dynamic> salesData = [];

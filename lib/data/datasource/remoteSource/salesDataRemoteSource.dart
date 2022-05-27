@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/merchandiseOrderModel.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
 import '../../../error/exception.dart';
@@ -12,6 +13,7 @@ abstract class SalesDataRemoteSource {
   Future<String?> saveSalesData(List<SalesDataModel> salesData);
 }
 
+@Injectable(as: SalesDataRemoteSource)
 class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
   Future<String?> postImage(List<SalesData> salesData,
       List<String?> paymentDocuments, List<String?> merchandiseType) async {

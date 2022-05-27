@@ -4,13 +4,18 @@ import 'package:salesforce/data/models/SalesModel.dart';
 import 'package:salesforce/data/models/returnModel.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
 
+import '../../domain/entities/availability.dart';
+import '../../domain/entities/merchndiseOrder.dart';
+import '../../domain/entities/retailer.dart';
+import '../../domain/entities/returns.dart';
+import '../../domain/entities/sales.dart';
 import 'merchandiseOrderModel.dart';
 
 class SalesDataModel extends SalesData {
   SalesDataModel({
-    List<SalesModel>? salesPojo,
-    List<AvailabilityModel>? availabilityPojo,
-    List<ReturnsModel>? returnsPojo,
+    List<Sales>? salesPojo,
+    List<Availability>? availabilityPojo,
+    List<Returns>? returnsPojo,
     String? salesDescription,
     String? returnedDescription,
     String? availabilityDescription,
@@ -22,8 +27,8 @@ class SalesDataModel extends SalesData {
     String? paymentType,
     String? paymentdocument,
     required String userId,
-    RetailerModel? retailerPojo,
-    MerchandiseOrderModel? merchandiseOrderPojo,
+    Retailer? retailerPojo,
+    MerchandiseOrder? merchandiseOrderPojo,
   }) : super(
             sales: salesPojo,
             availability: availabilityPojo,
@@ -76,10 +81,9 @@ class SalesDataModel extends SalesData {
       );
 
   Map<String, dynamic> toJson(SalesDataModel instance) => <String, dynamic>{
-        'salesPojo': instance.sales?.map((e) => e.toJson()).toList(),
-        'availabilityPojo':
-            instance.availability?.map((e) => e.toJson()).toList(),
-        'returnPojo': instance.returns?.map((e) => e.toJson()).toList(),
+        'salesPojo': instance.sales,
+        'availabilityPojo': instance.availability,
+        'returnPojo': instance.returns,
         'salesDescription': instance.salesDescription,
         'returnedDescription': instance.returnedDescription,
         'availabilityDescription': instance.availabilityDescription,
@@ -91,7 +95,46 @@ class SalesDataModel extends SalesData {
         'paymentType': instance.paymentType,
         'paymentdocument': instance.paymentdocument,
         'userId': instance.userId,
-        'retailerPojo': instance.retailerPojo?.toJson(),
-        'merchandiseOrderPojo': instance.merchandiseOrderPojo?.toJson(),
+        'retailerPojo': instance.retailerPojo,
+        'merchandiseOrderPojo': instance.merchandiseOrderPojo,
       };
+
+  SalesDataModel copyWith({
+    List<SalesModel>? salesPojo,
+    List<AvailabilityModel>? availabilityPojo,
+    List<ReturnsModel>? returnsPojo,
+    String? salesDescription,
+    String? returnedDescription,
+    String? availabilityDescription,
+    String? assignedDepot,
+    String? collectionDate,
+    double? latitude,
+    double? longitude,
+    String? retailer,
+    String? paymentType,
+    String? paymentdocument,
+    String? userId,
+    RetailerModel? retailerPojo,
+    MerchandiseOrderModel? merchandiseOrderPojo,
+  }) {
+    return SalesDataModel(
+        salesPojo: salesPojo ?? sales,
+        availabilityPojo: availabilityPojo ?? availability,
+        returnsPojo: returnsPojo ?? returns,
+        salesDescription: salesDescription ?? this.salesDescription,
+        returnedDescription: returnedDescription ?? this.returnedDescription,
+        availabilityDescription:
+            availabilityDescription ?? this.availabilityDescription,
+        longitude: longitude ?? this.longitude,
+        assignedDepot: assignedDepot ?? this.assignedDepot,
+        retailer: retailer ?? this.retailer,
+        paymentType: paymentType ?? this.paymentType,
+        paymentdocument: paymentdocument ?? this.paymentdocument,
+        retailerPojo: retailerPojo ?? this.retailerPojo,
+        merchandiseOrderPojo: merchandiseOrderPojo ?? this.merchandiseOrderPojo,
+        userId: userId ?? this.userId,
+        latitude: latitude ?? this.latitude,
+        collectionDate: collectionDate ?? this.collectionDate);
+  }
 }
+//?.map((e) => e.toJson()).toList(),

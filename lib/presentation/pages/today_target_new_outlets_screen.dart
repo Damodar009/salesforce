@@ -1,11 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
-
 import '../../utils/app_colors.dart';
-import '../widgets/individualOrderDetail.dart';
 
 class NewTargetNewOutletsScreen extends StatelessWidget {
   const NewTargetNewOutletsScreen({Key? key}) : super(key: key);

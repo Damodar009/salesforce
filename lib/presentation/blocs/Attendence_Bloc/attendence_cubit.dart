@@ -72,7 +72,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
         Box box = await Hive.openBox(HiveConstants.attendence);
         var failureOrsucess = useCaseForHiveImpl.saveValueByKey(
-            box, HiveConstants.assignedDepot, [latitude2, longitude2]);
+            box, HiveConstants.assignedDepot, depots[i].id);
 
         break;
       } else {}

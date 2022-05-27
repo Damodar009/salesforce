@@ -1,3 +1,0 @@
-// class MerchandiseSupportEntiry {
-//   String
-// }
