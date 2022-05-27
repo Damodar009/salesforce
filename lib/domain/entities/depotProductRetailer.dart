@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:salesforce/domain/entities/merchandise.dart';
 import 'package:salesforce/domain/entities/products.dart';
+import 'package:salesforce/domain/entities/region.dart';
 import 'package:salesforce/domain/entities/retailerDropDown.dart';
 import 'package:salesforce/domain/entities/retailerType.dart';
 
@@ -10,8 +12,8 @@ class DepotProductRetailer extends Equatable {
   final List<RetailerType> retailerType;
   final List<Depot> depots;
   final List<RetailerDropDown> retailerDropDown;
-  final List<RetailerDropDown> region;
-  final List<RetailerDropDown> merchandise;
+  final List<RegionDropDown> region;
+  final List<MerchandiseDropDown> merchandise;
 
   DepotProductRetailer(
       {required this.region,

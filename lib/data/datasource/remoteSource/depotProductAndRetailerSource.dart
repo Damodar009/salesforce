@@ -1,5 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:salesforce/data/models/merchandiseModel.dart';
+import 'package:salesforce/data/models/regionModel.dart';
+import 'package:salesforce/data/models/retailerDropDownModel.dart';
+import 'package:salesforce/domain/entities/merchandise.dart';
 import 'package:salesforce/domain/entities/products.dart';
+import 'package:salesforce/domain/entities/region.dart';
+import 'package:salesforce/domain/entities/retailerDropDown.dart';
 import 'package:salesforce/domain/entities/retailerType.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
@@ -41,14 +47,31 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
         List<Depot> depots = (response.data["data"]["depotDetails"] as List)
             .map((sectorModel) => DepotModel.fromJson(sectorModel))
             .toList();
+
+        List<RetailerDropDown> retailerDropdown = (response.data["data"]
+                ["depotDetails"] as List)
+            .map((sectorModel) => RetailerDropDownModel.fromJson(sectorModel))
+            .toList();
+
+        List<MerchandiseDropDown> merchandiseDropDown = (response.data["data"]
+                ["depotDetails"] as List)
+            .map(
+                (sectorModel) => MerchandiseDropDownModel.fromJson(sectorModel))
+            .toList();
+
+        List<RegionDropDown> regionDropDown =
+            (response.data["data"]["depotDetails"] as List)
+                .map((sectorModel) => RegionDropDownModel.fromJson(sectorModel))
+                .toList();
+
 //todo
         depotProductRetailer = DepotProductRetailer(
             products: products,
             retailerType: retailerTypes,
             depots: depots,
-            retailerDropDown: [],
-            merchandise: [],
-            region: []);
+            retailerDropDown: retailerDropdown,
+            merchandise: merchandiseDropDown,
+            region: regionDropDown);
 
         return depotProductRetailer;
       } else {

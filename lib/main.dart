@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/Userdata.dart';
+import 'package:salesforce/domain/entities/merchandise.dart';
+import 'package:salesforce/domain/entities/region.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/domain/usecases/userCaseForUploadImageSave.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
@@ -40,6 +42,8 @@ Future<void> main() async {
     ..registerAdapter(ProductsAdapter())
     ..registerAdapter(RetailerTypeAdapter())
     ..registerAdapter(SalesLocationTrackAdapter())
+    ..registerAdapter(MerchandiseDropDownAdapter())
+    ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(RetailerAdapter());
 
   runApp(const MyApp());

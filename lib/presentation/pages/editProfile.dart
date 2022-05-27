@@ -469,7 +469,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                         //edit profile event
 
-                        // Navigator.pushNamed(context, Routes.profileRoute);
+                        Navigator.pushNamed(context, Routes.menuScreen);
                         BlocProvider.of<ProfileBloc>(context)
                             .add(GetProfileEvent());
                       },
