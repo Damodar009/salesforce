@@ -12,7 +12,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   SaveLocally hiveDb = SaveLocally();
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
 
-  AuthBloc(this.useCaseForRemoteSourceimpl) : super(AuthInitial()) {
+  AuthBloc() : super(AuthInitial()) {
     on<LoginAttemptEvent>((event, emit) async {
       emit(LoginLoadingState());
       final isSuccessful = await useCaseForRemoteSourceimpl.login(

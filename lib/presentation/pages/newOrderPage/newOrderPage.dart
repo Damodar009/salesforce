@@ -308,7 +308,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               }
             } else {
               int index = retailerList.indexOf(nameOfOutlet);
-              String retailerId = retailerIdList[index];
+            //  String retailerId = retailerIdList[index];
               salesDataModel = SalesData(
                   sales: salessPojo,
                   returns: returnspojo,
@@ -316,7 +316,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   salesDescription: _salesRemarks.text,
                   returnedDescription: _returnRemarks.text,
                   availabilityDescription: _availabilityRemarks.text,
-                  retailer: retailerId,
+                  retailer: "retailerId",
                   userId: userId,
                   assignedDepot: assignedDepots,
                   longitude: longitude,
@@ -555,7 +555,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           child: textFormFeildIncreAndDecre(
                               validator: (string) {},
                               initialValue: checkIndex(sales, i)
-                                  ? sales[i].getReturn().toString() ?? ""
+                                  ? sales[i].getReturn() != null
+                                      ? sales[i].getReturn().toString()
+                                      : ""
                                   : "",
                               onChanged: (string) {
                                 setState(() {
@@ -749,7 +751,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           child: textFormFeildIncreAndDecre(
                               validator: (string) {},
                               initialValue: checkIndex(availability, i)
-                                  ? availability[i].getStock().toString() ?? ""
+                                  ? availability[i].getStock() != null
+                                      ? availability[i].getStock().toString()
+                                      : ""
                                   : "",
                               onChanged: (string) {
                                 setState(() {
@@ -960,7 +964,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                           child: textFormFeildIncreAndDecre(
                               validator: (string) {},
                               initialValue: checkIndex(returns, i)
-                                  ? returns[i].getReturn().toString() ?? ""
+                                  ? returns[i].getReturn() != null
+                                      ? returns[i].getReturn().toString()
+                                      : ""
                                   : "",
                               onChanged: (string) {
                                 setState(() {

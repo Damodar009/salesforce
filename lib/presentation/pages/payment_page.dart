@@ -121,6 +121,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     style: linkStyle,
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
+                        print("asdfadsfasdfasdf");
                         if (_paymentController.text == "" &&
                             _imageInputController.text == "") {
                           showDialog(
@@ -130,15 +131,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       "You have not filled payment detail.Do you want to fill?",
                                       "Yes",
                                       "No", () {
+                                        print("inside yes");
                                     Navigator.of(context).pop();
                                   }, () {
+                                print("inside yes");
                                     Navigator.of(context).pushNamed(
                                         Routes.merchandiseSupportScreen);
                                   }));
                         } else {
+                          print("asdfadsfasdfasdf");
                           String awd = _paymentController.text;
+                          print(awd);
 
-                          print(_imageInputController.text.length);
                           //
                           // Navigator.of(context)
                           //     .pushNamed(Routes.merchandiseSupportScreen);
@@ -170,6 +174,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             "No", () {
                           Navigator.of(context).pop();
                           late SalesData sales;
+                          print("its running");
 
                           if (newOrderCubit.state is NewOrderLoaded) {
                             Object? sdm = newOrderCubit.state.props[0];
@@ -192,6 +197,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
               } else {
                 late SalesData sales;
+                print("tsisfasdf");
 
                 if (newOrderCubit.state is NewOrderLoaded) {
                   Object? sdm = newOrderCubit.state.props[0];

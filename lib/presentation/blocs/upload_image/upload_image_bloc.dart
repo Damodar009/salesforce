@@ -12,10 +12,8 @@ part 'upload_image_state.dart';
 
 class UploadImageBloc extends Bloc<UploadImageEvent, UploadImageState> {
   var useCaseForUploadImageImpl = getIt<UseCaseForUploadImageImpl>();
-  
-  UploadImageBloc(
-      this.useCaseForUploadImageImpl)
-      : super(UploadImageInitial()) {
+
+  UploadImageBloc() : super(UploadImageInitial()) {
     on<UploadImageEvent>((event, emit) async {
       // TODO: implement event handler
     });
@@ -29,8 +27,7 @@ class UploadImageBloc extends Bloc<UploadImageEvent, UploadImageState> {
   }
 
   mapEventToState(SaveImageEvent event, Emitter<UploadImageState> emit) async {
-
-    if(event.imageName != null){}
+    if (event.imageName != null) {}
     final isSuccesfull =
         await useCaseForUploadImageImpl.uploadImageSave(event.imageName);
 

@@ -40,15 +40,9 @@ Widget popupWidget(BuildContext context, String text, String buttonText1,
         children: [
           SizedBox(
               height: 50,
-              child: button(buttonText1, () {
-                buttonClicked1;
-                // Navigator.of(context)
-                //     .pushNamed(Routes.merchandiseSupportScreen);
-              }, false, AppColors.buttonColor)),
-          textButton(buttonText2, () {
-            buttonClicked2;
-
-          }),
+              child: button(
+                  buttonText1, buttonClicked1, false, AppColors.buttonColor)),
+          textButton(buttonText2, buttonClicked2),
         ],
       ),
     ],

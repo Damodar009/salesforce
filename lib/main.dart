@@ -79,27 +79,20 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  var useCaseForRemoteSourceImpl = getIt<UseCaseForRemoteSourceimpl>();
-  var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
-  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
-  var useCaseForUploadImageImpl = getIt<UseCaseForUploadImageImpl>();
+  // var useCaseForRemoteSourceImpl = getIt<UseCaseForRemoteSourceimpl>();
+  // var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
+  // var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  // var useCaseForUploadImageImpl = getIt<UseCaseForUploadImageImpl>();
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc(useCaseForRemoteSourceImpl)),
-        BlocProvider(
-            create: (context) => AttendenceCubit(useCaseForAttendenceImpl)),
-        BlocProvider(
-            create: (context) =>
-                ProfileBloc(useCaseForRemoteSourceImpl, useCaseForHiveImpl)),
-        BlocProvider(
-            create: (context) => UploadImageBloc(useCaseForUploadImageImpl)),
+        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => AttendenceCubit()),
+        BlocProvider(create: (context) => ProfileBloc()),
+        BlocProvider(create: (context) => UploadImageBloc()),
         BlocProvider(create: (context) => NewOrderCubit()),
-        // BlocProvider(
-        //   create: (context) => ),
-        // ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -164,6 +157,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoggedIn ? DashboardScreen(index: 0) : LOginScreen();
+    return isLoggedIn ? DashboardScreen(index: 0) : const LOginScreen();
   }
 }

@@ -129,6 +129,7 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                     if (newOrderCubit.state is NewOrderLoaded) {
                       Object? sdm = newOrderCubit.state.props[0];
                       if (sdm is SalesData) {
+                        print(sdm);
                         sales = sdm;
                         print("dfgsdg");
 
