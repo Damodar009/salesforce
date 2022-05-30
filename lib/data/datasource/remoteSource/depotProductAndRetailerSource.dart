@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
 import 'package:salesforce/data/models/merchandiseModel.dart';
 import 'package:salesforce/data/models/regionModel.dart';
 import 'package:salesforce/data/models/retailerDropDownModel.dart';
@@ -10,10 +11,14 @@ import 'package:salesforce/domain/entities/retailerType.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
 import '../../../error/exception.dart';
+import '../../../injectable.dart';
 import '../../../utils/apiUrl.dart';
+import '../../../utils/hiveConstant.dart';
 import '../../models/DepotModel.dart';
 import '../../models/Products.dart';
 import '../../models/RetailerType.dart';
+import '../../models/Userdata.dart';
+import '../local_data_sources.dart';
 
 abstract class GetDepotProductAndRetailer {
   Future<DepotProductRetailer> getDepotProductAndRetailer();
@@ -21,22 +26,31 @@ abstract class GetDepotProductAndRetailer {
 
 class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
   Dio dio = Dio();
+
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
+    //todo implement authorization token
+
+    Box box = await Hive.openBox(HiveConstants.userdata);
+    final signInLocalDataSource = getIt<SignInLocalDataSource>();
+
+    //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
+
     try {
-      Response response = await dio.post(
+      print("inside depot product retailer");
+      UserDataModel? userInfo =
+          await signInLocalDataSource.getUserDataFromLocal();
+      print(userInfo!.access_token);
+      Response response = await dio.get(
         ApiUrl.depotProductAndRetailor,
         options: Options(
-          contentType: "application/x-www-form-urlencoded",
           headers: <String, String>{
-            'Authorization': 'Bearer 4ec360b3-5296-4d12-8719-4ae999679ec9'
+            'Authorization': 'Bearer 823402f6-96dd-4b0d-a0f8-6d0af43a876c'
           },
         ),
       );
+
       if (response.data["status"] == true) {
-
-
-        print("product retailer dropdown");
         DepotProductRetailer depotProductRetailer;
         List<RetailerType> retailerTypes =
             (response.data["data"]["retailerTypeDropDown"] as List)
@@ -52,7 +66,7 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
             .toList();
 
         List<RetailerDropDown> retailerDropdown = (response.data["data"]
-                ["depotDetails"] as List)
+                ["retailerDropDown"] as List)
             .map((sectorModel) => RetailerDropDownModel.fromJson(sectorModel))
             .toList();
 
@@ -63,11 +77,10 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
             .toList();
 
         List<RegionDropDown> regionDropDown =
-            (response.data["data"]["depotDetails"] as List)
+            (response.data["data"]["regionDropDown"] as List)
                 .map((sectorModel) => RegionDropDownModel.fromJson(sectorModel))
                 .toList();
 
-//todo
         depotProductRetailer = DepotProductRetailer(
             products: products,
             retailerType: retailerTypes,

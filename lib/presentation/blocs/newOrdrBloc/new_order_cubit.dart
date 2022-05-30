@@ -27,8 +27,8 @@ class NewOrderCubit extends Cubit<NewOrderState> {
 
   saveSalesDataToHive(SalesData salesdata) async {
     Box box = await Hive.openBox(HiveConstants.salesDataCollection);
-    var sucess = useCaseForHiveImpl.saveValuestoHiveBox(box, salesdata);
-    sucess.fold(
+    var success = useCaseForHiveImpl.saveValuestoHiveBox(box, salesdata);
+    success.fold(
         (l) => {
               //box.close()
             },

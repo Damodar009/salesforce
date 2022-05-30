@@ -47,7 +47,7 @@ class _OutletScreenState extends State<OutletScreen> {
                 "Add now",
                 Routes.newOutletsRoute),
             outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
-                "Check In", Routes.paymentScreen),
+                "Check In", Routes.salesDataCollection),
           ]),
         )
       ],

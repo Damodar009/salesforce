@@ -308,7 +308,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               }
             } else {
               int index = retailerList.indexOf(nameOfOutlet);
-            //  String retailerId = retailerIdList[index];
+              //  String retailerId = retailerIdList[index];
               salesDataModel = SalesData(
                   sales: salessPojo,
                   returns: returnspojo,

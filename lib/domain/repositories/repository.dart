@@ -1,11 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
-import 'package:salesforce/data/models/userDetailsDataModel.dart';
-import 'package:salesforce/domain/entities/image.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
-import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
 import 'package:salesforce/domain/entities/userData.dart';
-import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import '../../data/models/SalesDataModel.dart';
 import '../../error/failure.dart';
@@ -54,6 +50,8 @@ abstract class SalesTeamRepository {
 abstract class UploadImageRepository {
   Future<Either<Failure, String>> uploadImageSave(String imageName);
 }
+
 abstract class SaveSalesDataRepository {
-  Future<Either<Failure, String?>> saveSalesData(List<SalesDataModel> salesDataModel);
+  Future<Either<Failure, String?>> saveSalesData(
+      List<SalesDataModel> salesDataModel);
 }

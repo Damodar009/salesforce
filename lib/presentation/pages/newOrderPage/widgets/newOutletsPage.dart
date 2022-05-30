@@ -28,6 +28,8 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
   bool loadingMap = false;
   Position? position;
   List<String> retailerTypes = [];
+  List<String> regionName = [];
+  List<String> regionId = [];
   String selectedValue = "";
   String typesOfOutLets = "";
   String region = " ";
@@ -35,7 +37,7 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
   final geoLocation = getIt<GeoLocationData>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _outLetName = TextEditingController();
-  final TextEditingController _contactPeson = TextEditingController();
+  final TextEditingController _contactPerson = TextEditingController();
   final TextEditingController _contactNumber = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _location = TextEditingController();
@@ -68,6 +70,8 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
     }
   }
 
+  // todo put somewhere else
+
   getRetailerType() async {
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
     var sucessOrNot = useCaseForHiveImpl.getValuesByKey(
@@ -79,18 +83,33 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
         (r) => {
               for (var i = 0; i < r.length; i++)
                 {
-                  print(" success"),
+                  print("success"),
                   retailerTypes.add(r[i].name),
                 },
               print(retailerTypes)
             });
   }
 
-  // todo get region
+  getRegion() async {
+    print("getting region from hive box");
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    var successOrFailed =
+        useCaseForHiveImpl.getValuesByKey(box, HiveConstants.regionKey);
+    successOrFailed.fold(
+        (l) => {print("getting depot from hive is failed ")},
+        (r) => {
+              for (var i = 0; i < r.length; i++)
+                {
+                  regionName.add(r[i].name),
+                  regionId.add(r[i].id),
+                }
+            });
+  }
 
   @override
   void initState() {
     getRetailerType();
+    getRegion();
     super.initState();
   }
 
@@ -126,7 +145,7 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
             ),
 
             textFormField(
-                controller: _contactPeson,
+                controller: _contactPerson,
                 validator: (string) {
                   return validator(string);
                 },
@@ -304,7 +323,7 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
             ),
 
             textFeildWithDropDownFor(
-                item: [],
+                item: regionName,
                 validator: (string) {},
                 onselect: (string) {
                   setState(() {
@@ -321,17 +340,18 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
                 setState(() {
                   loading = true;
                 });
-                //todo get region
+                int index = regionName.indexOf(region);
+                String regions = regionId[index];
                 RetailerModel retailer = RetailerModel(
                     name: _outLetName.toString(),
                     latitude: position!.latitude,
                     longitude: position!.longitude,
                     address: _address.toString(),
-                    contactPerson: _contactPeson.toString(),
+                    contactPerson: _contactPerson.toString(),
                     contactNumber: _contactNumber.toString(),
                     retailerClass: selectedValue,
                     retailerType: _typesOfOutlet.toString(),
-                    region: "kathmandu");
+                    region: regions);
 
                 newOrderCubit.getRetailers(retailer);
                 print(newOrderCubit.state);

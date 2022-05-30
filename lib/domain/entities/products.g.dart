@@ -18,10 +18,10 @@ class ProductsAdapter extends TypeAdapter<Products> {
     };
     return Products(
       name: fields[0] as String,
-      path: fields[1] as String,
+      path: fields[1] as String?,
       id: fields[2] as String,
       childProducts: (fields[3] as List)
-          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .map((dynamic e) => (e as Map?)?.cast<String, dynamic>())
           .toList(),
     );
   }

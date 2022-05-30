@@ -8,9 +8,9 @@ part 'Products.g.dart';
 class ProductsModel extends Products {
   ProductsModel(
       {required String name,
-      required String path,
+      String? path,
       required String id,
-      required List<Map<String, dynamic>> childProducts})
+      required List<Map<String, dynamic>?> childProducts})
       : super(name: name, path: path, id: id, childProducts: childProducts);
 
   factory ProductsModel.fromJson(Map<String, dynamic> json) =>

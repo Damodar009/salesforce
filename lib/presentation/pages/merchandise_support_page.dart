@@ -2,12 +2,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salesforce/data/models/merchandiseOrderModel.dart';
+import 'package:salesforce/injectable.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/utils/app_colors.dart';
 import '../../domain/entities/SalesData.dart';
+import '../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../routes.dart';
+import '../../utils/hiveConstant.dart';
 import '../blocs/newOrdrBloc/new_order_cubit.dart';
 import '../widgets/appBarWidget.dart';
 import '../widgets/imageWidget.dart';
@@ -28,9 +32,14 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
       TextEditingController();
   final TextEditingController _reasonController = TextEditingController();
   final TextEditingController _imageInputController = TextEditingController();
-  late String merchantTypeId;
 
-  List<String> items = [
+  var useCaseHiveData = getIt<UseCaseForHiveImpl>();
+
+  late String merchantTypeId;
+  List<String> merchandiseName = [];
+  List<String> merchandiseId = [];
+
+  List<String> itms = [
     'Banner',
     'Display',
     'Pharase',
@@ -60,8 +69,20 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
     _reasonController.clear();
   }
 
-//todo && merchanttypeID
-  getMerchantDropDownFromHive() {}
+  getMerchantDropDownFromHive() async {
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    var successOrFailed =
+        useCaseHiveData.getValuesByKey(box, HiveConstants.merchandiseKey);
+    successOrFailed.fold(
+        (l) => {print("getting merchandise from hive is failed ")},
+        (r) => {
+              for (var i = 0; i < r.length; i++)
+                {
+                  merchandiseName.add(r[i].name),
+                  merchandiseId.add(r[i].id),
+                }
+            });
+  }
 
   @override
   void initState() {
@@ -97,7 +118,7 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                     hintText:
                         // widget.getProfileState.userDetail!.userDocument ??
                         "Choose",
-                    item: items),
+                    item: merchandiseName),
               ),
               SizedBox(
                 height: mediaQueryHeight * 0.04,
@@ -131,12 +152,15 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                       if (sdm is SalesData) {
                         print(sdm);
                         sales = sdm;
-                        print("dfgsdg");
+
+                        int index = merchandiseName
+                            .indexOf(_typesOfMerchandiseSupport.text);
+                        String merchandise = merchandiseId[index];
 
                         merchandiseOrderModel = MerchandiseOrderModel(
                             image: image!.path,
                             description: _reasonController.text,
-                            merchandise_id: _typesOfMerchandiseSupport.text);
+                            merchandise_id: merchandise);
 
                         SalesData salesData = sales.copyWith(
                             merchandiseOrderPojo: merchandiseOrderModel);

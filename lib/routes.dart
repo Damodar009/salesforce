@@ -28,14 +28,12 @@ class Routes {
   static const String logOUtRoutes = "/logout";
   static const String totalOutletsRoute = "/totalOutlets";
   static const String newOutletRoute = "/newOutlet";
-  static const String totalOutLetsVisitedRoute =
-      "/totalOutLetsVisited";
+  static const String totalOutLetsVisitedRoute = "/totalOutLetsVisited";
   static const String totalSalesRoute = "/totalSales";
   static const String visitedOutlets = "/visitedOutlets";
   static const String xlsOrder = "/xlsOrder";
   static const String menuScreen = "/menuScreen";
-  static const String merchandiseSupportScreen =
-      "/merchandiseSupportScreen";
+  static const String merchandiseSupportScreen = "/merchandiseSupportScreen";
 
   static const paymentScreen = "/paymentScreen";
 }
@@ -45,30 +43,26 @@ class RouteGenerator {
     final args = routeSettings.arguments;
     switch (routeSettings.name) {
       case Routes.splashScreen:
-        return MaterialPageRoute(
-            builder: (_) => const SplashScreen());
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case Routes.loginRoute:
         return MaterialPageRoute(builder: (_) => const LOginScreen());
       case Routes.profileRoute:
-        return MaterialPageRoute(
-            builder: (_) => const ProfileScreen());
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.newOrderRoute:
-        return MaterialPageRoute(
-            builder: (_) => const NewOrderScreen());
+        return MaterialPageRoute(builder: (_) => const NewOrderScreen());
       case Routes.newOutletsRoute:
-        return MaterialPageRoute(
-            builder: (_) => const NewOutletsScreen());
+        return MaterialPageRoute(builder: (_) => const NewOutletsScreen());
       case Routes.salesDataCollection:
-        return MaterialPageRoute(builder: (_) => Container());
+        return MaterialPageRoute(
+            builder: (_) => ListOfOrderAndOutletDetailScreen());
       case Routes.logOUtRoutes:
         return MaterialPageRoute(builder: (_) => LogOutPage());
       case Routes.menuScreen:
         return MaterialPageRoute(builder: (_) => const MenuScreen());
       case Routes.paymentScreen:
-        return MaterialPageRoute(builder: (_) =>  PaymentScreen());
+        return MaterialPageRoute(builder: (_) => PaymentScreen());
       case Routes.merchandiseSupportScreen:
-        return MaterialPageRoute(
-            builder: (_) => MerchandiseSupportScreen());
+        return MaterialPageRoute(builder: (_) => MerchandiseSupportScreen());
 
       case Routes.dashboardRoute:
         return MaterialPageRoute(
@@ -76,8 +70,7 @@ class RouteGenerator {
                   index: 0,
                 ));
       case Routes.attendanceRoute:
-        return MaterialPageRoute(
-            builder: (_) => const AttendenceScreen());
+        return MaterialPageRoute(builder: (_) => const AttendenceScreen());
 
       case Routes.totalOutletsRoute:
         return MaterialPageRoute(
@@ -101,11 +94,9 @@ class RouteGenerator {
       case Routes.visitedOutlets:
         if (args is VistedOutlets) {
           return MaterialPageRoute(
-              builder: (_) =>
-                  VisitedOutletWidget(visitedOutlets: args));
+              builder: (_) => VisitedOutletWidget(visitedOutlets: args));
         } else {
-          return MaterialPageRoute(
-              builder: (_) => const UndefinedRoute());
+          return MaterialPageRoute(builder: (_) => const UndefinedRoute());
         }
       default:
         return MaterialPageRoute(builder: (_) => const LOginScreen());

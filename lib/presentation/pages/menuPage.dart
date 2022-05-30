@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:salesforce/presentation/pages/changePasswordPage.dart';
-import 'package:salesforce/presentation/pages/editProfile.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/routes.dart';

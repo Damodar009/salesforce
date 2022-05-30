@@ -1,5 +1,5 @@
 class ApiUrl {
-  static const String baseUrl = "http://67.231.243.61:5052/salesforce";
+  static const String baseUrl = "http://103.90.86.112:80/salesforce";
   static const String apiUrl = baseUrl + "/api";
   static const String login = baseUrl + "/oauth/token";
   static const String changePassword = apiUrl + "/user/changePassword";

@@ -59,11 +59,11 @@ class UseCaseForHiveImpl implements UseCaseForHive {
   }
 
   @override
-  Either<Failure, String> saveValuestoHiveBox(Box box, values) {
+  Either<Failure, String> saveValuestoHiveBox(Box box, dynamic values) {
     try {
       box.add(values);
 
-      return const Right("Sucess");
+      return const Right("Success");
     } catch (e) {
       print(e);
       return Left(CacheFailure());
