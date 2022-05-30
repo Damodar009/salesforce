@@ -21,7 +21,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
   var geolocator = getIt<GeoLocationData>();
 
-  AttendenceCubit(this.useCaseForAttendenceImpl) : super(AttendenceInitial());
+  AttendenceCubit() : super(AttendenceInitial());
 
   /// getiing user id from hive box
   Future<String> getUserIdFromHiveBox() async {

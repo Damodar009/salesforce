@@ -11,6 +11,7 @@ import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.d
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/blocs/profile_bloc/profile_bloc.dart';
+import 'package:salesforce/presentation/blocs/publish_notification/publish_notification_bloc.dart';
 import 'package:salesforce/presentation/blocs/upload_image/upload_image_bloc.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
@@ -79,27 +80,25 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  var useCaseForRemoteSourceImpl = getIt<UseCaseForRemoteSourceimpl>();
-  var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
-  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
-  var useCaseForUploadImageImpl = getIt<UseCaseForUploadImageImpl>();
+  // var useCaseForRemoteSourceImpl = getIt<UseCaseForRemoteSourceimpl>();
+  // var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
+  // var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+  // var useCaseForUploadImageImpl = getIt<UseCaseForUploadImageImpl>();
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc(useCaseForRemoteSourceImpl)),
-        BlocProvider(
-            create: (context) => AttendenceCubit(useCaseForAttendenceImpl)),
-        BlocProvider(
-            create: (context) =>
-                ProfileBloc(useCaseForRemoteSourceImpl, useCaseForHiveImpl)),
-        BlocProvider(
-            create: (context) => UploadImageBloc(useCaseForUploadImageImpl)),
+        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => AttendenceCubit()),
+        BlocProvider(create: (context) => ProfileBloc()),
+        BlocProvider(create: (context) => UploadImageBloc()),
+        BlocProvider(create: (context) => PublishNotificationBloc()),
         BlocProvider(create: (context) => NewOrderCubit()),
-        // BlocProvider(
-        //   create: (context) => ),
-        // ),
+
+        // BlocProvider<PublishNotificationBloc>(
+        //   create: (context) => PublishNotificationBloc()),
+        // )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -120,23 +119,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   final signInLocalDataSource = getIt<SignInLocalDataSource>();
 
   bool isLoggedIn = false;
   checkUserLoggedIn() async {
     try {
-      // String? accessToken;
-
-      // Box box = await Hive.openBox(HiveConstants.userdata);
-
-      // var checkUserAccessToken =
-      //     useCaseForHiveImpl.getValueByKey(box, "access_token");
-
-      // checkUserAccessToken.fold((l) => {print("failed")},
-      //     (r) => {accessToken = r!, print(r.toString())});
-
-      // currentUserInfo.
       print("this below is access toke hai ");
       print("this is main page and the keys are below");
 

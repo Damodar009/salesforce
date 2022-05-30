@@ -25,8 +25,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   late final StreamSubscription uploadImageStreamSubscription;
 
   ProfileBloc(
-    this.useCaseForRemoteSourceimpl,
-    this.useCaseForHiveImpl,
+    
   ) : super(ProfileInitial()) {
     on<ProfileEvent>((event, emit) {
       // TODO: implement event handler

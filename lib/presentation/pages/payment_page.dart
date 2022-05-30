@@ -137,7 +137,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   }));
                         } else {
                           String awd = _paymentController.text;
-
+      
                           print(_imageInputController.text.length);
                           //
                           // Navigator.of(context)
@@ -170,12 +170,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             "No", () {
                           Navigator.of(context).pop();
                           late SalesData sales;
-
+      
                           if (newOrderCubit.state is NewOrderLoaded) {
                             Object? sdm = newOrderCubit.state.props[0];
                             if (sdm is SalesData) {
                               sales = sdm;
-
+      
                               newOrderCubit.saveSalesDataToHive(sales);
                               //todo replacement
                               Navigator.of(context).push(MaterialPageRoute(
@@ -187,25 +187,25 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         }, () {
                           Navigator.of(context).pop();
                         }));
-
+      
                 //todo show snackbar
-
+      
               } else {
                 late SalesData sales;
-
+      
                 if (newOrderCubit.state is NewOrderLoaded) {
                   Object? sdm = newOrderCubit.state.props[0];
                   if (sdm is SalesData) {
                     sales = sdm;
-
+      
                     SalesData model = sales.copyWith(
                         paymentType: _paymentController.text,
                         paymentdocument: image!.path);
-
+      
                     newOrderCubit.getOrders(model);
-
+      
                     newOrderCubit.saveSalesDataToHive(model);
-
+      
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => VisitedOutletWidget(
                               visitedOutlets: visitedOutlets,

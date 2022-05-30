@@ -176,7 +176,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         validator: (value) {},
                         controller: _emailController,
                         hintText:
-                            // widget.getProfileState.email ??
+                            widget.getProfileState.email ??
                             "Email",
                         obsecureText1: () {
                           setState(() {});
@@ -470,6 +470,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         //edit profile event
 
                         Navigator.pushNamed(context, Routes.menuScreen);
+                        // Navigator.pushNamedAndRemoveUntil(context, Routes.menuScreen, (route) => false),
                         BlocProvider.of<ProfileBloc>(context)
                             .add(GetProfileEvent());
                       },
