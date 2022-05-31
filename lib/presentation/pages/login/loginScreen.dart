@@ -41,7 +41,9 @@ class _LOginScreenState extends State<LOginScreen> {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text('Login successful')));
           print("routinhg");
-          Navigator.pushNamedAndRemoveUntil(context, Routes.dashboardRoute, (route) => false);
+          // Navigator.pushNamedAndRemoveUntil(context, Routes.dashboardRoute, (route) => false);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+                    Routes.dashboardRoute, (route) => false);
           // Navigator.of(context).pushNamed(Routes.dashboardRoute);
         } else if (state is LoginFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(

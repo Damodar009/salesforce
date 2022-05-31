@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salesforce/data/datasource/remoteSource/salesDataRemoteSource.dart';
+import 'package:salesforce/presentation/widgets/backgroundShadesWidget.dart';
 import 'package:salesforce/routes.dart';
 import '../../utils/app_colors.dart';
 
@@ -22,6 +23,7 @@ class _OutletScreenState extends State<OutletScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        BackgroundShades(),
         SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
