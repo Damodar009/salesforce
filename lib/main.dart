@@ -3,10 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/Userdata.dart';
-import 'package:salesforce/domain/entities/merchandise.dart';
-import 'package:salesforce/domain/entities/region.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
-import 'package:salesforce/domain/usecases/userCaseForUploadImageSave.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
@@ -17,20 +14,20 @@ import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
-import 'package:salesforce/utils/hiveConstant.dart';
 import 'domain/entities/SalesData.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/availability.dart';
 import 'domain/entities/depot.dart';
 import 'domain/entities/merchndiseOrder.dart';
 import 'domain/entities/products.dart';
+
+import 'domain/entities/region.dart';
 import 'domain/entities/retailer.dart';
+import 'domain/entities/retailerDropDown.dart';
 import 'domain/entities/retailerType.dart';
 import 'domain/entities/returns.dart';
 import 'domain/entities/sales.dart';
 import 'domain/entities/saleslocationTrack.dart';
-import 'domain/usecases/useCaseForAttebdenceSave.dart';
-import 'domain/usecases/usecasesForRemoteSource.dart';
 import 'injectable.dart';
 import 'package:path_provider/path_provider.dart' as pathprovider;
 
@@ -54,6 +51,8 @@ Future<void> main() async {
     ..registerAdapter(AvailabilityAdapter())
     ..registerAdapter(MerchandiseOrderAdapter())
     ..registerAdapter(ReturnsAdapter())
+    ..registerAdapter(RetailerDropDownAdapter())
+    ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(SalesAdapter());
 
   runApp(const MyApp());
@@ -151,6 +150,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoggedIn ? DashboardScreen(index: 0) : LOginScreen();
+    return isLoggedIn ? DashboardScreen(index: 0) : const LOginScreen();
   }
 }

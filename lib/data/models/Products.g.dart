@@ -9,10 +9,10 @@ part of 'Products.dart';
 ProductsModel _$ProductsModelFromJson(Map<String, dynamic> json) =>
     ProductsModel(
       name: json['name'] as String,
-      path: json['path'] as String,
+      path: json['path'] as String?,
       id: json['id'] as String,
       childProducts: (json['childProducts'] as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
+          .map((e) => e as Map<String, dynamic>?)
           .toList(),
     );
 

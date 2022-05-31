@@ -3,8 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salesforce/presentation/blocs/publish_notification/publish_notification_bloc.dart';
 import 'package:salesforce/presentation/pages/changePasswordPage.dart';
-import 'package:salesforce/presentation/pages/editProfile.dart';
-import 'package:salesforce/presentation/pages/notice_board_page.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/widgets/backgroundShadesWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';

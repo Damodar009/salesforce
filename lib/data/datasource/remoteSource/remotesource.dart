@@ -14,7 +14,10 @@ import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
+import '../../../domain/entities/merchandise.dart';
 import '../../../domain/entities/products.dart';
+import '../../../domain/entities/region.dart';
+import '../../../domain/entities/retailerDropDown.dart';
 import '../../../domain/entities/retailerType.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../error/exception.dart';
@@ -24,6 +27,9 @@ import '../../models/Userdata.dart';
 import '../../models/DepotModel.dart';
 import '../../models/Products.dart';
 import '../../models/RetailerType.dart';
+import '../../models/merchandiseModel.dart';
+import '../../models/regionModel.dart';
+import '../../models/retailerDropDownModel.dart';
 import '../../models/userDetailModel.dart';
 import '../local_data_sources.dart';
 
@@ -280,6 +286,7 @@ class RemoteSourceImplementation implements RemoteSource {
     //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
 
     try {
+      print("inside depot product retailer");
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
       print(userInfo!.access_token);
@@ -287,17 +294,18 @@ class RemoteSourceImplementation implements RemoteSource {
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer ' + userInfo.access_token!
+            'Authorization': 'Bearer 823402f6-96dd-4b0d-a0f8-6d0af43a876c'
           },
         ),
       );
-//todo change bearer
+
       if (response.data["status"] == true) {
         DepotProductRetailer depotProductRetailer;
         List<RetailerType> retailerTypes =
             (response.data["data"]["retailerTypeDropDown"] as List)
                 .map((sectorModel) => RetailerTypeModel.fromJson(sectorModel))
                 .toList();
+
         List<Products> products =
             (response.data["data"]["productDropDown"] as List)
                 .map((sectorModel) => ProductsModel.fromJson(sectorModel))
@@ -306,19 +314,36 @@ class RemoteSourceImplementation implements RemoteSource {
             .map((sectorModel) => DepotModel.fromJson(sectorModel))
             .toList();
 
+        List<RetailerDropDown> retailerDropdown = (response.data["data"]
+                ["retailerDropDown"] as List)
+            .map((sectorModel) => RetailerDropDownModel.fromJson(sectorModel))
+            .toList();
+
+        List<MerchandiseDropDown> merchandiseDropDown = (response.data["data"]
+                ["depotDetails"] as List)
+            .map(
+                (sectorModel) => MerchandiseDropDownModel.fromJson(sectorModel))
+            .toList();
+
+        List<RegionDropDown> regionDropDown =
+            (response.data["data"]["regionDropDown"] as List)
+                .map((sectorModel) => RegionDropDownModel.fromJson(sectorModel))
+                .toList();
+
         depotProductRetailer = DepotProductRetailer(
             products: products,
             retailerType: retailerTypes,
             depots: depots,
-            merchandise: [],
-            retailerDropDown: [],
-            region: []);
+            retailerDropDown: retailerDropdown,
+            merchandise: merchandiseDropDown,
+            region: regionDropDown);
 
         return depotProductRetailer;
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }
@@ -386,10 +411,7 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel) async {
-
-print(saveUserDetailsDataModel);
-
-
+    print(saveUserDetailsDataModel);
 
     print("saveUserDetailsRemoteDataSource");
 
@@ -398,8 +420,7 @@ print(saveUserDetailsDataModel);
 
     UserDataModel? userInfo =
         await signInLocalDataSource.getUserDataFromLocal();
-print("okay");
-
+    print("okay");
 
     print(userInfo!.access_token);
 
@@ -408,7 +429,6 @@ print("okay");
     print("saveUserDetailsRemoteDataSource access token is $accessToken ");
 
     print(userInfo);
-
 
     print("this is access token");
 

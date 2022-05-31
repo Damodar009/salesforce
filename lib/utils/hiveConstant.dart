@@ -15,6 +15,9 @@ class HiveConstants {
   static const String productKey = "products";
   static const String retailerTypeKey = "retailerTypes";
   static const String depotKey = "depots";
+  static const String retailerDropdownKey = "retailerDropDown";
+  static const String regionKey = "region";
+  static const String merchandiseKey = "merchandise";
 
   //attendence
   static const String attendenceCheckinKey = "chekIn";

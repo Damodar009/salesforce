@@ -24,9 +24,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   // final UploadImageBloc uploadImageBloc;
   late final StreamSubscription uploadImageStreamSubscription;
 
-  ProfileBloc(
-    
-  ) : super(ProfileInitial()) {
+  ProfileBloc() : super(ProfileInitial()) {
     on<ProfileEvent>((event, emit) {
       // TODO: implement event handler
     });

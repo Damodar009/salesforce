@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     _initialData.getAndSaveInitalData();
-    getUserName();
+   // getUserName();
     super.initState();
   }
 
@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 10,
                       ),
                       const Text(
-                          "Please check in to entry your attendence \n for today",
+                          "Please check in to enter your attendance \n for today",
                           style: TextStyle(
                             fontSize: 18,
                           )),

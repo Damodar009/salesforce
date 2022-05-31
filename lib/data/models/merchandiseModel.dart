@@ -5,7 +5,7 @@ part 'merchandiseModel.g.dart';
 
 @JsonSerializable()
 class MerchandiseDropDownModel extends MerchandiseDropDown {
-  MerchandiseDropDownModel({required String name, required String id})
+  const MerchandiseDropDownModel({required String name, required String id})
       : super(name: name, id: id);
 
   factory MerchandiseDropDownModel.fromJson(Map<String, dynamic> json) =>

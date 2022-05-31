@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:dartz/dartz.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/Userdata.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
-import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/injectable.dart';

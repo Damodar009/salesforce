@@ -27,13 +27,16 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
   bool loading = false;
   Position? position;
   List<String> retailerTypes = [];
+  List<String> regionName = [];
+  List<String> regionId = [];
+  String region = " ";
   String selectedValue = "";
   String initialValue = "";
   final useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   final geoLocation = getIt<GeoLocationData>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _outLetName = TextEditingController();
-  final TextEditingController _contactPeson = TextEditingController();
+  final TextEditingController _contactPerson = TextEditingController();
   final TextEditingController _contactNumber = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _location = TextEditingController();
@@ -58,7 +61,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
     return null;
   }
 
-  bool formValidaation() {
+  bool formValidation() {
     if (_formKey.currentState!.validate()) {
       return true;
     } else {
@@ -84,9 +87,25 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
             });
   }
 
+  getRegion() async {
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    var successOrFailed =
+        useCaseForHiveImpl.getValuesByKey(box, HiveConstants.regionKey);
+    successOrFailed.fold(
+        (l) => {print("getting depot from hive is failed ")},
+        (r) => {
+              for (var i = 0; i < r.length; i++)
+                {
+                  regionName.add(r[i].name),
+                  regionId.add(r[i].id),
+                }
+            });
+  }
+
   @override
   void initState() {
     getRetailerType();
+    getRegion();
     super.initState();
   }
 
@@ -159,7 +178,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     //todo
 
                     textFormField(
-                        controller: _contactPeson,
+                        controller: _contactPerson,
                         validator: (string) {
                           return validator(string);
                         },
@@ -325,22 +344,42 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     const SizedBox(
                       height: 20,
                     ),
+                    title("Select Region"),
+                    const SizedBox(
+                      height: 7,
+                    ),
+
+                    textFeildWithDropDownFor(
+                        item: regionName,
+                        validator: (string) {},
+                        onselect: (string) {
+                          setState(() {
+                            region = string;
+                          });
+                        },
+                        initialText: region),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
                     button("Add new Outlet", () async {
-                      if (formValidaation()) {
+                      if (formValidation()) {
                         setState(() {
                           loading = true;
                         });
                         //todo get region
+                        int index = regionName.indexOf(region);
+                        String regions = regionId[index];
                         Retailer retailer = Retailer(
                             name: _outLetName.toString(),
                             latitude: position!.latitude,
                             longitude: position!.longitude,
                             address: _address.toString(),
-                            contactPerson: _contactPeson.toString(),
+                            contactPerson: _contactPerson.toString(),
                             contactNumber: _contactNumber.toString(),
                             retailerClass: selectedValue,
                             retailerType: _typesOfOutlet.toString(),
-                            region: "kathmandu");
+                            region: regions);
                         print(retailer);
 
                         Box box = await Hive.openBox(HiveConstants.newRetailer);

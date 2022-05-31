@@ -60,7 +60,7 @@ class _DoughnutChartState extends State<DoughnutChart> {
             const SizedBox(
               width: 17,
             ),
-            indicater("Absence", false),
+            indicater("Absent", false),
           ],
         )
       ],

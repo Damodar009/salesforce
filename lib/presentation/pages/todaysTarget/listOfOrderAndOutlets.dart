@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:salesforce/domain/entities/SalesData.dart';
+import 'package:salesforce/domain/entities/sales.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 
+import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
+import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/hiveConstant.dart';
 import '../../widgets/individualOrderDetail.dart';
 
 class ListOfOrderAndOutletDetailScreen extends StatefulWidget {
@@ -15,21 +21,45 @@ class ListOfOrderAndOutletDetailScreen extends StatefulWidget {
 
 class _ListOfOrderAndOutletDetailScreenState
     extends State<ListOfOrderAndOutletDetailScreen> {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   String text = "1234567890m";
-  List<dynamic> data = [];
+  List<dynamic> salesData = [];
 
-  getDataFromHiveFor(String routes) {
-    switch (routes) {
-      case "totalOutlets":
-        break;
-      case "newOutlet":
-        break;
-      case "totalOutLetsVisited":
-        break;
-      case "totalSales":
-        break;
-    }
+  // getDataFromHiveFor(String routes) {
+  //   switch (routes) {
+  //     case "totalOutlets":
+  //       break;
+  //     case "newOutlet":
+  //       break;
+  //     case "totalOutLetsVisited":
+  //       break;
+  //     case "totalSales":
+  //       break;
+  //   }
+  // }
+
+  getDataFromHiveForTodaySalesData() async {
+    Box boxs = await Hive.openBox(HiveConstants.salesDataCollection);
+    var successOrFailed = useCaseForHiveImpl.getAllValuesFromHiveBox(boxs);
+    successOrFailed.fold(
+        (l) => {print("this is so sad")}, (r) => {salesData.addAll(r)});
   }
+
+  SalesData salesdata = SalesData(
+      sales: [
+        Sales(sales: 2, product: 'mr aryan'),
+        Sales(sales: 3, product: 'mr surasa '),
+        Sales(sales: 3, product: 'mr raj'),
+        Sales(sales: 3, product: 'mr dhamala'),
+        Sales(sales: 3, product: 'mr movieman'),
+        Sales(sales: 3, product: 'mr saurav'),
+      ],
+      retailer: "mr movieMan",
+      assignedDepot: "assignedDepot",
+      collectionDate: "collectionDate",
+      latitude: 34,
+      longitude: 45,
+      userId: "userId");
 
   @override
   void initState() {
@@ -56,7 +86,8 @@ class _ListOfOrderAndOutletDetailScreenState
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
-                      return individualOrderDetail("", " ", 12);
+                      return individualOrderDetail(
+                          "Mr rajkumar", salesdata.sales!);
                     },
                     itemCount: 4),
                 const SizedBox(

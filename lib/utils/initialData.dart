@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-
 import '../domain/entities/depotProductRetailer.dart';
 import '../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../domain/usecases/usecasesForRemoteSource.dart';
@@ -10,16 +9,16 @@ class InitialData {
   var useCaseForRemoteSourceimpl = getIt<UseCaseForRemoteSourceimpl>();
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   Future<DepotProductRetailer?> getDepotAndDropDownFromApi() async {
-    DepotProductRetailer? depotProdeuctRetailer;
+    DepotProductRetailer? depotProductRetailer;
     var failureOrsucess =
         await useCaseForRemoteSourceimpl.getDepotProductRetailerDropDown();
-    failureOrsucess.fold((l) => {print("failedalksndadasd")},
-        (r) => {depotProdeuctRetailer = r});
+    failureOrsucess.fold(
+        (l) => {print("failedalksndadasd")}, (r) => {depotProductRetailer = r});
 
-    return depotProdeuctRetailer;
+    return depotProductRetailer;
   }
 
-  savedepotProductRetailerDropDownToHiveBox(
+  saveDepotProductRetailerDropDownToHiveBox(
       DepotProductRetailer? depotProductRetailer) async {
     if (depotProductRetailer != null) {
       Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
@@ -29,6 +28,13 @@ class InitialData {
           box, HiveConstants.productKey, depotProductRetailer.products);
       useCaseForHiveImpl.saveValueByKey(box, HiveConstants.retailerTypeKey,
           depotProductRetailer.retailerType);
+
+      useCaseForHiveImpl.saveValueByKey(box, HiveConstants.retailerDropdownKey,
+          depotProductRetailer.retailerDropDown);
+      useCaseForHiveImpl.saveValueByKey(
+          box, HiveConstants.regionKey, depotProductRetailer.region);
+      useCaseForHiveImpl.saveValueByKey(
+          box, HiveConstants.merchandiseKey, depotProductRetailer.merchandise);
     } else {
       print("failed");
     }
@@ -38,6 +44,6 @@ class InitialData {
     DepotProductRetailer? depotProductRetailer;
     depotProductRetailer = await getDepotAndDropDownFromApi();
 
-    await savedepotProductRetailerDropDownToHiveBox(depotProductRetailer);
+    await saveDepotProductRetailerDropDownToHiveBox(depotProductRetailer);
   }
 }

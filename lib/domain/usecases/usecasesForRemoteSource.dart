@@ -1,11 +1,8 @@
 import 'dart:async';
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
-import 'package:salesforce/domain/entities/saveUserDetailsData.dart';
-import 'package:salesforce/domain/entities/userDetail.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
 import '../../error/failure.dart';

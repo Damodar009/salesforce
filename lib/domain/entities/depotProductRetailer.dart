@@ -12,10 +12,10 @@ class DepotProductRetailer extends Equatable {
   final List<RetailerType> retailerType;
   final List<Depot> depots;
   final List<RetailerDropDown> retailerDropDown;
-  final List<RegionDropDown> region;
+  final List<RegionDropDown?> region;
   final List<MerchandiseDropDown> merchandise;
 
-  DepotProductRetailer(
+  const DepotProductRetailer(
       {required this.region,
       required this.merchandise,
       required this.products,

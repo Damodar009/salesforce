@@ -7,14 +7,14 @@ class Products extends Equatable {
   @HiveField(0)
   final String name;
   @HiveField(1)
-  final String path;
+  final String? path;
   @HiveField(2)
   final String id;
   @HiveField(3)
-  final List<Map<String, dynamic>> childProducts;
+  final List<Map<String, dynamic>?> childProducts;
   Products(
       {required this.name,
-      required this.path,
+      this.path,
       required this.id,
       required this.childProducts});
 
