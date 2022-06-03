@@ -35,7 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
           child: SingleChildScrollView(
             child: Container(
               height: (mediaQueryHeight > mediaQueryWidth)
-                  ? mediaQueryHeight 
+                  ? mediaQueryHeight
                   : mediaQueryWidth,
               child: Scaffold(
                   body: Stack(
