@@ -77,7 +77,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
-      body: screens[selectedIndex],
+      body: IndexedStack(index: selectedIndex, children: const [
+        HomeScreen(),
+        OutletScreen(),
+        CalenderScreen(),
+        MenuScreen(),
+      ]),
     );
   }
 }

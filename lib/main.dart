@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/Userdata.dart';
-import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
@@ -14,6 +13,7 @@ import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'domain/entities/SalesData.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/availability.dart';
@@ -92,9 +92,12 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => AttendenceCubit()),
         BlocProvider(create: (context) => ProfileBloc()),
         BlocProvider(create: (context) => UploadImageBloc()),
-        BlocProvider(create: (context) => PublishNotificationBloc()),
+        BlocProvider(
+            create: (context) => PublishNotificationBloc()
+              ..add(GetAllPublishNotificationEvent())),
         BlocProvider(create: (context) => NewOrderCubit()),
 
+        // BlocProvider<PublishNotificationBloc>(
         // BlocProvider<PublishNotificationBloc>(
         //   create: (context) => PublishNotificationBloc()),
         // )
@@ -119,6 +122,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final signInLocalDataSource = getIt<SignInLocalDataSource>();
+  final prefs = getIt<SharedPreferences>();
 
   bool isLoggedIn = false;
   checkUserLoggedIn() async {
@@ -126,13 +130,19 @@ class _SplashScreenState extends State<SplashScreen> {
       print("this below is access toke hai ");
       print("this is main page and the keys are below");
 
+      var _remeberMe = prefs.getBool("remember_me") ?? false;
+
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
       print(userInfo!.access_token);
 
       setState(() {
-        if (userInfo.access_token != null) {
-          isLoggedIn = true;
+        if (_remeberMe) {
+          if (userInfo.access_token != null) {
+            isLoggedIn = true;
+          } else {
+            isLoggedIn = false;
+          }
         } else {
           isLoggedIn = false;
         }

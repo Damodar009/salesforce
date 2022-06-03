@@ -9,7 +9,6 @@ import 'package:salesforce/injectable.dart';
 @Injectable(as: GetAllPublishNotificationRepository)
 class GetAllPublishNotificationRepositoryImpl
     implements GetAllPublishNotificationRepository {
-      
   final getAllPublishNotificationRemoteDataSource =
       getIt<GetAllPublishNotificationRemoteDataSource>();
   @override
@@ -19,6 +18,12 @@ class GetAllPublishNotificationRepositoryImpl
       final publishNotificationResponse =
           await getAllPublishNotificationRemoteDataSource
               .getAllPublishNotification();
+
+      print("object111111");
+
+      print(publishNotificationResponse);
+
+      print("what happno bro");
 
       return Right(publishNotificationResponse);
     } catch (e) {

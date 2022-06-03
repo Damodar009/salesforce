@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
+import 'package:salesforce/injectable.dart';
 
 import 'package:salesforce/utils/app_colors.dart';
 import 'package:salesforce/utils/validators.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../routes.dart';
 import '../../blocs/auth_bloc/auth_bloc.dart';
 import '../../widgets/buttonWidget.dart';
@@ -19,6 +21,7 @@ class LOginScreen extends StatefulWidget {
 class _LOginScreenState extends State<LOginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final prefs = getIt<SharedPreferences>();
   final _formKey = GlobalKey<FormState>();
   bool rememberMe = false;
   bool obsecureText = true;
@@ -32,6 +35,25 @@ class _LOginScreenState extends State<LOginScreen> {
     } else {}
   }
 
+  bool _isChecked = false;
+
+  //handle remember me function
+  void _handleRemeberme(bool value) {
+    _isChecked = value;
+    prefs.setBool("remember_me", value);
+    setState(() {
+      _isChecked = value;
+      print(_isChecked);
+      print("this is remember me bool value1");
+    });
+    print("ththhththhththth");
+    // prefs.getBool("remember_me");
+    print(prefs.getBool("remember_me"));
+    print("hhhhhhhh");
+
+    // prefs.getKeys("remember_me");
+  }
+
   @override
   Widget build(BuildContext context) {
     var authbloc = BlocProvider.of<AuthBloc>(context);
@@ -42,8 +64,8 @@ class _LOginScreenState extends State<LOginScreen> {
               .showSnackBar(const SnackBar(content: Text('Login successful')));
           print("routinhg");
           // Navigator.pushNamedAndRemoveUntil(context, Routes.dashboardRoute, (route) => false);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-                    Routes.dashboardRoute, (route) => false);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(Routes.dashboardRoute, (route) => false);
           // Navigator.of(context).pushNamed(Routes.dashboardRoute);
         } else if (state is LoginFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -141,7 +163,13 @@ class _LOginScreenState extends State<LOginScreen> {
                                                 //todo write code for remember me
                                                 setStat(() {
                                                   rememberMe = newValue!;
+                                                  print(newValue);
                                                 });
+                                                _handleRemeberme(
+                                                    newValue ?? false);
+                                                print(newValue);
+                                                print(
+                                                    "this is remember me bool value2222");
                                               });
                                         }),
                                         const Padding(
