@@ -57,10 +57,10 @@ Widget cancleWidget(Function() onClick) {
 
 Widget circleContainer() {
   return Padding(
-    padding: const EdgeInsets.only(left: 8.0),
+    padding: const EdgeInsets.only(left: 4.0),
     child: Container(
       height: 40,
-      width: 40,
+      width: 37,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         shape: BoxShape.circle,

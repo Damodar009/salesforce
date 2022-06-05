@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
@@ -40,8 +41,7 @@ Widget textFormField(
           borderRadius: BorderRadius.all(
             Radius.circular(30.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -50,8 +50,7 @@ Widget textFormField(
           fontSize: 15,
         ),
         hintText: hintText,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(
@@ -110,8 +109,7 @@ Widget textFeildWithDropDown({
           borderRadius: BorderRadius.all(
             Radius.circular(30.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -120,8 +118,7 @@ Widget textFeildWithDropDown({
           fontSize: 15,
         ),
         hintText: hintText,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(
@@ -155,8 +152,7 @@ Widget textFeildWithMultipleLines({
           borderRadius: BorderRadius.all(
             Radius.circular(15.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -184,6 +180,8 @@ Widget textFormFeildIncreAndDecre({
   required String initialValue,
   required String? Function(String?) validator,
   required String? Function(String?) onChanged,
+  Function? incrementReturn,
+  Function? decrementReturn,
 }) {
   return TextFormField(
     initialValue: initialValue,
@@ -193,40 +191,49 @@ Widget textFormFeildIncreAndDecre({
       fontFamily: 'Inter',
       fontSize: 15,
     ),
-    decoration: const InputDecoration(
+    decoration: InputDecoration(
         prefix: InkWell(
-          child: Icon(
+          onTap: () {
+            decrementReturn;
+          },
+          child: const Icon(
             Icons.minimize_outlined,
             color: AppColors.primaryColor,
           ),
         ),
         suffixIcon: InkWell(
-          child: Icon(
-            Icons.add,
-            color: AppColors.primaryColor,
+          onTap: () {},
+          child: InkWell(
+            onTap: () {
+              incrementReturn;
+            },
+            child: const Icon(
+              Icons.add,
+              color: AppColors.primaryColor,
+            ),
           ),
         ),
         fillColor: Colors.white,
-        errorStyle: TextStyle(color: AppColors.primaryColor),
-        border: OutlineInputBorder(
+        errorStyle: const TextStyle(color: AppColors.primaryColor),
+        border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(30.0),
           ),
           borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
-        hintStyle: TextStyle(
+        hintStyle: const TextStyle(
           color: Colors.grey,
           fontFamily: 'Inter',
           fontSize: 15,
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        focusedBorder: OutlineInputBorder(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(
               Radius.circular(30.0),
             )),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(
               Radius.circular(30.0),
@@ -241,6 +248,7 @@ Widget textFeildWithDropDownFor(
     required List<String> item,
     required Function(String) onselect}) {
   return TextFormField(
+    enabled: false,
     key: Key(initialText),
     initialValue: initialText,
     validator: (val) => validator(val),
@@ -263,11 +271,11 @@ Widget textFeildWithDropDownFor(
               color: Colors.white,
             ),
           ),
-          onSelected: (string){
+          onSelected: (string) {
             print("this is clicked ");
 
-
-            onselect(string);},
+            onselect(string);
+          },
           itemBuilder: (BuildContext context) {
             return item.map<PopupMenuItem<String>>((String value) {
               return PopupMenuItem(child: Text(value), value: value);
@@ -280,8 +288,7 @@ Widget textFeildWithDropDownFor(
           borderRadius: BorderRadius.all(
             Radius.circular(30.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -289,8 +296,7 @@ Widget textFeildWithDropDownFor(
           fontFamily: 'Inter',
           fontSize: 15,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(
@@ -303,3 +309,65 @@ Widget textFeildWithDropDownFor(
             ))),
   );
 }
+
+// Widget dropDownWithSearch({required String initialText,
+//     TextInputType textInputType = TextInputType.text,
+//     required String? Function(String?) validator,
+//     required List<String> item,}) {
+//   return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 20),
+//       child: DropdownSearch<String>(
+//         popupProps: const PopupProps.menu(
+//           showSearchBox: true,
+//           showSelectedItems: true,
+//         ),
+//         items: ["sdfas", "fsaf", "dsfadsf"],
+//         dropdownSearchDecoration: const InputDecoration(
+//           hintText: "Select one",
+//         ),
+//         onChanged: (value) {
+//           // setState(() {
+//           //   int index = parentCategory!
+//           //       .indexWhere((element) => element.name == value!);
+//           //   dropDownValue = parentCategory![index].id;
+//           //   print(dropDownValue);
+//           // });
+//         },
+//       ));
+// }
+
+// Widget InputDecoration(){
+//   return const InputDecoration(
+//                                 fillColor: Colors.white,
+//                                 errorStyle: const TextStyle(
+//                                     color: Color.fromRGBO(2, 40, 89, 1)),
+//                                 border: const OutlineInputBorder(
+//                                   borderRadius: BorderRadius.all(
+//                                     Radius.circular(30.0),
+//                                   ),
+//                                   borderSide: BorderSide(
+//                                       color: AppColors.textFeildINputBorder),
+//                                 ),
+//                                 filled: true,
+//                                 hintStyle: const TextStyle(
+//                                   color: Colors.black,
+//                                   fontFamily: 'Inter',
+//                                   fontSize: 15,
+//                                 ),
+//                                 hintText: "Select",
+//                                 // (widget.getProfileState.userDetail!.dob == null)
+//                                 //     ? "Choose your dob"
+//                                 //     : widget.getProfileState.userDetail!.dob,
+//                                 contentPadding: const EdgeInsets.symmetric(
+//                                     horizontal: 20, vertical: 5),
+//                                 focusedBorder: const OutlineInputBorder(
+//                                     borderSide: BorderSide(color: Colors.blue),
+//                                     borderRadius: BorderRadius.all(
+//                                       Radius.circular(30.0),
+//                                     )),
+//                                 enabledBorder: const OutlineInputBorder(
+//                                     borderSide: BorderSide(color: Colors.blue),
+//                                     borderRadius: BorderRadius.all(
+//                                       Radius.circular(30.0),
+//                                     )));
+// }
