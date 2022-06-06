@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               setState(() {
                                                 loading = true;
                                               });
-
+                
                                               bool check = await attendenceCubit
                                                   .checkIn();
                                               if (!check) {
@@ -225,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         content: Text(
                                                             'Please go to depot first')));
                                               }
-
+                
                                               setState(() {
                                                 loading = false;
                                               });

@@ -54,8 +54,9 @@ Future<void> main() async {
     ..registerAdapter(RetailerDropDownAdapter())
     ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(SalesAdapter());
-
-  runApp(const MyApp());
+  Future.delayed(Duration(seconds: 5), (() {
+    runApp(const MyApp());
+  }));
 }
 
 class MyApp extends StatefulWidget {

@@ -201,7 +201,7 @@ class _NoticeListViewWidgetState extends State<NoticeListViewWidget> {
                                             horizontal: 18, vertical: 10),
                                         child: Center(
                                             child: Text(
-                                          'View all',
+                                          'View',
                                           style: TextStyle(color: Colors.white),
                                         ))),
                                   ),
