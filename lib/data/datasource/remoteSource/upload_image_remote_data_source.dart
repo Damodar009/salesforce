@@ -1,11 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
-import 'package:salesforce/data/models/image_response_model.dart';
-import 'package:salesforce/domain/entities/image.dart';
 import 'package:salesforce/error/exception.dart';
 import 'package:salesforce/utils/apiUrl.dart';
-
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../injectable.dart';
 import '../../../utils/hiveConstant.dart';

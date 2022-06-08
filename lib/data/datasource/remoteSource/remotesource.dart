@@ -9,7 +9,6 @@ import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/sales_data_collection.dart';
-import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
@@ -17,16 +16,18 @@ import '../../../domain/entities/depotProductRetailer.dart';
 import '../../../domain/entities/merchandise.dart';
 import '../../../domain/entities/products.dart';
 import '../../../domain/entities/region.dart';
+import '../../../domain/entities/retailer.dart';
 import '../../../domain/entities/retailerDropDown.dart';
 import '../../../domain/entities/retailerType.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../error/exception.dart';
 import '../../../injectable.dart';
 import '../../../utils/hiveConstant.dart';
-import '../../models/Userdata.dart';
 import '../../models/DepotModel.dart';
 import '../../models/Products.dart';
+import '../../models/RetailerModel.dart';
 import '../../models/RetailerType.dart';
+import '../../models/Userdata.dart';
 import '../../models/merchandiseModel.dart';
 import '../../models/regionModel.dart';
 import '../../models/retailerDropDownModel.dart';
@@ -38,24 +39,11 @@ abstract class RemoteSource {
 
   Future<String> changePassword(String oldpassword, String newPassword);
 
-  Future<String> postImage();
-
-  Future<String> getProductList();
-
-  Future<String> getRegionList();
-
-  Future<String> attendenceSave();
-
-  Future<List<SalesDataCollection>> saveSalesDataCollection();
-
-  Future<String?> postDataToApi();
-
   Future<DepotProductRetailer> getDepotProductAndRetailer();
 
   Future<UserDetailsData> getUserDetailsData();
 
-  Future<List<RetailerPojo>> saveAllRetailer(
-      List<RetailerPojo> listOfRetailers);
+  Future<List<RetailerPojo>> saveAllRetailer(List<Retailer> listOfRetailers);
 
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel);
@@ -152,12 +140,6 @@ class RemoteSourceImplementation implements RemoteSource {
   }
 
   @override
-  Future<String?> postDataToApi() {
-    // TODO: implement postSurveyAnswer
-    throw UnimplementedError();
-  }
-
-  @override
   Future<String> changePassword(String oldpassword, String newPassword) async {
     String? userid;
     String? accessToken;
@@ -173,11 +155,6 @@ class RemoteSourceImplementation implements RemoteSource {
         (l) => {print("failed")}, (r) => {userid = r!, print(r.toString())});
     print("this is password");
 
-    print(oldpassword);
-    print(newPassword);
-    print(
-      ApiUrl.changePassword,
-    );
     try {
       Response response = await dio.post(
         ApiUrl.changePassword,
@@ -204,78 +181,6 @@ class RemoteSourceImplementation implements RemoteSource {
     }
   }
 
-//todo
-  @override
-  Future<String> postImage() async {
-    try {
-      Response response = await dio.post(
-        ApiUrl.login,
-        data: <String, String>{'grant_type': 'password'},
-        options: Options(
-          contentType: "application/x-www-form-urlencoded",
-          headers: <String, String>{'Authorization': 'Basic '},
-        ),
-      );
-      if (response.data["status"] == true) {
-        return Future.value('Success');
-      } else {
-        throw ServerException();
-      }
-    } on DioError catch (e) {
-      throw ServerException();
-    }
-  }
-
-  @override
-  Future<String> attendenceSave() {
-    // TODO: implement attendenceSave
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getProductList() {
-    // TODO: implement getProductList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> getRegionList() {
-    // TODO: implement getRegionList
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<SalesDataCollection>> saveSalesDataCollection() async {
-    //todo implement authorization token
-
-    Box box = await Hive.openBox(HiveConstants.userdata);
-
-    dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
-    try {
-      Response response = await dio.get(
-        ApiUrl.saveSalesDataCollection,
-        options: Options(
-          headers: <String, String>{
-            'Authorization': 'Bearer ' + accessToken,
-          },
-        ),
-      );
-
-      if (response.data["status"] == true) {
-        List<SalesDataCollection> saveSalesDataCollection =
-            (response.data as List)
-                .map((e) => SalesDataCollectionModel.fromJson(e))
-                .toList();
-
-        return saveSalesDataCollection;
-      } else {
-        throw ServerException();
-      }
-    } on DioError catch (e) {
-      throw ServerException();
-    }
-  }
-
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
     //todo implement authorization token
@@ -294,7 +199,7 @@ class RemoteSourceImplementation implements RemoteSource {
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer 823402f6-96dd-4b0d-a0f8-6d0af43a876c'
+            'Authorization': 'Bearer 760a7676-c27b-4d78-83a6-d6322f27e042'
           },
         ),
       );
@@ -320,7 +225,7 @@ class RemoteSourceImplementation implements RemoteSource {
             .toList();
 
         List<MerchandiseDropDown> merchandiseDropDown = (response.data["data"]
-                ["depotDetails"] as List)
+                ["merchandiseDropDown"] as List)
             .map(
                 (sectorModel) => MerchandiseDropDownModel.fromJson(sectorModel))
             .toList();
@@ -350,8 +255,9 @@ class RemoteSourceImplementation implements RemoteSource {
 
   @override
   Future<List<RetailerPojo>> saveAllRetailer(
-      List<RetailerPojo> listOfRetailers) async {
+      List<Retailer> listOfRetailers) async {
     String? accessToken;
+
     Box box = await Hive.openBox(HiveConstants.userdata);
 
     var accessTokenSuccessOrFailed =
@@ -359,18 +265,19 @@ class RemoteSourceImplementation implements RemoteSource {
     accessTokenSuccessOrFailed.fold((l) => {print("failed")},
         (r) => {accessToken = r!, print(r.toString())});
 
-    List<RetailerPojoModel> retailerPojoModelList = [];
+    List<RetailerModel> retailerPojoModelList = [];
 
     for (var i = 0; i < listOfRetailers.length; i++) {
       var saveListOfRetailers = listOfRetailers[i];
+      String as = saveListOfRetailers.address.toString();
 
-      RetailerPojoModel saveListOfRetailersModel = RetailerPojoModel(
-        address: saveListOfRetailers.address,
-        contactNumber: saveListOfRetailers.contactNumber,
-        contactPerson: saveListOfRetailers.contactPerson,
+      RetailerModel saveListOfRetailersModel = RetailerModel(
+        address: as,
+        contactNumber: saveListOfRetailers.contactNumber.toString(),
+        contactPerson: saveListOfRetailers.contactPerson.toString(),
         latitude: saveListOfRetailers.latitude,
         longitude: saveListOfRetailers.longitude,
-        name: saveListOfRetailers.name,
+        name: saveListOfRetailers.name.toString(),
         region: saveListOfRetailers.region,
         retailerClass: saveListOfRetailers.retailerClass,
         retailerType: saveListOfRetailers.retailerType,
@@ -379,11 +286,12 @@ class RemoteSourceImplementation implements RemoteSource {
       retailerPojoModelList.add(saveListOfRetailersModel);
     }
 
-    var saveRetailesInJson = retailerPojoModelList
+    var saveRetailerInJson = retailerPojoModelList
         .map((saveListOfRetailersModel) => saveListOfRetailersModel.toJson())
         .toList();
 
-    var jsonEncodedAnswer = jsonEncode(saveRetailesInJson);
+    var jsonEncodedAnswer = jsonEncode(saveRetailerInJson);
+    print(jsonEncodedAnswer);
 
     //todo implement authorization token
     try {
@@ -393,17 +301,19 @@ class RemoteSourceImplementation implements RemoteSource {
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer ' + accessToken!,
+            'Authorization': 'Bearer e51d0831-3b0f-40d9-a8e5-8b88b7234ba9',
           },
         ),
       );
 
       if (response.data["status"] == true) {
+        print("this is true ");
         return Future.value([]);
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
+      print(e);
       throw ServerException();
     }
   }

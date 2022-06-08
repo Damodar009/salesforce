@@ -1,16 +1,18 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
-import 'package:salesforce/data/models/merchandiseOrderModel.dart';
-import 'package:salesforce/domain/entities/SalesData.dart';
-import '../../../error/exception.dart';
 
-import '../../../utils/apiUrl.dart';
-import '../../models/SalesDataModel.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
+import 'package:salesforce/domain/entities/SalesData.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../error/exception.dart';
+import '../../../utils/apiUrl.dart';
+import '../../models/SalesDataModel.dart';
+import '../../models/merchandiseOrderModel.dart';
+
 abstract class SalesDataRemoteSource {
-  Future<String?> saveSalesData(List<SalesDataModel> salesData);
+  Future<String?> saveSalesData(List<SalesData> salesData);
 }
 
 @Injectable(as: SalesDataRemoteSource)
@@ -19,7 +21,6 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
       List<String?> paymentDocuments, List<String?> merchandiseType) async {
     Dio dio = Dio();
     Uuid uuid = const Uuid();
-
     List<dynamic> images = [];
     List<String> uuids = [];
 
@@ -46,8 +47,6 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
         merchandiseType.add(null);
       }
     }
-
-    /// post images
     var formImageData = FormData.fromMap({
       "image": images,
       'unique_key': uuids,
@@ -56,13 +55,12 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
     try {
       //todo image
       Response response = await dio.post(
-        ApiUrl.salesData,
+        "http://103.90.86.112:80/salesforce/api/image/multipleImageSave",
         data: formImageData,
         options: Options(
           headers: <String, String>{
-            'Accept': 'application/json',
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+            'Authorization': 'Bearer 9d027860-ab49-4ff9-bb28-eb1b6618b661'
           },
         ),
       );
@@ -78,25 +76,29 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
   }
 
   @override
-  Future<String?> saveSalesData(List<SalesDataModel> salesData) async {
+  Future<String?> saveSalesData(List<SalesData> salesData) async {
     Dio dio = Dio();
     List<String?> paymentDocuments = [];
     List<String?> merchandiseType = [];
-    List<SalesDataModel> salesDataMOdel = [];
 
     String? success =
         await postImage(salesData, paymentDocuments, merchandiseType);
     if (success == "Success") {
+      print("starting sales data save");
       List<SalesDataModel> salesDataModel = [];
       for (var i = 0; i < salesData.length; i++) {
         String? payment = paymentDocuments[i];
         MerchandiseOrderModel? merchandiseOrderModel;
         if (salesData[i].merchandiseOrderPojo != null) {
+          print("inside merchandise poijo");
           merchandiseOrderModel = MerchandiseOrderModel(
               merchandise_id: salesData[i].merchandiseOrderPojo!.merchandise_id,
               description: salesData[i].merchandiseOrderPojo!.description,
               image: merchandiseType[i]!);
         }
+        print("the user id is ${salesData[i].assignedDepot}");
+        print("the payment id is ${payment}");
+        // todo check assigned depot
 
         SalesDataModel salesModel = SalesDataModel(
           salesPojo: salesData[i].sales,
@@ -105,7 +107,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
           salesDescription: salesData[i].salesDescription,
           returnedDescription: salesData[i].returnedDescription,
           availabilityDescription: salesData[i].availabilityDescription,
-          assignedDepot: salesData[i].assignedDepot,
+          assignedDepot: "NGBifEuwYylJoyRt7a8bkA==",
           collectionDate: salesData[i].collectionDate,
           latitude: salesData[i].latitude,
           longitude: salesData[i].longitude,
@@ -119,25 +121,28 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
 
         salesDataModel.add(salesModel);
       }
+      var salesDataModeljson = salesDataModel.map((e) => e.toJson(e)).toList();
+      var encodedSalesData = json.encode(salesDataModeljson);
+      print(encodedSalesData);
 
-      var salesDataModeljson = salesDataMOdel.map((e) => {e.toJson(e)}).toList;
-
-      var jsonEncoded = json.encode(salesDataModeljson);
       try {
+        print("strating to send sales data ");
         Response response = await dio.post(
           ApiUrl.salesData,
-          data: jsonEncoded,
+          data: encodedSalesData,
           options: Options(
             headers: <String, String>{
-              'Accept': 'application/json',
-              'Content-Type': 'multipart/form-data',
-              'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer 9d027860-ab49-4ff9-bb28-eb1b6618b661'
             },
           ),
         );
+        print(response);
         if (response.data["status"] == true) {
+          print("sending sales data  is successful");
           return "Success";
         } else {
+          print("failed to send sales data ");
           throw ServerException();
         }
       } on DioError catch (e) {

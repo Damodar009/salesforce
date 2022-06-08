@@ -13,9 +13,9 @@ class AttendenceRepositoryImpl implements AttendenceRepository {
 
   @override
   Future<Either<Failure, Attendence>> saveAttendence(
-      Attendence attendence) async {
+      Attendence attendance) async {
     try {
-      final question = await attendenceRemoteSource.saveAttendence(attendence);
+      final question = await attendenceRemoteSource.saveAttendence(attendance);
       return Right(question);
     } catch (e) {
       return Left(ServerFailure());

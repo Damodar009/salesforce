@@ -13,4 +13,6 @@ class ApiUrl {
   static const String saveUser = baseUrl + "/api/user/save";
   static const String salesData = baseUrl + "/api/salesdata/save";
   static const String imageUpload = baseUrl + '/api/image/save';
+  static const String multipleImageUpload =
+      baseUrl + '/api/image/multipleImageSave';
 }

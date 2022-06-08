@@ -10,6 +10,7 @@ import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
 import '../../domain/entities/depotProductRetailer.dart';
+import '../../domain/entities/retailer.dart';
 import '../../domain/repositories/repository.dart';
 import '../../error/failure.dart';
 import '../datasource/remoteSource/remotesource.dart';
@@ -62,16 +63,6 @@ class RepositoryImplementation implements Repository {
   }
 
   @override
-  Future<Either<Failure, dynamic>> postToRemoteSource() async {
-    try {
-      final response = await remoteSource.postDataToApi();
-      return Right(response);
-    } catch (e) {
-      return Left(ServerFailure());
-    }
-  }
-
-  @override
   Future<Either<Failure, String>> changePassword(
       String oldPassword, String newPassword) async {
     try {
@@ -83,45 +74,15 @@ class RepositoryImplementation implements Repository {
     }
   }
 
-  @override
-  Future<Either<Failure, String>> postImage() async {
-    try {
-      final response = await remoteSource.postImage();
-      return Right(response);
-    } catch (e) {
-      return Left(ServerFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, String>> attendenceSave() async {
-    try {
-      final response = await remoteSource.attendenceSave();
-      return Right(response);
-    } catch (e) {
-      return Left(ServerFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, String>> getProductList() async {
-    try {
-      final response = await remoteSource.getProductList();
-      return Right(response);
-    } catch (e) {
-      return Left(ServerFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, String>> getRegionList() async {
-    try {
-      final response = await remoteSource.getRegionList();
-      return Right(response);
-    } catch (e) {
-      return Left(ServerFailure());
-    }
-  }
+  // @override
+  // Future<Either<Failure, String>> attendenceSave() async {
+  //   try {
+  //     final response = await remoteSource.attendenceSave();
+  //     return Right(response);
+  //   } catch (e) {
+  //     return Left(ServerFailure());
+  //   }
+  // }
 
   @override
   Future<Either<Failure, DepotProductRetailer>>
@@ -136,7 +97,7 @@ class RepositoryImplementation implements Repository {
 
   @override
   Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
-      List<RetailerPojo> listOfRetailers) async {
+      List<Retailer> listOfRetailers) async {
     try {
       final response = await remoteSource.saveAllRetailer(listOfRetailers);
       return Right(response);

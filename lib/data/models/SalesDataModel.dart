@@ -1,5 +1,6 @@
 import 'package:salesforce/data/models/AvailabilityModel.dart';
 import 'package:salesforce/data/models/RetailerModel.dart';
+import 'package:salesforce/data/models/RetailerPojo.dart';
 import 'package:salesforce/data/models/SalesModel.dart';
 import 'package:salesforce/data/models/returnModel.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
@@ -47,8 +48,6 @@ class SalesDataModel extends SalesData {
             retailerPojo: retailerPojo,
             merchandiseOrderPojo: merchandiseOrderPojo);
 
-
-
   factory SalesDataModel.fromJson(Map<String, dynamic> json) => SalesDataModel(
         salesPojo: (json["salesPojo"] as List)
             .map((e) => SalesModel.fromJson(e))
@@ -80,23 +79,63 @@ class SalesDataModel extends SalesData {
                 json['merchandiseOrderPojo'] as Map<String, dynamic>),
       );
 
-  Map<String, dynamic> toJson(SalesDataModel instance) => <String, dynamic>{
-        'salesPojo': instance.sales,
-        'availabilityPojo': instance.availability,
-        'returnPojo': instance.returns,
-        'salesDescription': instance.salesDescription,
-        'returnedDescription': instance.returnedDescription,
-        'availabilityDescription': instance.availabilityDescription,
-        'assignedDepot': instance.assignedDepot,
-        'collectionDate': instance.collectionDate,
-        'latitude': instance.latitude,
-        'longitude': instance.longitude,
-        'retailer': instance.retailer,
-        'paymentType': instance.paymentType,
-        'paymentdocument': instance.paymentdocument,
-        'userId': instance.userId,
-        'retailerPojo': instance.retailerPojo,
-        'merchandiseOrderPojo': instance.merchandiseOrderPojo,
+  Map<String, dynamic> toJson(SalesDataModel salesDataModel) =>
+      <String, dynamic>{
+        'salesPojo': salesDataModel.sales != null
+            ? salesDataModel.sales
+                ?.map((e) =>
+                    SalesModel(sales: e.sales, product: e.product).toJson())
+                .toList()
+            : [],
+        'availabilityPojo': salesDataModel.availability != null
+            ? salesDataModel.availability
+                ?.map((e) => AvailabilityModel(
+                        stock: e.stock,
+                        availability: e.availability,
+                        product: e.product)
+                    .toJson())
+                .toList()
+            : [],
+        'returnPojo': salesDataModel.returns != null
+            ? salesDataModel.returns
+                ?.map((e) =>
+                    ReturnsModel(returned: e.returned, product: e.product)
+                        .toJson())
+                .toList()
+            : [],
+        'salesDescription': salesDataModel.salesDescription,
+        'returnedDescription': salesDataModel.returnedDescription,
+        'availabilityDescription': salesDataModel.availabilityDescription,
+        'assignedDepot': salesDataModel.assignedDepot,
+        'collectionDate': salesDataModel.collectionDate,
+        'latitude': salesDataModel.latitude,
+        'longitude': salesDataModel.longitude,
+        'retailer': salesDataModel.retailer,
+        'paymentType': salesDataModel.paymentType,
+        'paymentdocument': salesDataModel.paymentdocument,
+        'userId': salesDataModel.userId,
+        'retailerPojo': salesDataModel.retailerPojo != null
+            ? RetailerPojoModel(
+                    name: salesDataModel.retailerPojo!.name,
+                    retailerType: salesDataModel.retailerPojo!.retailerType,
+                    longitude: salesDataModel.retailerPojo!.longitude,
+                    contactPerson: salesDataModel.retailerPojo!.contactPerson,
+                    region: salesDataModel.retailerPojo!.region,
+                    contactNumber: salesDataModel.retailerPojo!.contactNumber,
+                    retailerClass: salesDataModel.retailerPojo!.retailerClass,
+                    address: salesDataModel.retailerPojo!.address,
+                    latitude: salesDataModel.retailerPojo!.latitude)
+                .toJson()
+            : null,
+        'merchandiseOrderPojo': salesDataModel.merchandiseOrderPojo != null
+            ? MerchandiseOrderModel(
+                    merchandise_id:
+                        salesDataModel.merchandiseOrderPojo!.merchandise_id,
+                    description:
+                        salesDataModel.merchandiseOrderPojo!.description,
+                    image: salesDataModel.merchandiseOrderPojo!.image)
+                .toJson()
+            : null,
       };
 
   SalesDataModel copyWith({
@@ -118,9 +157,9 @@ class SalesDataModel extends SalesData {
     MerchandiseOrderModel? merchandiseOrderPojo,
   }) {
     return SalesDataModel(
-        salesPojo: salesPojo ?? sales,
-        availabilityPojo: availabilityPojo ?? availability,
-        returnsPojo: returnsPojo ?? returns,
+        salesPojo: salesPojo,
+        availabilityPojo: availabilityPojo,
+        returnsPojo: returnsPojo,
         salesDescription: salesDescription ?? this.salesDescription,
         returnedDescription: returnedDescription ?? this.returnedDescription,
         availabilityDescription:
@@ -130,8 +169,8 @@ class SalesDataModel extends SalesData {
         retailer: retailer ?? this.retailer,
         paymentType: paymentType ?? this.paymentType,
         paymentdocument: paymentdocument ?? this.paymentdocument,
-        retailerPojo: retailerPojo ?? this.retailerPojo,
-        merchandiseOrderPojo: merchandiseOrderPojo ?? this.merchandiseOrderPojo,
+        retailerPojo: retailerPojo,
+        merchandiseOrderPojo: merchandiseOrderPojo,
         userId: userId ?? this.userId,
         latitude: latitude ?? this.latitude,
         collectionDate: collectionDate ?? this.collectionDate);

@@ -70,12 +70,19 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
   }
 
   getMerchantDropDownFromHive() async {
+    print("inside getmerchant dropdown from hive ");
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    List<dynamic> ca = box.keys.toList();
+    var sa = box.get("merchandise");
+    print(sa);
+    print(ca);
     var successOrFailed =
         useCaseHiveData.getValuesByKey(box, HiveConstants.merchandiseKey);
     successOrFailed.fold(
         (l) => {print("getting merchandise from hive is failed ")},
         (r) => {
+              print("adsf"),
+              print(r),
               for (var i = 0; i < r.length; i++)
                 {
                   merchandiseName.add(r[i].name),
@@ -147,6 +154,8 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                       _typesOfMerchandiseSupport.text != "") {
                     MerchandiseOrderModel merchandiseOrderModel;
                     late SalesData sales;
+                    print("thi is before if condition");
+                    print(newOrderCubit.state);
                     if (newOrderCubit.state is NewOrderLoaded) {
                       Object? sdm = newOrderCubit.state.props[0];
                       if (sdm is SalesData) {
@@ -156,6 +165,7 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                         int index = merchandiseName
                             .indexOf(_typesOfMerchandiseSupport.text);
                         String merchandise = merchandiseId[index];
+                        print("this is merchandise data");
 
                         merchandiseOrderModel = MerchandiseOrderModel(
                             image: image!.path,
@@ -168,10 +178,7 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                         newOrderCubit.getOrders(salesData);
                         newOrderCubit.saveSalesDataToHive(salesData);
                         newOrderCubit.setInitialState();
-                        print(newOrderCubit.state.props[0]);
-
-                        newOrderCubit.saveSalesDataToHive(salesData);
-                        newOrderCubit.setInitialState();
+                        print("thi is working sdf");
 
                         final VistedOutlets visitedOutlets = VistedOutlets(
                           navTitle: 'TOTAL',
@@ -190,7 +197,7 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                     //todo  showSnackbar
                   }
 
-                  clear();
+                  // clear();
                 },
                 false,
                 AppColors.buttonColor,

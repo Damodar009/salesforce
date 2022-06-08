@@ -17,9 +17,9 @@ import 'domain/entities/SalesData.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/availability.dart';
 import 'domain/entities/depot.dart';
+import 'domain/entities/merchandise.dart';
 import 'domain/entities/merchndiseOrder.dart';
 import 'domain/entities/products.dart';
-
 import 'domain/entities/region.dart';
 import 'domain/entities/retailer.dart';
 import 'domain/entities/retailerDropDown.dart';
@@ -52,6 +52,7 @@ Future<void> main() async {
     ..registerAdapter(ReturnsAdapter())
     ..registerAdapter(RetailerDropDownAdapter())
     ..registerAdapter(RegionDropDownAdapter())
+    ..registerAdapter(MerchandiseDropDownAdapter())
     ..registerAdapter(SalesAdapter());
 
   runApp(const MyApp());

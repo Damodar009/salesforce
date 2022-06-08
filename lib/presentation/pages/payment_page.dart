@@ -1,15 +1,16 @@
 import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:salesforce/data/models/SalesDataModel.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
+
 import '../../domain/entities/SalesData.dart';
 import '../../routes.dart';
 import '../widgets/deleteTheoryTestPopupWidget.dart';
@@ -131,17 +132,36 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       "You have not filled payment detail.Do you want to fill?",
                                       "Yes",
                                       "No", () {
-                                        print("inside yes");
+                                    print("inside yes");
                                     Navigator.of(context).pop();
                                   }, () {
-                                print("inside yes");
+                                    print("inside yes");
                                     Navigator.of(context).pushNamed(
                                         Routes.merchandiseSupportScreen);
                                   }));
+
+                          //todo add save data to hove
                         } else {
-                          print("asdfadsfasdfasdf");
-                          String awd = _paymentController.text;
-                          print(awd);
+                          late SalesData sales;
+                          print("its running");
+
+                          if (newOrderCubit.state is NewOrderLoaded) {
+                            Object? sdm = newOrderCubit.state.props[0];
+                            if (sdm is SalesData) {
+                              sales = sdm;
+                              SalesData model = sales.copyWith(
+                                  paymentType: _paymentController.text,
+                                  paymentdocument: image!.path);
+                              print("save sales data");
+
+                              newOrderCubit.saveSalesDataToHive(sales);
+                              print("save payment data");
+                              Navigator.of(context)
+                                  .pushNamed(Routes.merchandiseSupportScreen);
+                              //todo replacement
+
+                            }
+                          }
 
                           //
                           // Navigator.of(context)
@@ -197,7 +217,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
               } else {
                 late SalesData sales;
-                print("tsisfasdf");
 
                 if (newOrderCubit.state is NewOrderLoaded) {
                   Object? sdm = newOrderCubit.state.props[0];
@@ -207,6 +226,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     SalesData model = sales.copyWith(
                         paymentType: _paymentController.text,
                         paymentdocument: image!.path);
+
+                    print(model.toString());
 
                     newOrderCubit.getOrders(model);
 

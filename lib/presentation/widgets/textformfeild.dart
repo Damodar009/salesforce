@@ -40,8 +40,7 @@ Widget textFormField(
           borderRadius: BorderRadius.all(
             Radius.circular(30.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -50,8 +49,7 @@ Widget textFormField(
           fontSize: 15,
         ),
         hintText: hintText,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(
@@ -110,8 +108,7 @@ Widget textFeildWithDropDown({
           borderRadius: BorderRadius.all(
             Radius.circular(30.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -120,8 +117,7 @@ Widget textFeildWithDropDown({
           fontSize: 15,
         ),
         hintText: hintText,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(
@@ -155,8 +151,7 @@ Widget textFeildWithMultipleLines({
           borderRadius: BorderRadius.all(
             Radius.circular(15.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -186,6 +181,7 @@ Widget textFormFeildIncreAndDecre({
   required String? Function(String?) onChanged,
 }) {
   return TextFormField(
+    key: Key(initialValue),
     initialValue: initialValue,
     onChanged: onChanged,
     keyboardType: TextInputType.number,
@@ -263,11 +259,11 @@ Widget textFeildWithDropDownFor(
               color: Colors.white,
             ),
           ),
-          onSelected: (string){
+          onSelected: (string) {
             print("this is clicked ");
 
-
-            onselect(string);},
+            onselect(string);
+          },
           itemBuilder: (BuildContext context) {
             return item.map<PopupMenuItem<String>>((String value) {
               return PopupMenuItem(child: Text(value), value: value);
@@ -280,8 +276,7 @@ Widget textFeildWithDropDownFor(
           borderRadius: BorderRadius.all(
             Radius.circular(30.0),
           ),
-          borderSide:
-              BorderSide(color: AppColors.textFeildINputBorder),
+          borderSide: BorderSide(color: AppColors.textFeildINputBorder),
         ),
         filled: true,
         hintStyle: const TextStyle(
@@ -289,8 +284,7 @@ Widget textFeildWithDropDownFor(
           fontFamily: 'Inter',
           fontSize: 15,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.blue),
             borderRadius: BorderRadius.all(

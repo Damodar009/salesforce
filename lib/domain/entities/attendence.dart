@@ -24,7 +24,7 @@ class Attendence extends Equatable {
   final String? user;
 
   Attendence(
-      this.id,
+      {this.id,
       this.macAddress,
       this.checkin,
       this.checkin_latitude,
@@ -32,7 +32,10 @@ class Attendence extends Equatable {
       this.checkout,
       this.checkout_latitude,
       this.checkout_longitude,
-      this.user);
+      this.user});
+
+
+
 
   @override
   List<Object?> get props => [

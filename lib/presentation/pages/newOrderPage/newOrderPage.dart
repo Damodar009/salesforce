@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/data/models/Userdata.dart';
@@ -98,11 +99,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     return childProducts;
   }
 
-//todo do retiler in another page
   getRetailerList() async {
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
-    var sucessOrNot = useCaseForHiveImpl.getValuesByKey(box, "retailerTypes");
-    sucessOrNot.fold(
+    var successOrNot = useCaseForHiveImpl.getValuesByKey(
+        box, HiveConstants.retailerDropdownKey);
+    successOrNot.fold(
         (l) => {print("no success")},
         (r) => {
               for (var i = 0; i < r.length; i++)
@@ -222,114 +223,154 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           button("Save Order", () async {
-            setState(() {
-              loading = true;
-            });
-            print("it going to be awesome");
-            List<Sales> salessPojo = [];
-            List<Returns> returnspojo = [];
-            List<Availability> availabilityPojo = [];
-            for (var i = 0; i < returns.length; i++) {
-              ReturnsModel returnsmodel = ReturnsModel(
-                  returned: sales[i].getReturn(),
-                  product: sales[i].getProduct());
-              returnspojo.add(returnsmodel);
+            if (returns.isNotEmpty ||
+                availability.isNotEmpty ||
+                sales.isNotEmpty) {
+              setState(() {
+                loading = true;
+              });
 
-              print(returnspojo[i]);
-            }
-            for (var i = 0; i < availability.length; i++) {
-              AvailabilityModel availabilityx = AvailabilityModel(
-                  availability: availability[i].getavailability(),
-                  stock: availability[i].getStock(),
-                  product: availability[i].getproduct());
-              availabilityPojo.add(availabilityx);
-              print(availabilityPojo[i]);
-            }
-            for (var i = 0; i < sales.length; i++) {
-              SalesModel salesmodel = SalesModel(
-                  sales: sales[i].getReturn(), product: sales[i].getProduct());
-              salessPojo.add(salesmodel);
-              print(salessPojo[i]);
-            }
+              List<Sales> salessPojo = [];
+              List<Returns> returnspojo = [];
+              List<Availability> availabilityPojo = [];
+              for (var i = 0; i < returns.length; i++) {
+                ReturnsModel returnsmodel = ReturnsModel(
+                    returned: returns[i].getReturn(),
+                    product: returns[i].getProduct());
+                returnspojo.add(returnsmodel);
 
-            SalesData salesDataModel;
+                print(returnspojo[i]);
+              }
+              for (var i = 0; i < availability.length; i++) {
+                AvailabilityModel availabilityx = AvailabilityModel(
+                    availability: availability[i].getavailability(),
+                    stock: availability[i].getStock() ?? 0,
+                    product: availability[i].getproduct());
+                availabilityPojo.add(availabilityx);
+                print(availabilityPojo[i]);
+              }
+              for (var i = 0; i < sales.length; i++) {
+                SalesModel salesmodel = SalesModel(
+                    sales: sales[i].getReturn(),
+                    product: sales[i].getProduct());
+                salessPojo.add(salesmodel);
+                print(salessPojo[i]);
+              }
 
-            GeoLocationData geoLocationData = GeoLocationData();
-            Position? position = await geoLocationData.getCurrentLocation();
-            double latitude = position!.latitude;
+              SalesData salesDataModel;
+              GeoLocationData geoLocationData = GeoLocationData();
+              Position? position = await geoLocationData.getCurrentLocation();
+              double latitude = position!.latitude;
+              double longitude = position.longitude;
+              DateTime dateTimeNow = DateTime.now();
 
-            double longitude = position.longitude;
-            DateTime dateTimeNow = DateTime.now();
+              String assignedDepots = "";
+              String userId = "";
+              Box box = await Hive.openBox(HiveConstants.attendence);
+              var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
+                  box, HiveConstants.assignedDepot);
 
-            String assignedDepots = "";
-            String userId = "";
-            Box box = await Hive.openBox(HiveConstants.attendence);
-            var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
-                box, HiveConstants.assignedDepot);
+              failureOrsucess.fold(
+                  (l) => {
+                        //box.close(),
+                        print("this is failed")
+                      },
+                  (r) => {
+                        //box.close(),
 
-            failureOrsucess.fold(
-                (l) => {
-                      //box.close(),
-                      print("this is failed")
-                    },
-                (r) => {
-                      //box.close(),
+                        assignedDepots = r[0]
+                      });
 
-                      assignedDepots = r[0]
-                    });
+              UserDataModel? userDataModel =
+                  await sharedPreference.getUserDataFromLocal();
+              if (userDataModel != null) {
+                userId = userDataModel.userid!;
+              }
 
-            UserDataModel? userDataModel =
-                await sharedPreference.getUserDataFromLocal();
-            if (userDataModel != null) {
-              userId = userDataModel.userid!;
-            }
+              if (newOrderCubit.state is NewRetailerCreated) {
+                Object? sdm = newOrderCubit.state.props[0];
+                RetailerModel retailerModel;
+                if (sdm is RetailerModel) {
+                  retailerModel = sdm;
 
-            if (newOrderCubit.state is NewRetailerCreated) {
-              Object? sdm = newOrderCubit.state.props[0];
-              RetailerModel retailerModel;
-              if (sdm is RetailerModel) {
-                retailerModel = sdm;
+                  salesDataModel = SalesData(
+                      sales: salessPojo,
+                      returns: returnspojo,
+                      availability: availabilityPojo,
+                      salesDescription: _salesRemarks.text,
+                      returnedDescription: _returnRemarks.text,
+                      availabilityDescription: _availabilityRemarks.text,
+                      userId: userId,
+                      assignedDepot: assignedDepots,
+                      longitude: longitude,
+                      collectionDate: dateTimeNow.toString(),
+                      latitude: latitude,
+                      retailerPojo: retailerModel);
+                  newOrderCubit.getOrders(salesDataModel);
+                  setState(() {
+                    loading = false;
+                  });
 
-                salesDataModel = SalesData(
-                    sales: salessPojo,
-                    returns: returnspojo,
-                    availability: availabilityPojo,
-                    salesDescription: _salesRemarks.text,
-                    returnedDescription: _returnRemarks.text,
-                    availabilityDescription: _availabilityRemarks.text,
-                    userId: userId,
-                    assignedDepot: assignedDepots,
-                    longitude: longitude,
-                    collectionDate: dateTimeNow.toString(),
-                    latitude: latitude,
-                    retailerPojo: retailerModel);
-                newOrderCubit.getOrders(salesDataModel);
-                print("okay");
+                  Navigator.of(context).pushNamed(Routes.paymentScreen);
+                  print("not okay");
+                }
+              } else {
+                if (nameOfOutlet != "") {
+                  int index = retailerList.indexOf(nameOfOutlet);
+                  String retailerId = retailerIdList[index];
+                  salesDataModel = SalesData(
+                      sales: salessPojo,
+                      returns: returnspojo,
+                      availability: availabilityPojo,
+                      salesDescription: _salesRemarks.text,
+                      returnedDescription: _returnRemarks.text,
+                      availabilityDescription: _availabilityRemarks.text,
+                      retailer: retailerId,
+                      userId: userId,
+                      assignedDepot: assignedDepots,
+                      longitude: longitude,
+                      collectionDate: dateTimeNow.toString(),
+                      latitude: latitude);
+                  newOrderCubit.getOrders(salesDataModel);
+
+                  setState(() {
+                    loading = false;
+                  });
+
+                  Navigator.of(context).pushNamed(Routes.paymentScreen);
+                  print("not okay");
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Outlet is not selected",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: AppColors.primaryColor,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+
+                  setState(() {
+                    loading = false;
+                  });
+                }
               }
             } else {
-              int index = retailerList.indexOf(nameOfOutlet);
-              //  String retailerId = retailerIdList[index];
-              salesDataModel = SalesData(
-                  sales: salessPojo,
-                  returns: returnspojo,
-                  availability: availabilityPojo,
-                  salesDescription: _salesRemarks.text,
-                  returnedDescription: _returnRemarks.text,
-                  availabilityDescription: _availabilityRemarks.text,
-                  retailer: "retailerId",
-                  userId: userId,
-                  assignedDepot: assignedDepots,
-                  longitude: longitude,
-                  collectionDate: dateTimeNow.toString(),
-                  latitude: latitude);
-              newOrderCubit.getOrders(salesDataModel);
-              print("not okay");
-            }
-            setState(() {
-              loading = true;
-            });
+              print("toasr");
+              //TODO show SNACKBAR
 
-            Navigator.of(context).pushNamed(Routes.paymentScreen);
+              Fluttertoast.showToast(
+                  msg: "There is no valid order",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: AppColors.primaryColor,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+
+              setState(() {
+                loading = false;
+              });
+            }
           }, loading, AppColors.buttonColor),
           const SizedBox(
             height: 20,
@@ -725,8 +766,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                               validator: (string) {},
                               item: checkIndex(availabilityParentProduct, i)
                                   ? getChildProducts(
-                                          availabilityParentProduct[i]) ??
-                                      []
+                                      availabilityParentProduct[i])
                                   : [],
                               onselect: (string) {
                                 setState(() {
@@ -743,7 +783,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 });
                               },
                               initialText: checkIndex(availability, i)
-                                  ? availability[i].getproduct()!
+                                  ? availability[i].getproduct() ?? ""
                                   : ""),
                         ),
                         SizedBox(
@@ -969,27 +1009,32 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                       : ""
                                   : "",
                               onChanged: (string) {
-                                setState(() {
-                                  if (checkIndex(returns, i)) {
-                                    returns[i].setReturn(int.parse(string!));
-                                  } else {
-                                    RerturnAndSale returna = RerturnAndSale();
-                                    returna.setReturn(int.parse(string!));
+                                if (checkIndex(returns, i)) {
+                                  returns[i].setReturn(int.parse(string!));
+                                } else {
+                                  RerturnAndSale returna = RerturnAndSale();
+                                  returna.setReturn(int.parse(string!));
 
-                                    returns.add(returna);
-                                  }
-                                });
+                                  returns.add(returna);
+                                }
                               }),
                         ),
                         InkWell(
                             onTap: () {
                               if (returns.isNotEmpty) {
-                                print("this is niot what i want");
                                 setState(() {
                                   if (checkIndex(returns, i)) {
-                                    returnParentProduct.removeAt(i);
-                                    returns.removeAt(i);
-                                    returnLength = returns.length;
+                                    print("this is index at $i for remove ");
+                                    print(returns[i].getProduct());
+                                    print(returns[i].getReturn());
+
+                                    setState(() {
+                                      returnParentProduct.removeAt(i);
+                                      returns.removeAt(i);
+                                      returnLength = returns.length;
+                                    });
+                                    print(returnParentProduct.length);
+                                    print(returns.length);
                                   } else {
                                     returnLength = returnLength - 1;
                                   }

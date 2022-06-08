@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../data/models/SalesDataModel.dart';
 import '../../error/failure.dart';
 import '../../injectable.dart';
+import '../entities/SalesData.dart';
 import '../repositories/repository.dart';
 
 abstract class UseCaseForSalesData {
@@ -14,11 +15,11 @@ abstract class UseCaseForSalesData {
 @injectable
 class UseCaseForSalesDataImpl implements UseCaseForSalesData {
   var salesDataRepository = getIt<SaveSalesDataRepository>();
-  UseCaseForSalesDataImpl({required this.salesDataRepository});
+  UseCaseForSalesDataImpl();
 
   @override
   Future<Either<Failure, String?>> saveSalesData(
-      List<SalesDataModel> salesDataModel) async {
+      List<SalesData> salesDataModel) async {
     return await salesDataRepository.saveSalesData(salesDataModel);
   }
 }
