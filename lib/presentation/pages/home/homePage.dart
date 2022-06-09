@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +8,8 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/domain/entities/attendence.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/pages/todaysTarget/todaysTarget.dart';
+import 'package:salesforce/presentation/blocs/publish_notification/publish_notification_bloc.dart';
+import 'package:salesforce/presentation/widgets/notice_list_view_widget.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/initialData.dart';
 import '../../../domain/usecases/useCaseForAttebdenceSave.dart';
@@ -48,6 +51,15 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   String distanceTraveled = "0 km";
   String userName = "";
+
+  bool? checkNotice;
+
+  noticeCheck() {
+    setState(() {
+      checkNotice = checkNotice;
+    });
+  }
+
   getUserName() async {
     Box box = await Hive.openBox(HiveConstants.userdata);
     String tempname = await box.get("name");
@@ -93,20 +105,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // TodayTarget todayTarget = TodayTarget();
   // todayTarget.sendListOfNewRetailer();
-
+  final int _widgetIndex = 1;
   @override
   void initState() {
     BlocProvider.of<AttendenceCubit>(context).getCheckInStatus();
     _initialData.getAndSaveInitalData();
     getTodayTargetData();
     getUserName();
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    double mediaQueryHeight = MediaQuery.of(context).size.height;
+    double mediaQueryWidth = MediaQuery.of(context).size.width;
     var attendenceCubit = BlocProvider.of<AttendenceCubit>(context);
+
     return SingleChildScrollView(
       //todo
       child: SizedBox(
@@ -343,3 +357,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+// IndexedStack(
+// // index: _widgetIndex,
+// children: [
+// Stack(
+// children: [
+//
+// BlocBuilder<PublishNotificationBloc, PublishNotificationState>(
+// builder: (context, state) {
+// if (state is PublishNotificationLoadedState) {
+// print("shot notice mannnnnnn");
+// return Center(
+// child: NoticeListViewWidget(
+// data: state.publishNotificationState,
+// widgetIndex: _widgetIndex),
+// );
+// } else {
+// print("you have an error so no notice");
+// return Container();
+// }
+// },
+// ),
+// ],
+// ),
+// ],
+//
+// );

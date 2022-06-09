@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,6 @@ import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
-
 import '../../domain/entities/SalesData.dart';
 import '../../routes.dart';
 import '../widgets/deleteTheoryTestPopupWidget.dart';
@@ -226,7 +224,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     SalesData model = sales.copyWith(
                         paymentType: _paymentController.text,
                         paymentdocument: image!.path);
-
                     print(model.toString());
 
                     newOrderCubit.getOrders(model);

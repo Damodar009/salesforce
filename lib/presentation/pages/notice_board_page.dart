@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:fullscreen/fullscreen.dart';
+import 'package:salesforce/domain/entities/publish_notification.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
-class NoticeBoardScreen extends StatelessWidget {
-  const NoticeBoardScreen({Key? key}) : super(key: key);
+class NoticeBoardScreen extends StatefulWidget {
+  NoticeBoardScreen({Key? key, required this.publishNotificationlist})
+      : super(key: key);
+
+  PublishNotification publishNotificationlist;
+
+  @override
+  State<NoticeBoardScreen> createState() => _NoticeBoardScreenState();
+}
+
+class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
+  void enterFullScreen(FullScreenMode fullScreenMode) async {
+    await FullScreen.enterFullScreen(fullScreenMode);
+  }
+
+  void exitFullScreen() async {
+    await FullScreen.exitFullScreen();
+  }
+
+  bool fullScreenImage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +31,11 @@ class NoticeBoardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: appBar(
-        // icon: Icons.arrow_back_ios_new_outlined,
-        navTitle: 'NOTICE BOARD',
-        context: context
-        //  backNavigate: () { Navigator.pop(context); }
-      ),
+          // icon: Icons.arrow_back_ios_new_outlined,
+          navTitle: 'NOTICE BOARD',
+          context: context
+          //  backNavigate: () { Navigator.pop(context); }
+          ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -30,65 +50,104 @@ class NoticeBoardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image(
-                    width: MediaQuery.of(context).size.width,
-                    color: AppColors.buttonColor,
-                    image: const AssetImage(
-                      "assets/images/total_order_complete.png",
-                    ),
-                  ),
-                  SizedBox(
-                    height: mediaQueryHeight * 0.01,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      'INNOVATION',
-                    ),
-                  ),
-                  SizedBox(
-                    height: mediaQueryHeight * 0.01,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      '3 WAYS TO BOOST BEVERAGE BRAND INNOVATION ',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  ),
-                  SizedBox(
-                    height: mediaQueryHeight * 0.03,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      'READ MORE',
-                    ),
-                  ),
+                  // Image(
+                  //     // width: MediaQuery.of(context).size.width,
+                  //     color: AppColors.buttonColor,
+                  //     image: publishNotificationlist.path != null
+                  //         ? NetworkImage(publishNotificationlist.path!)
+                  //         : const AssetImage(
+                  //             "assets/images/total_order_complete.png",
+                  //           ) as ImageProvider),
+
+                  widget.publishNotificationlist.path != null
+                      ? InkWell(
+                          // onTap: (() => {
+                          //       setState(() {
+                          //         fullScreenImage = !fullScreenImage;
+                          //       }),
+                          //       print(fullScreenImage),
+                          //       print("image full screen function"),
+                          //       // enterFullScreen(FullScreenMode.EMERSIVE_STICKY)
+                          //     })
+                              
+                          child: fullScreenImage
+                              ? Container(
+                                  height: MediaQuery.of(context).size.height,
+                                  // width: 100,
+                                  decoration: BoxDecoration(
+                                      color: Colors.amber,
+                                      image: DecorationImage(
+                                          image: NetworkImage(widget
+                                              .publishNotificationlist.path!),
+                                          fit: BoxFit.fill)),
+                                )
+                              : Container(
+                                  height: 200,
+                                  // width: 100,
+                                  decoration: BoxDecoration(
+                                      color: Colors.amber,
+                                      image: DecorationImage(
+                                          image: NetworkImage(widget
+                                              .publishNotificationlist.path!),
+                                          fit: BoxFit.cover)),
+                                ),
+                        )
+                      : Container(),
                   SizedBox(
                     height: mediaQueryHeight * 0.01,
                   ),
                   Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      widget.publishNotificationlist.title!.toUpperCase(),
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                  ),
+                  SizedBox(
+                    height: mediaQueryHeight * 0.01,
+                  ),
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Text(
+                  //     '3 WAYS TO BOOST BEVERAGE BRAND INNOVATION ',
+                  //     overflow: TextOverflow.ellipsis,
+                  //     maxLines: 2,
+                  //   ),
+                  // ),
+                  SizedBox(
+                    height: mediaQueryHeight * 0.02,
+                  ),
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      widget.publishNotificationlist.body!,
+                      // "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                    ),
+                  ),
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 20),
+                  //   child: Text(
+                  //     'READ MORE',
+                  //   ),
+                  // ),
+                  SizedBox(
+                    height: mediaQueryHeight * 0.02,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Row(
-                      children: const [
-                        Text(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
                           'RC Cola Int Team',
                         ),
-                        SizedBox(
-                          height: 10,
+                        const SizedBox(
+                          // height: 10,
                           width: 10,
                         ),
-                        Text('April 5, 2022'),
+                        Text(widget.publishNotificationlist.created_date ?? ""),
                       ],
                     ),
                   )

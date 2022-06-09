@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:salesforce/presentation/pages/baclground.dart';
 import 'package:salesforce/presentation/pages/home/homePage.dart';
 import 'package:salesforce/presentation/pages/menuPage.dart';
 import 'package:salesforce/utils/app_colors.dart';
-
 import 'calenderPage.dart';
 import 'outlets_page.dart';
 
@@ -18,12 +18,6 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
-  List<Widget> screens = [
-    const HomeScreen(),
-    const OutletScreen(),
-    const CalenderScreen(),
-    const MenuScreen(),
-  ];
 
   @override
   void initState() {
@@ -78,7 +72,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
-      body: screens[selectedIndex],
+      body: IndexedStack(index: selectedIndex, children: const [
+        HomeScreen(),
+        OutletScreen(),
+        MyBackground(),
+        MenuScreen(),
+      ]),
     );
   }
 }

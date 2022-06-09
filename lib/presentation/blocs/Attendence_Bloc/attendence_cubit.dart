@@ -351,7 +351,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
       // print(checkInAttendance);
 
       bool checkedIn = await saveDataToApiOrHive(checkOutAttendance, false);
-    //  print("the value of checkIn in check out is $checkedIn");
+      //  print("the value of checkIn in check out is $checkedIn");
       if (checkedIn) {
         emit(CheckedOutState());
         failed = false;

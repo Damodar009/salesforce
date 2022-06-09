@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
+import 'package:salesforce/domain/entities/publish_notification.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
@@ -49,4 +50,8 @@ abstract class UploadImageRepository {
 abstract class SaveSalesDataRepository {
   Future<Either<Failure, String?>> saveSalesData(
       List<SalesData> salesDataModel);
+}
+
+abstract class GetAllPublishNotificationRepository {
+  Future<Either<Failure, List<PublishNotification>>> getAllPublishNotification();
 }

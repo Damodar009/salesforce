@@ -1,5 +1,5 @@
 class ApiUrl {
-  static const String baseUrl = "http://103.90.86.112:80/salesforce";
+  static const String baseUrl = "http://103.90.86.112/salesforce";
   static const String apiUrl = baseUrl + "/api";
   static const String login = baseUrl + "/oauth/token";
   static const String changePassword = apiUrl + "/user/changePassword";
@@ -13,6 +13,10 @@ class ApiUrl {
   static const String saveUser = baseUrl + "/api/user/save";
   static const String salesData = baseUrl + "/api/salesdata/save";
   static const String imageUpload = baseUrl + '/api/image/save';
+
   static const String multipleImageUpload =
       baseUrl + '/api/image/multipleImageSave';
+
+  static const String getAllPublishNotification =
+      baseUrl + "/api/publishNotification/getallmobile";
 }

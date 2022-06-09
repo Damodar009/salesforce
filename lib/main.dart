@@ -3,16 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/Userdata.dart';
-import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/blocs/profile_bloc/profile_bloc.dart';
+import 'package:salesforce/presentation/blocs/publish_notification/publish_notification_bloc.dart';
 import 'package:salesforce/presentation/blocs/upload_image/upload_image_bloc.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'domain/entities/SalesData.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/availability.dart';
@@ -54,8 +55,9 @@ Future<void> main() async {
     ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(MerchandiseDropDownAdapter())
     ..registerAdapter(SalesAdapter());
-
-  runApp(const MyApp());
+  Future.delayed(Duration(seconds: 5), (() {
+    runApp(const MyApp());
+  }));
 }
 
 class MyApp extends StatefulWidget {
@@ -74,8 +76,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    print("this is logged in");
-    // checkUserLoggedIn();
+    checkUserLoggedIn();
     super.initState();
   }
 
@@ -92,7 +93,15 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => AttendenceCubit()),
         BlocProvider(create: (context) => ProfileBloc()),
         BlocProvider(create: (context) => UploadImageBloc()),
+        BlocProvider(
+            create: (context) => PublishNotificationBloc()
+              ..add(GetAllPublishNotificationEvent())),
         BlocProvider(create: (context) => NewOrderCubit()),
+
+        // BlocProvider<PublishNotificationBloc>(
+        // BlocProvider<PublishNotificationBloc>(
+        //   create: (context) => PublishNotificationBloc()),
+        // )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -113,33 +122,28 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   final signInLocalDataSource = getIt<SignInLocalDataSource>();
+  final prefs = getIt<SharedPreferences>();
 
   bool isLoggedIn = false;
   checkUserLoggedIn() async {
     try {
-      // String? accessToken;
-
-      // Box box = await Hive.openBox(HiveConstants.userdata);
-
-      // var checkUserAccessToken =
-      //     useCaseForHiveImpl.getValueByKey(box, "access_token");
-
-      // checkUserAccessToken.fold((l) => {print("failed")},
-      //     (r) => {accessToken = r!, print(r.toString())});
-
-      // currentUserInfo.
       print("this below is access toke hai ");
       print("this is main page and the keys are below");
+
+      var _remeberMe = prefs.getBool("remember_me") ?? false;
 
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
       print(userInfo!.access_token);
 
       setState(() {
-        if (userInfo.access_token != null) {
-          isLoggedIn = true;
+        if (_remeberMe) {
+          if (userInfo.access_token != null) {
+            isLoggedIn = true;
+          } else {
+            isLoggedIn = false;
+          }
         } else {
           isLoggedIn = false;
         }

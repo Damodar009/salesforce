@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salesforce/data/datasource/remoteSource/salesDataRemoteSource.dart';
+import 'package:salesforce/presentation/widgets/backgroundShadesWidget.dart';
 import 'package:salesforce/routes.dart';
 import '../../utils/app_colors.dart';
 import '../blocs/Attendence_Bloc/attendence_cubit.dart';
@@ -25,6 +26,7 @@ class _OutletScreenState extends State<OutletScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        BackgroundShades(),
         SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [

@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -78,6 +79,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   late int returnLength;
   late int availabilityLength;
   late int salesLength;
+  int _counter = 0;
 
   List<String> returnProductNames = [];
 
@@ -114,6 +116,22 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   retailerIdList.add(r[i].id),
                 },
             });
+  }
+
+  void incrementReturn(String value) {
+    int incNumber = int.parse(value);
+    print("inc button is clicked");
+    setState(() {
+      incNumber++;
+    });
+
+    print(incNumber);
+  }
+
+  void decrementNumber() {
+    setState(() {
+      _counter--;
+    });
   }
 
   @override
@@ -568,31 +586,32 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     ),
                     Row(
                       children: [
-                        SizedBox(
-                            width: 150,
-                            //todo unchanged
-                            child: textFeildWithDropDownFor(
-                                validator: (string) {},
-                                item: checkIndex(salesParentProduct, i)
-                                    ? getChildProducts(salesParentProduct[i])
-                                    : [],
-                                onselect: (string) {
-                                  setState(() {
-                                    if (checkIndex(sales, i)) {
-                                      sales[i].setProduct(string);
-                                    } else {
-                                      RerturnAndSale saless = RerturnAndSale();
-                                      saless.setProduct(string);
 
-                                      sales.add(saless);
-                                    }
-                                  });
-                                },
-                                initialText: checkIndex(sales, i)
-                                    ? sales[i].getProduct() ?? ""
-                                    : "")),
+                           textFeildWithDropDownFor(
+                              validator: (string) {},
+                              item: checkIndex(salesParentProduct, i)
+                                  ? getChildProducts(salesParentProduct[i])
+                                  : [],
+                              // incrementReturn;
+                              onselect: (string) {
+                                setState(() {
+                                  if (checkIndex(sales, i)) {
+                                    sales[i].setProduct(string);
+                                  } else {
+                                    RerturnAndSale saless = RerturnAndSale();
+                                    saless.setProduct(string);
+
+                                    sales.add(saless);
+                                  }
+                                });
+                              },
+                              initialText: checkIndex(sales, i)
+                                  ? sales[i].getProduct() ?? ""
+                                  : ""
+                                  ),
+
                         SizedBox(
-                          width: 140,
+                          width: 130,
                           child: textFormFeildIncreAndDecre(
                               validator: (string) {},
                               initialValue: checkIndex(sales, i)
@@ -602,6 +621,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   : "",
                               onChanged: (string) {
                                 setState(() {
+                                  print(string);
+
+                                  print("increment number is clicked");
                                   if (checkIndex(sales, i)) {
                                     sales[i].setReturn(int.parse(string!));
                                   } else {
@@ -757,6 +779,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
+
                     Row(
                       children: [
                         SizedBox(
@@ -1000,7 +1023,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                     ? returns[i].getProduct() ?? ""
                                     : "")),
                         SizedBox(
-                          width: 140,
+                          width: 130,
                           child: textFormFeildIncreAndDecre(
                               validator: (string) {},
                               initialValue: checkIndex(returns, i)
