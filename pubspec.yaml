@@ -59,14 +59,21 @@ dependencies:
   hive_flutter: ^1.1.0
   geolocator: ^8.2.0
   mac_address: ^1.0.0
-  # background_location: ^0.8.1
+  #background_location: ^0.8.1
+  background_location:
+    git:
+      url: https://github.com/hilalbaig/background_location.git
+      ref: master
   uuid: ^3.0.6
   shared_preferences: ^2.0.15
   fluttertoast: ^8.0.9
+
+  device_info_plus: ^0.0.1
   dropdown_search: ^4.0.0
   fullscreen: ^1.0.3
   flutter_launcher_icons: ^0.9.3
   syncfusion_flutter_xlsio: ^20.1.59-beta
+
 
 
 

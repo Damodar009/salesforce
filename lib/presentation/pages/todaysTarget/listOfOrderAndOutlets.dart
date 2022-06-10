@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
-import 'package:salesforce/domain/entities/sales.dart';
+import 'package:salesforce/domain/entities/retailerDropDown.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
-
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
@@ -12,7 +11,7 @@ import '../../../utils/hiveConstant.dart';
 import '../../widgets/individualOrderDetail.dart';
 
 class ListOfOrderAndOutletDetailScreen extends StatefulWidget {
-  ListOfOrderAndOutletDetailScreen({Key? key}) : super(key: key);
+  const ListOfOrderAndOutletDetailScreen({Key? key}) : super(key: key);
 
   @override
   State<ListOfOrderAndOutletDetailScreen> createState() =>
@@ -23,7 +22,8 @@ class _ListOfOrderAndOutletDetailScreenState
     extends State<ListOfOrderAndOutletDetailScreen> {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   String text = "1234567890m";
-  List<dynamic> salesData = [];
+  List<SalesData> salesData = [];
+  List<RetailerDropDown> retailerData = [];
 
   // getDataFromHiveFor(String routes) {
   //   switch (routes) {
@@ -40,29 +40,59 @@ class _ListOfOrderAndOutletDetailScreenState
 
   getDataFromHiveForTodaySalesData() async {
     Box boxs = await Hive.openBox(HiveConstants.salesDataCollection);
+    print("sales data collection inside hive ");
     var successOrFailed = useCaseForHiveImpl.getAllValuesFromHiveBox(boxs);
     successOrFailed.fold(
-        (l) => {print("this is so sad")}, (r) => {salesData.addAll(r)});
+        (l) => {print("this is so sad")},
+        (r) => {
+              setState(() {
+                for (var i = 0; i < r.length; i++) {
+                  print(r[i]);
+                  salesData.add(r[i]);
+                }
+              }),
+              print(salesData.length)
+            });
   }
 
-  SalesData salesdata = SalesData(
-      sales: [
-        Sales(sales: 2, product: 'mr aryan'),
-        Sales(sales: 3, product: 'mr surasa '),
-        Sales(sales: 3, product: 'mr raj'),
-        Sales(sales: 3, product: 'mr dhamala'),
-        Sales(sales: 3, product: 'mr movieman'),
-        Sales(sales: 3, product: 'mr saurav'),
-      ],
-      retailer: "mr movieMan",
-      assignedDepot: "assignedDepot",
-      collectionDate: "collectionDate",
-      latitude: 34,
-      longitude: 45,
-      userId: "userId");
+  getRetailerLists() async {
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    var successOrNot = useCaseForHiveImpl.getValuesByKey(
+        box, HiveConstants.retailerDropdownKey);
+    successOrNot.fold(
+        (l) => {print("no success")},
+        (r) => {
+              for (var i = 0; i < r.length; i++)
+                {retailerData.add(r[i]), print(retailerData[i])},
+            });
+  }
+
+  String? getNameFromId(String retailerId) {
+    String? retailerName;
+    retailerData.map((e) => {
+          if (e.id == retailerId) {retailerName = e.name} else {}
+        });
+    return retailerName;
+  }
+
+  // getRetailerList() async {
+  //   Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+  //   var sucessOrNot = useCaseForHiveImpl.getValuesByKey(box, "retailerTypes");
+  //   sucessOrNot.fold(
+  //       (l) => {print("no success")},
+  //       (r) => {
+  //             for (var i = 0; i < r.length; i++)
+  //               {
+  //                 print(r[i].id),
+  //                 print(r[i].name),
+  //               },
+  //           });
+  // }
 
   @override
   void initState() {
+    getDataFromHiveForTodaySalesData();
+    getRetailerLists();
     super.initState();
   }
 
@@ -87,9 +117,10 @@ class _ListOfOrderAndOutletDetailScreenState
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return individualOrderDetail(
-                          "Mr rajkumar", salesdata.sales!);
+                          getNameFromId(salesData[index].retailer!),
+                          salesData[index].sales!);
                     },
-                    itemCount: 4),
+                    itemCount: salesData.length),
                 const SizedBox(
                   height: 20,
                 ),

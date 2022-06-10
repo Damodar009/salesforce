@@ -19,9 +19,9 @@ import 'domain/entities/SalesData.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/availability.dart';
 import 'domain/entities/depot.dart';
+import 'domain/entities/merchandise.dart';
 import 'domain/entities/merchndiseOrder.dart';
 import 'domain/entities/products.dart';
-
 import 'domain/entities/region.dart';
 import 'domain/entities/retailer.dart';
 import 'domain/entities/retailerDropDown.dart';
@@ -55,6 +55,7 @@ Future<void> main() async {
     ..registerAdapter(RetailerDropDownAdapter())
     ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(SalesAdapter())
+    ..registerAdapter(MerchandiseDropDownAdapter())
     ..registerAdapter(PublishNotificationAdapter());
   Future.delayed(const Duration(seconds: 2), (() {
     runApp(const MyApp());
@@ -77,8 +78,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    print("this is logged in");
-    // checkUserLoggedIn();
+    checkUserLoggedIn();
     super.initState();
   }
 

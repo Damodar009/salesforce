@@ -60,9 +60,9 @@ class RouteGenerator {
       case Routes.menuScreen:
         return MaterialPageRoute(builder: (_) => const MenuScreen());
       case Routes.paymentScreen:
-        return MaterialPageRoute(builder: (_) => PaymentScreen());
+        return MaterialPageRoute(builder: (_) => const PaymentScreen());
       case Routes.merchandiseSupportScreen:
-        return MaterialPageRoute(builder: (_) => MerchandiseSupportScreen());
+        return MaterialPageRoute(builder: (_) => const MerchandiseSupportScreen());
 
       case Routes.dashboardRoute:
         return MaterialPageRoute(

@@ -17,15 +17,15 @@ class AttendenceAdapter extends TypeAdapter<Attendence> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Attendence(
-      fields[0] as String?,
-      fields[1] as String?,
-      fields[2] as String?,
-      fields[3] as double?,
-      fields[4] as double?,
-      fields[5] as String?,
-      fields[6] as double?,
-      fields[7] as double?,
-      fields[8] as String?,
+      id: fields[0] as String?,
+      macAddress: fields[1] as String?,
+      checkin: fields[2] as String?,
+      checkin_latitude: fields[3] as double?,
+      checkin_longitude: fields[4] as double?,
+      checkout: fields[5] as String?,
+      checkout_latitude: fields[6] as double?,
+      checkout_longitude: fields[7] as double?,
+      user: fields[8] as String?,
     );
   }
 

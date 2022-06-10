@@ -31,6 +31,9 @@ class InitialData {
 
       useCaseForHiveImpl.saveValueByKey(box, HiveConstants.retailerDropdownKey,
           depotProductRetailer.retailerDropDown);
+      print("this is merchandisr data from api");
+
+      print(depotProductRetailer.merchandise);
       useCaseForHiveImpl.saveValueByKey(
           box, HiveConstants.regionKey, depotProductRetailer.region);
       useCaseForHiveImpl.saveValueByKey(

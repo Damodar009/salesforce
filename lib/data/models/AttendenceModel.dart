@@ -15,8 +15,17 @@ class AttendenceModel extends Attendence {
       double? checkout_latitude,
       double? checkout_longitude,
       String? user})
-      : super(id, macAddress, checkin, checkin_latitude, checkin_longitude,
-            checkout, checkout_latitude, checkout_longitude, user);
+      : super(
+          id: id,
+          macAddress: macAddress,
+          checkin: checkin,
+          checkin_latitude: checkin_latitude,
+          checkin_longitude: checkin_longitude,
+          checkout: checkout,
+          checkout_latitude: checkout_latitude,
+          checkout_longitude: checkout_longitude,
+          user: user,
+        );
 
   factory AttendenceModel.fromJson(Map<String, dynamic> json) =>
       _$AttendenceModelFromJson(json);

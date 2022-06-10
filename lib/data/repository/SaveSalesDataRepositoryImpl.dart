@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import 'package:salesforce/data/models/SalesDataModel.dart';
-
+import '../../domain/entities/SalesData.dart';
 import '../../domain/repositories/repository.dart';
 import '../../error/failure.dart';
 import '../../injectable.dart';
@@ -14,7 +13,7 @@ class SaveSalesDataRepositoryImpl implements SaveSalesDataRepository {
 
   @override
   Future<Either<Failure, String?>> saveSalesData(
-      List<SalesDataModel> salesDataModel) async {
+      List<SalesData> salesDataModel) async {
     try {
       final question =
           await salesDataRemoteSource.saveSalesData(salesDataModel);

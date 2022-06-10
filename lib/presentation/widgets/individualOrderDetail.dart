@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/sales.dart';
 import '../../utils/app_colors.dart';
 
-Widget individualOrderDetail(String outlet, List<Sales> sales) {
+Widget individualOrderDetail(String? outlet, List<Sales> sales) {
   return Padding(
     padding: const EdgeInsets.all(16.0),
     child: Container(
@@ -24,7 +24,7 @@ Widget individualOrderDetail(String outlet, List<Sales> sales) {
                   const SizedBox(
                     width: 50,
                   ),
-                  Text(outlet)
+                  Text(outlet ?? "")
                 ],
               ),
               const SizedBox(

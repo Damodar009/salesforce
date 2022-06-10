@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/domain/entities/depotProductRetailer.dart';
@@ -28,9 +30,59 @@ class AttendenceCubit extends Cubit<AttendenceState> {
     String userId = "";
     Box box = await Hive.openBox(HiveConstants.userdata);
     var failureOrSuccess = useCaseForHiveImpl.getValueByKey(box, "userid");
-    failureOrSuccess.fold((l) => {emit(UserGetFailed())}, (r) => {userId = r!});
+    failureOrSuccess.fold((l) => {}, (r) => {userId = r!});
 
     return userId;
+  }
+
+  getCheckInStatus() async {
+    bool isCheckIn = false;
+    DateTime now = DateTime.now();
+    DateTime moonLanding;
+
+    Box box = await Hive.openBox(HiveConstants.attendence);
+    print("the keys of attendance box are ");
+    print(box.keys.toList());
+    var failureOrSuccess = useCaseForHiveImpl.getValueByKey(
+        box, HiveConstants.attendenceCheckinKey);
+    failureOrSuccess.fold(
+        (l) => {
+              print("getting attendance data from the hive is failed"),
+            },
+        (r) => {
+              print(r),
+              moonLanding = DateTime.parse(r.checkin!),
+              if (now.day == moonLanding.day)
+                {isCheckIn = true, print("this is the check in greater ")}
+              // r.map((e) => {
+              //       moonLanding = DateTime.parse(e.checkin!),
+              //       if (now.day == moonLanding.day)
+              //         {
+              //           isCheckIn = true,
+              //         }
+              //     }),
+            });
+    if (isCheckIn == true) {
+      var failureOrSucess = useCaseForHiveImpl.getValuesByKey(
+          box, HiveConstants.attendenceCheckinKey);
+      failureOrSucess.fold(
+          (l) => {print("data from checkout hive box is failed")},
+          (r) => {
+                print("data from hive attendance is passed"),
+                r.map((e) => {
+                      moonLanding = DateTime.parse(e.checkout!),
+                      if (now.day == moonLanding.day)
+                        {
+                          isCheckIn = false,
+                        }
+                    }),
+              });
+    }
+    if (isCheckIn == true) {
+      emit(CheckedInState());
+    } else {
+      emit(CheckedOutState());
+    }
   }
 
   /// get data from the api
@@ -40,22 +92,25 @@ class AttendenceCubit extends Cubit<AttendenceState> {
         await useCaseForRemoteSourceimpl.getDepotProductRetailerDropDown();
     failureOrsucess.fold(
         (l) => {
-              emit(ApiFailed()),
+              //  emit(ApiFailed()),
             },
         (r) => {depotProdeuctRetailer = r});
 
     return depotProdeuctRetailer;
   }
 
-  /// check current location with deppot list location
+  /// check current location with depot list location
   Future<bool> checkCurrentLocationWithDepots(
       List<dynamic> depots, double latitude, double longitude) async {
     bool isIndepot = false;
-    int minimunDistance = 20; // in meters
+    int minimumDistance = 20; // in meters
     var p = 0.017453292519943295;
     var c = cos;
 
     for (var i = 0; i < depots.length; i++) {
+      print("the location of depots are ");
+      print(depots[i].latitude);
+      print(depots[i].longitude);
       double latitude2 = depots[i].latitude;
       double longitude2 = depots[i].longitude;
 
@@ -66,13 +121,12 @@ class AttendenceCubit extends Cubit<AttendenceState> {
               (1 - c((longitude - longitude2) * p)) /
               2;
 
-      if (12742 * asin(sqrt(a)) <= minimunDistance) {
+      if (12742 * asin(sqrt(a)) <= minimumDistance) {
         isIndepot = true;
 
         Box box = await Hive.openBox(HiveConstants.attendence);
         var failureOrsucess = useCaseForHiveImpl.saveValueByKey(
             box, HiveConstants.assignedDepot, depots[i].id);
-
         break;
       } else {}
     }
@@ -89,7 +143,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
           await getDepotAndDropDownFromApi();
       if (depotProductRetailer != null) {
         depots = depotProductRetailer.depots;
-        savedepotProductRetailerDropDownToHiveBox(depotProductRetailer);
+        saveDepotProductRetailerDropDownToHiveBox(depotProductRetailer);
       } else {
         return null;
       }
@@ -100,69 +154,87 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   /// look for the internet
   checkInternet() {}
 
-  /// save attendence to api or local database
-  saveDataToApiOrHive(Attendence attendence, isCheckIn) async {
-    bool result = await InternetConnectionChecker().hasConnection;
-    if (result) {
-      var failureOrsucess =
-          await useCaseForAttendenceImpl.attendenceSave(attendence);
+  Future<bool> saveDataToApiOrHive(
+      Attendence attendance, bool isCheckIn) async {
+    bool isSaved = false;
+    Box box = await Hive.openBox(HiveConstants.attendence);
 
-      failureOrsucess.fold(
+    if (isCheckIn) {
+      //save data to api
+      var successOrFailed =
+          await useCaseForAttendenceImpl.attendenceSave(attendance);
+      successOrFailed.fold(
           (l) => {
-                // if (l is ServerFailure)
-                //   emit(AttendenceFailed())
-                // else if (l is CacheFailure)
-                //   emit(AttendenceFailed())
+                print("saving check in attendance data to Api is failed"),
               },
-          (r) => {}
+          (r) async => {
+                print("saving check in attendance data to Api is success"),
+                //save to hive
+                useCaseForHiveImpl
+                    .saveValueByKey(box, HiveConstants.attendenceCheckinKey, r)
+                    .fold(
+                        (l) => {print("saving check in to hive is failed")},
+                        (r) => {
+                              isSaved = true,
+                            }),
 
-          //emit(AttendenceSucess())
-          );
+                //todo check for check out data anf send if available
+              });
     } else {
-      if (!isCheckIn) {
-        Box box = await Hive.openBox(HiveConstants.attendence);
-        var failureOrsucess = useCaseForHiveImpl.saveValueByKey(
-            box, HiveConstants.attendenceCheckOutKey, attendence);
-
-        failureOrsucess.fold(
-            (l) => {
-                  // if (l is ServerFailure)
-                  //   emit(AttendenceFailed())
-                  // else if (l is CacheFailure)
-                  //   emit(AttendenceFailed())
-                },
-            (r) => {
-                  // if (r.toString() == "Success")
-                  //   //emit(AttendenceSucess())
-                  // else
-                  //   emit(AttendenceFailed())
+      print("this is inside checkout");
+      bool internet = await InternetConnectionChecker().hasConnection;
+      if (internet) {
+        await useCaseForAttendenceImpl
+            .attendenceSave(attendance)
+            .then((value) => {
+                  value.fold(
+                      (l) => {
+                            // print("check out data is failed"),
+                          },
+                      (r) => {
+                            isSaved = true,
+                            // print("check out data is  passed"),
+                            // emit(CheckedOutState()),
+                          })
                 });
       } else {
-        emit(AttendenceFailed());
+        print("there is no internet ");
+        var successOrFailedApi = useCaseForHiveImpl.saveValueByKey(
+            box, HiveConstants.attendenceCheckinKey, attendance);
+        successOrFailedApi.fold(
+            (l) => {
+                  // print("saving check out attendance data to hive is failed"),
+                },
+            (r) => {
+                  // print("saving check out attendance data to hive is success"),
+                  isSaved = true,
+                  //  emit(CheckedOutState())
+                });
       }
     }
+    // print("this is the value of is saved without internet ");
+    // print(isSaved);
+    return isSaved;
   }
 
   /// check for checkout data while check in
-  dynamic getCheckoutDataFromHiveBox() async {
-    dynamic checkout;
+  Future<Attendence?> getAttendanceDataFromHiveBox(
+      String attendanceType) async {
+    Attendence? checkout;
     Box box = await Hive.openBox(HiveConstants.attendence);
-    var failureOrSucess = useCaseForHiveImpl.getValuesByKey(
-        box, HiveConstants.attendenceCheckOutKey);
+    var failureOrSuccess =
+        useCaseForHiveImpl.getValueByKey(box, attendanceType);
 
-    failureOrSucess.fold(
-        (l) => {
-              // emit(AttendenceFailed())
-            },
+    failureOrSuccess.fold(
+        (l) => {},
         (r) => {
               checkout = r,
             });
-
     return checkout;
   }
 
   ///  /// save depot and  dropdown to the hive box
-  savedepotProductRetailerDropDownToHiveBox(
+  saveDepotProductRetailerDropDownToHiveBox(
       DepotProductRetailer? depotProductRetailer) async {
     if (depotProductRetailer != null) {
       Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
@@ -173,7 +245,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
       useCaseForHiveImpl.saveValueByKey(box, HiveConstants.retailerTypeKey,
           depotProductRetailer.retailerType);
     } else {
-      emit(HiveSaveFailed());
+      //    emit(HiveSaveFailed());
     }
   }
 
@@ -187,7 +259,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
     failureOrSuccess.fold(
         (l) => {
               //todo hive failed
-              emit(HiveSaveFailed()),
+              //   emit(HiveSaveFailed()),
             },
         (r) => {depots = r});
 
@@ -196,16 +268,18 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
   /// check in
   Future<bool> checkIn() async {
-    bool isInternet;
     bool failed = false;
-
-    //emit(AttendenceLoading());
-    // todo check for internet
     Position? position = await geolocator.getCurrentLocation();
     List<dynamic>? depots = await getDepotList();
     if (position != null && depots != null) {
       bool isInDepot = await checkCurrentLocationWithDepots(
           depots, position.latitude, position.longitude);
+
+      // if (Platform.isAndroid) {
+      //   deviceData =
+      //       _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+      // } else if (Platform.isIOS) {
+      //   deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
 
       if (isInDepot) {
         print(true);
@@ -213,11 +287,25 @@ class AttendenceCubit extends Cubit<AttendenceState> {
         String dateTime = DateTime.now().toString();
         String macAddresss = await macAddress.getMacAddress();
         String userId = await getUserIdFromHiveBox();
-        Attendence checkInAttendence = Attendence(null, macAddresss, dateTime,
-            position.latitude, position.longitude, null, null, null, userId);
+        Attendence checkInAttendance = Attendence(
+            id: null,
+            macAddress: macAddresss,
+            checkin: dateTime,
+            checkin_latitude: position.latitude,
+            checkin_longitude: position.longitude,
+            checkout: null,
+            checkout_latitude: null,
+            checkout_longitude: null,
+            user: userId);
 
-        saveDataToApiOrHive(checkInAttendence, true);
-        //  emit(AttendenceSucess());
+        bool checkedIn = await saveDataToApiOrHive(checkInAttendance, true);
+        if (checkedIn) {
+          emit(CheckedInState());
+          failed = !checkedIn;
+        } else {
+          failed = true;
+          print("check in is not successful");
+        }
       } else {
         failed = true;
       }
@@ -226,19 +314,70 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   }
 
   checkOut() async {
+    bool failed = false;
     Position? position = await geolocator.getCurrentLocation();
     if (position != null) {
+      String? id;
+      String? checkIn;
+      double? latitude, longitude;
       MacAddress macAddress = MacAddress();
       String dateTime = DateTime.now().toString();
       String macAddresss = await macAddress.getMacAddress();
       String userId = await getUserIdFromHiveBox();
-      Attendence checkInAttendence = Attendence(null, macAddresss, null, null,
-          null, dateTime, position.latitude, position.longitude, userId);
 
-      saveDataToApiOrHive(checkInAttendence, true);
-      emit(AttendenceSucess());
+      Attendence? checkInAttendance = await getAttendanceDataFromHiveBox(
+          HiveConstants.attendenceCheckinKey);
+
+      if (checkInAttendance != null) {
+        id = checkInAttendance.id;
+        if (id == null) {
+          checkIn = checkInAttendance.checkin;
+          latitude = checkInAttendance.checkin_latitude;
+          longitude = checkInAttendance.checkin_longitude;
+        }
+      } else {}
+
+      Attendence checkOutAttendance = Attendence(
+          id: id,
+          macAddress: macAddresss,
+          checkin: checkIn,
+          checkin_latitude: latitude,
+          checkin_longitude: longitude,
+          checkout: dateTime,
+          checkout_latitude: position.latitude,
+          checkout_longitude: position.longitude,
+          user: userId);
+      // print("the attendance is");
+      // print(checkInAttendance);
+
+      bool checkedIn = await saveDataToApiOrHive(checkOutAttendance, false);
+      //  print("the value of checkIn in check out is $checkedIn");
+      if (checkedIn) {
+        emit(CheckedOutState());
+        failed = false;
+      } else {
+        failed = true;
+        Fluttertoast.showToast(
+            msg: "check out not complete",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
     } else {
-      emit(LocationGetFailed());
+      failed = true;
+      Fluttertoast.showToast(
+          msg: "Please do location on",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      // emit(LocationGetFailed());
     }
+    return failed;
   }
 }

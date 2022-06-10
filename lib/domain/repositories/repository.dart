@@ -6,8 +6,10 @@ import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import '../../data/models/SalesDataModel.dart';
 import '../../error/failure.dart';
+import '../entities/SalesData.dart';
 import '../entities/attendence.dart';
 import '../entities/depotProductRetailer.dart';
+import '../entities/retailer.dart';
 import '../entities/salesPerson.dart';
 import '../entities/saleslocationTrack.dart';
 
@@ -15,23 +17,16 @@ abstract class Repository {
   Future<Either<Failure, UserData>> login(String username, String password);
   Future<Either<Failure, String>> changePassword(
       String oldPassword, String newPassword);
-  Future<Either<Failure, String>> postImage();
-  Future<Either<Failure, String>> getProductList();
-  Future<Either<Failure, String>> getRegionList();
-  Future<Either<Failure, String>> attendenceSave();
+
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown();
   Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
-      List<RetailerPojo> listOfRetailers);
+      List<Retailer> listOfRetailers);
 
   Future<Either<Failure, UserDetailsData>> getUserDetailsData();
 
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel);
-
-  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection();
-
-  Future<dynamic> postToRemoteSource();
 }
 
 abstract class AttendenceRepository {
@@ -54,7 +49,7 @@ abstract class UploadImageRepository {
 
 abstract class SaveSalesDataRepository {
   Future<Either<Failure, String?>> saveSalesData(
-      List<SalesDataModel> salesDataModel);
+      List<SalesData> salesDataModel);
 }
 
 abstract class GetAllPublishNotificationRepository {

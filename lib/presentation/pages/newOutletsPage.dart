@@ -10,6 +10,7 @@ import '../../injectable.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/geolocation.dart';
 import '../../utils/hiveConstant.dart';
+import '../../utils/validators.dart';
 import '../widgets/buttonWidget.dart';
 import '../widgets/radioBotton.dart';
 import '../widgets/textformfeild.dart';
@@ -22,11 +23,12 @@ class NewOutletsScreen extends StatefulWidget {
 }
 
 class _NewOutletsScreenState extends State<NewOutletsScreen> {
-  bool outletsCreated = true;
   bool visiblity = false;
   bool loading = false;
+  bool loadingMap = false;
   Position? position;
   List<String> retailerTypes = [];
+  List<String> retailerTypesId = [];
   List<String> regionName = [];
   List<String> regionId = [];
   String region = " ";
@@ -71,17 +73,18 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
 
   getRetailerType() async {
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
-    var sucessOrNot = useCaseForHiveImpl.getValuesByKey(
+    var successOrNot = useCaseForHiveImpl.getValuesByKey(
       box,
       HiveConstants.retailerTypeKey,
     );
-    sucessOrNot.fold(
+    successOrNot.fold(
         (l) => {print("no success")},
         (r) => {
               for (var i = 0; i < r.length; i++)
                 {
                   print(" success"),
                   retailerTypes.add(r[i].name),
+                  retailerTypesId.add(r[i].id),
                 },
               print(retailerTypes)
             });
@@ -132,29 +135,6 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        const Text(
-                          'Outlets already created',
-                          style: TextStyle(color: Color(0xFF003049)),
-                        ),
-                        StatefulBuilder(builder: (context, setStat) {
-                          return Checkbox(
-                              value: outletsCreated,
-                              activeColor: AppColors.buttonColor,
-                              checkColor: Colors.white,
-                              fillColor: MaterialStateColor.resolveWith(
-                                  (states) => AppColors.buttonColor),
-                              onChanged: (newValue) {
-                                //todo write code for outletsCreated
-                                setStat(() {
-                                  outletsCreated = newValue!;
-                                });
-                              });
-                        }),
-                      ],
-                    ),
                     title("Name of Outlet"),
                     const SizedBox(
                       height: 12,
@@ -180,7 +160,13 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     textFormField(
                         controller: _contactPerson,
                         validator: (string) {
-                          return validator(string);
+                          bool isValid = Validators.isValidEmail(string!);
+
+                          if (isValid) {
+                            return null;
+                          } else {
+                            return "enter valid email";
+                          }
                         },
                         obsecureText1: () {},
                         hintText: ''),
@@ -194,6 +180,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     ),
 
                     textFormField(
+                        textInputType: TextInputType.phone,
                         controller: _contactNumber,
                         validator: (string) {
                           return phoneValidator(string);
@@ -229,6 +216,10 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                           title("Map"),
                           InkWell(
                             onTap: () async {
+                              setState(() {
+                                loadingMap = true;
+                              });
+
                               position = await geoLocation.getCurrentLocation();
                               setState(() {
                                 visiblity = !visiblity;
@@ -236,20 +227,24 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                                     position!.longitude.toString() +
                                         " , " +
                                         position!.longitude.toString();
+                                loadingMap = false;
                               });
                             },
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  color: AppColors.attendenceCard,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: const Icon(
-                                Icons.location_on_outlined,
-                                size: 35,
-                                color: AppColors.buttonColor,
-                              ),
-                            ),
+                            child: !loadingMap
+                                ? Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                        color: AppColors.attendenceCard,
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: const Icon(
+                                      Icons.location_on_outlined,
+                                      size: 35,
+                                      color: AppColors.buttonColor,
+                                    ),
+                                  )
+                                : const CircularProgressIndicator(),
                           ),
                         ],
                       ),
@@ -305,7 +300,9 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
 
                     textFormField(
                         controller: _location,
-                        validator: (string) {},
+                        validator: (string) {
+                          return validator(string);
+                        },
                         obsecureText1: () {},
                         hintText: ' Longitude and latitude (map Location)'),
                     const SizedBox(
@@ -333,7 +330,9 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     ),
                     textFeildWithDropDownFor(
                         item: retailerTypes,
-                        validator: (string) {},
+                        validator: (string) {
+                          return validator(string);
+                        },
                         onselect: (string) {
                           setState(() {
                             initialValue = string;
@@ -351,7 +350,13 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
 
                     textFeildWithDropDownFor(
                         item: regionName,
-                        validator: (string) {},
+                        validator: (string) {
+                          if (region != " ") {
+                            return null;
+                          } else {
+                            return "this cannot be empty";
+                          }
+                        },
                         onselect: (string) {
                           setState(() {
                             region = string;
@@ -370,15 +375,19 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                         //todo get region
                         int index = regionName.indexOf(region);
                         String regions = regionId[index];
+                        int retailerIndex = retailerTypes.indexOf(initialValue);
+                        String retailerid = retailerTypesId[retailerIndex];
+
+                        print("this is region id $regions");
                         Retailer retailer = Retailer(
-                            name: _outLetName.toString(),
+                            name: _outLetName.text,
                             latitude: position!.latitude,
                             longitude: position!.longitude,
-                            address: _address.toString(),
-                            contactPerson: _contactPerson.toString(),
-                            contactNumber: _contactNumber.toString(),
-                            retailerClass: selectedValue,
-                            retailerType: _typesOfOutlet.toString(),
+                            address: _address.text,
+                            contactPerson: _contactPerson.text,
+                            contactNumber: _contactNumber.text,
+                            retailerClass: selectedValue.split(" ")[0],
+                            retailerType: retailerid,
                             region: regions);
                         print(retailer);
 
@@ -405,6 +414,8 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                         setState(() {
                           loading = false;
                         });
+
+                        Navigator.of(context).pop();
                       } else {}
                     }, loading, AppColors.buttonColor),
                   ],

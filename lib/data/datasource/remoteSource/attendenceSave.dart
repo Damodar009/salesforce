@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/AttendenceModel.dart';
 import 'package:salesforce/domain/entities/attendence.dart';
-
 import '../../../error/exception.dart';
 import '../../../utils/apiUrl.dart';
 
@@ -13,7 +11,6 @@ abstract class AttendenceRemoteSource {
 }
 
 @Injectable(as: AttendenceRemoteSource)
-
 class AttendenceSave implements AttendenceRemoteSource {
   Dio dio = Dio();
   @override
@@ -31,6 +28,8 @@ class AttendenceSave implements AttendenceRemoteSource {
 
     var attendenceInJson = attendenceModel.toJson();
     var jsonEncodedAnswer = jsonEncode(attendenceInJson);
+    print("this is attendence save ");
+    print(jsonEncodedAnswer);
 
     try {
       Response response = await dio.post(
@@ -39,22 +38,22 @@ class AttendenceSave implements AttendenceRemoteSource {
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+            'Authorization': 'Bearer 4a90d667-f22d-4dd5-a15b-4fa13a4edeb4'
           },
         ),
       );
       if (response.data["status"] == true) {
+        print(response);
         Attendence attendence = AttendenceModel.fromJson(response.data["data"]);
-
-        print('oleoleoleoleoleoeloel');
 
         return attendence;
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
+      print("this is attendence failed ");
       print(e);
-      throw ServerException();
     }
+    throw ServerException();
   }
 }

@@ -184,6 +184,7 @@ Widget textFormFeildIncreAndDecre({
   Function? decrementReturn,
 }) {
   return TextFormField(
+    key: Key(initialValue),
     initialValue: initialValue,
     onChanged: onChanged,
     keyboardType: TextInputType.number,

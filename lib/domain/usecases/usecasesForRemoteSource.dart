@@ -1,12 +1,15 @@
 import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
+
 import '../../error/failure.dart';
 import '../entities/depotProductRetailer.dart';
+import '../entities/retailer.dart';
 import '../entities/userData.dart';
 import '../repositories/repository.dart';
 
@@ -14,14 +17,11 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, UserData>> login(String username, String password);
   Future<Either<Failure, String>> changePassword(
       String oldPassword, String newPassword);
-  Future<Either<Failure, String>> postImage();
-  Future<Either<Failure, String>> getProductList();
-  Future<Either<Failure, String>> getRegionList();
-  Future<Either<Failure, String>> attendenceSave();
+
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown();
   Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
-      List<RetailerPojo> listOfRetailers);
+      List<Retailer> listOfRetailers);
   Future<Either<Failure, UserDetailsData>> getUserDetailsData();
 
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
@@ -29,7 +29,6 @@ abstract class UseCaseForRemoteSource {
 
   // Future<Either<Failure, UserDetailsData>> saveUserDetails();
 
-  Future<Either<Failure, dynamic>> postToRemoteSource();
 }
 
 @injectable
@@ -44,35 +43,15 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   }
 
   @override
-  Future<Either<Failure, dynamic>> postToRemoteSource() async {
-    return await repository.postToRemoteSource();
-  }
-
-  @override
   Future<Either<Failure, String>> changePassword(
       String oldPassword, String newPassword) async {
     return await repository.changePassword(oldPassword, newPassword);
   }
 
-  @override
-  Future<Either<Failure, String>> postImage() async {
-    return await repository.postImage();
-  }
-
-  @override
-  Future<Either<Failure, String>> attendenceSave() async {
-    return await repository.attendenceSave();
-  }
-
-  @override
-  Future<Either<Failure, String>> getProductList() async {
-    return await repository.getProductList();
-  }
-
-  @override
-  Future<Either<Failure, String>> getRegionList() async {
-    return await repository.getRegionList();
-  }
+  // @override
+  // Future<Either<Failure, String>> attendenceSave() async {
+  //   return await repository.attendenceSave();
+  // }
 
   @override
   Future<Either<Failure, DepotProductRetailer>>
@@ -82,7 +61,7 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
 
   @override
   Future<Either<Failure, List<RetailerPojo>>> saveAllRetailer(
-      List<RetailerPojo> listOfRetailers) async {
+      List<Retailer> listOfRetailers) async {
     return await repository.saveAllRetailer(listOfRetailers);
   }
 

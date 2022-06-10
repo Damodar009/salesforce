@@ -8,7 +8,7 @@ abstract class UseCaseForHive {
   Either<Failure, List<dynamic>> getAllValuesFromHiveBox(Box box);
   Either<Failure, List<dynamic>> getAllKeysFromTheHiveBox(Box box);
   Either<Failure, List<dynamic>> getValuesByKey(Box box, String key);
-  Either<Failure, String?> getValueByKey(Box box, String key);
+  Either<Failure, dynamic> getValueByKey(Box box, String key);
   Either<Failure, String> saveValuestoHiveBox(Box box, dynamic values);
   Either<Failure, String> saveValueByKey(Box box, String key, dynamic values);
   Either<Failure, String> savePublishNoticeInHive(
@@ -43,6 +43,7 @@ class UseCaseForHiveImpl implements UseCaseForHive {
   Either<Failure, List<dynamic>> getValuesByKey(Box box, String key) {
     try {
       List<dynamic> values = box.get(key);
+      print(values);
 
       return Right(values);
     } catch (e) {
@@ -76,7 +77,7 @@ class UseCaseForHiveImpl implements UseCaseForHive {
   }
 
   @override
-  Either<Failure, String?> getValueByKey(Box box, String key) {
+  Either<Failure, dynamic> getValueByKey(Box box, String key) {
     print("inside hive hello");
     try {
       dynamic values = box.get(key);

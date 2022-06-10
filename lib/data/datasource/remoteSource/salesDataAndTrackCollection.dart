@@ -52,11 +52,11 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
       );
       if (response.data["status"] == true) {
         List<SalesLocationTrack> salesLocationTrack =
-            (response.data["data"] as List).map((salesLoctionTrack) {
-          return SalesLocationTrackModel.fromJson(salesLoctionTrack);
+            (response.data["data"] as List).map((salesLocationTrack) {
+          return SalesLocationTrackModel.fromJson(salesLocationTrack);
         }).toList();
 
-        print('oleoleoleoleoleoeloel');
+
 
         return salesLocationTrack;
       } else {

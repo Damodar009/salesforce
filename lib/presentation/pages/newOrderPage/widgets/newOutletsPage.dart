@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:salesforce/utils/validators.dart';
 import '../../../../data/models/RetailerModel.dart';
 import '../../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../../injectable.dart';
@@ -28,6 +29,7 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
   bool loadingMap = false;
   Position? position;
   List<String> retailerTypes = [];
+  List<String> retailerTypesId = [];
   List<String> regionName = [];
   List<String> regionId = [];
   String selectedValue = "";
@@ -41,7 +43,7 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
   final TextEditingController _contactNumber = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _location = TextEditingController();
-  final TextEditingController _typesOfOutlet = TextEditingController();
+
   void selectValueRadioButton(String selectValue) {
     setState(() {
       selectedValue = selectValue;
@@ -74,11 +76,11 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
 
   getRetailerType() async {
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
-    var sucessOrNot = useCaseForHiveImpl.getValuesByKey(
+    var successOrNot = useCaseForHiveImpl.getValuesByKey(
       box,
       HiveConstants.retailerTypeKey,
     );
-    sucessOrNot.fold(
+    successOrNot.fold(
         (l) => {print("no success")},
         (r) => {
               for (var i = 0; i < r.length; i++)
@@ -147,7 +149,13 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
             textFormField(
                 controller: _contactPerson,
                 validator: (string) {
-                  return validator(string);
+                  bool isValid = Validators.isValidEmail(string!);
+
+                  if (isValid) {
+                    return null;
+                  } else {
+                    return "enter valid email";
+                  }
                 },
                 obsecureText1: () {},
                 hintText: ''),
@@ -161,6 +169,7 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
             ),
 
             textFormField(
+                textInputType: TextInputType.phone,
                 controller: _contactNumber,
                 validator: (string) {
                   return phoneValidator(string);
@@ -277,13 +286,15 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
 
             textFormField(
                 controller: _location,
-                validator: (string) {},
+                validator: (string) {
+                  return validator(string);
+                },
                 obsecureText1: () {},
                 hintText: ' Longitude and latitude (map Location)'),
             const SizedBox(
               height: 12,
             ),
-            title("Types of Outlets"),
+            title("Outlet class"),
 
             const SizedBox(
               height: 7,
@@ -305,7 +316,13 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
             ),
             textFeildWithDropDownFor(
                 item: retailerTypes,
-                validator: (string) {},
+                validator: (string) {
+                  if (typesOfOutLets != "") {
+                    return null;
+                  } else {
+                    return "this cannot be empty";
+                  }
+                },
                 onselect: (string) {
                   setState(() {
                     typesOfOutLets = string;
@@ -324,7 +341,13 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
 
             textFeildWithDropDownFor(
                 item: regionName,
-                validator: (string) {},
+                validator: (string) {
+                  if (region != " ") {
+                    return null;
+                  } else {
+                    return "this cannot be empty";
+                  }
+                },
                 onselect: (string) {
                   setState(() {
                     region = string;
@@ -342,23 +365,21 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
                 });
                 int index = regionName.indexOf(region);
                 String regions = regionId[index];
+                int retailerIndex = retailerTypes.indexOf(typesOfOutLets);
+                String retailerid = retailerTypesId[retailerIndex];
                 RetailerModel retailer = RetailerModel(
-                    name: _outLetName.toString(),
+                    name: _outLetName.text,
                     latitude: position!.latitude,
                     longitude: position!.longitude,
-                    address: _address.toString(),
-                    contactPerson: _contactPerson.toString(),
-                    contactNumber: _contactNumber.toString(),
-                    retailerClass: selectedValue,
-                    retailerType: _typesOfOutlet.toString(),
+                    address: _address.text,
+                    contactPerson: _contactPerson.text,
+                    contactNumber: _contactNumber.text,
+                    retailerClass: selectedValue.split(" ")[0],
+                    retailerType: retailerid,
                     region: regions);
 
                 newOrderCubit.getRetailers(retailer);
                 print(newOrderCubit.state);
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //         content:
-                //         Text('new retailer is created'))) ;
 
                 setState(() {
                   loading = false;

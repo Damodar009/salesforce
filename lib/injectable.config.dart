@@ -83,8 +83,8 @@ Future<_i1.GetIt> $initGetIt(_i1.GetIt get,
   gh.lazySingleton<_i23.UseCaseForHiveImpl>(() => _i23.UseCaseForHiveImpl());
   gh.factory<_i24.UseCaseForRemoteSourceimpl>(
       () => _i24.UseCaseForRemoteSourceimpl(get<_i4.Repository>()));
-  gh.factory<_i25.UseCaseForSalesDataImpl>(() => _i25.UseCaseForSalesDataImpl(
-      salesDataRepository: get<_i4.SaveSalesDataRepository>()));
+  gh.factory<_i25.UseCaseForSalesDataImpl>(
+      () => _i25.UseCaseForSalesDataImpl());
   gh.factory<_i26.UseCaseForSalesDataTrackCollectionImpl>(() =>
       _i26.UseCaseForSalesDataTrackCollectionImpl(
           salesDataCollectionRepository:
