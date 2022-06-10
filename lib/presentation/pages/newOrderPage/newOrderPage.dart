@@ -1091,7 +1091,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             print("the return length ${returns.length}");
 
             returnLength = returns.length;
-            print(returns);
           });
         }),
         const SizedBox(

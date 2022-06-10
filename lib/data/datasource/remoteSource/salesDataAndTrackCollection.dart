@@ -38,7 +38,6 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
 
     var jsonEncodedAnswer = jsonEncode(salesTrackInJson);
     print("this is list of sales data colletion");
-    print(jsonEncodedAnswer);
 
     try {
       Response response = await dio.post(

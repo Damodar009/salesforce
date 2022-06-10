@@ -29,4 +29,7 @@ class HiveConstants {
 
   //salesPersonLOcationTracking
 
+  //notice
+  static const String publishNotice = "publishNotice";
+
 }

@@ -66,7 +66,6 @@ class AttendenceCubit extends Cubit<AttendenceState> {
               (1 - c((longitude - longitude2) * p)) /
               2;
 
-      print(12742 * asin(sqrt(a)));
       if (12742 * asin(sqrt(a)) <= minimunDistance) {
         isIndepot = true;
 

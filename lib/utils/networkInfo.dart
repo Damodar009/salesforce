@@ -8,11 +8,8 @@ class Network {
 
     if (result == true) {
       return true;
-      print('YAY! Free cute dog pics!');
     } else {
       return false;
-      print('No internet :( Reason:');
-      // print(InternetConnectionChecker().lastTryResults);
     }
   }
 }

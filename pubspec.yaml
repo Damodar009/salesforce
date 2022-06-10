@@ -65,6 +65,9 @@ dependencies:
   fluttertoast: ^8.0.9
   dropdown_search: ^4.0.0
   fullscreen: ^1.0.3
+  flutter_launcher_icons: ^0.9.3
+
+
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +78,12 @@ dev_dependencies:
   hive_generator: ^1.1.2
 
   flutter_lints: ^1.0.0
+
+flutter_icons:
+  image_path: "assets/images/logo.jpeg"
+  android: true
+  ios: true  
+
 flutter_native_splash:
   color: "#ffffff"
   backgroundimage: "assets/images/Splash.png"

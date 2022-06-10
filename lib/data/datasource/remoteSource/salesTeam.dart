@@ -25,7 +25,6 @@ class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
 
     var salesPersonInJson = salesPersonModel.toJson();
     var jsonEncodedSalesPerson = jsonEncode(salesPersonInJson);
-    print(jsonEncodedSalesPerson);
 
     try {
       Response response = await dio.post(
@@ -38,14 +37,10 @@ class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
           },
         ),
       );
-      print("xdfgdfgdsgfdsgcgxcb");
       if (response.data["status"] == true) {
-        print("xcgxcb");
-        print(response.data["data"]);
         SalesPerson salesPerson =
             SalesPersonModel.fromJson(response.data["data"]);
         print("this is salesperson data ");
-        print(salesPerson);
 
         return salesPerson;
       } else {

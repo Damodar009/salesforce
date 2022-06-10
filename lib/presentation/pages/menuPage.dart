@@ -190,17 +190,17 @@ class _MenuScreenState extends State<MenuScreen> {
                           Icons.sticky_note_2_outlined, 'Privacy Policy'),
                       InkWell(
                         onTap: () {
-                          BlocProvider.of<PublishNotificationBloc>(context)
-                              .add(GetAllPublishNotificationEvent());
-                          if (state is PublishNotificationLoadedState) {
+                          // BlocProvider.of<PublishNotificationBloc>(context)
+                          //     .add(GetAllPublishNotificationEvent());
+                          // if (state is PublishNotificationLoadedState) {
                             print(
-                                "psuh me to this page mahh NoticeBoardTableScreen");
+                                "psuh me to this page NoticeBoardTableScreen");
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
                                         NoticeBoardTableScreen()));
-                          }
+                          // }
                         },
                         child: ProfileOptions(mediaQueryWidth, context,
                             Icons.notifications, 'Notice Board'),

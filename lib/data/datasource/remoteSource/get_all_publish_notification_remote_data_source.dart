@@ -23,19 +23,13 @@ class GetAllPublishNotificationRemoteDataSourceImpl
 
     print("GetAllPublishNotificationRemoteDataSourceImpl");
 
-    print(ApiUrl.getAllPublishNotification);
-
     String? accessToken;
     Box box = await Hive.openBox(HiveConstants.userdata);
 
     var accessTokenSuccessOrFailed =
         useCaseForHiveImpl.getValueByKey(box, "access_token");
     accessTokenSuccessOrFailed.fold((l) => {print("failed")},
-        (r) => {accessToken = r!, print(r.toString())});
-
-    print(accessToken);
-
-    print("why not foing man");
+        (r) => {accessToken = r!});
 
     try {
       Response response = await dio.get(
@@ -44,23 +38,14 @@ class GetAllPublishNotificationRemoteDataSourceImpl
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
-      print("hhhhhhhhhhh");
-
-      print(response.statusCode);
-      print(response.data);
 
       if (response.data["status"] == true) {
-        print("accessTokenSuccessOrFailed");
-        print("hhhhhhhhhhh");
         List<PublishNotification> notificationResponse =
             (response.data["data"] as List)
                 .map((e) => PublishNotificationModel.fromJson(e))
                 .toList();
 
         print("helloooooooooo");
-
-        print(notificationResponse);
-        print("object00000");
 
         return notificationResponse;
       } else {

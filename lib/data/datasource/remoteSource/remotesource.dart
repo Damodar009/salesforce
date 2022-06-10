@@ -115,11 +115,11 @@ class RemoteSourceImplementation implements RemoteSource {
 
     var access_Token = useCaseForHiveImpl.getValueByKey(box, "access_token");
     access_Token.fold((l) => {print("failed")},
-        (r) => {accessToken = r!, print(r.toString())});
+        (r) => {accessToken = r!});
 
     var successOrFailed = useCaseForHiveImpl.getValueByKey(box, "userid");
     successOrFailed.fold(
-        (l) => {print("failed")}, (r) => {userid = r!, print(r.toString())});
+        (l) => {print("failed")}, (r) => {userid = r!});
 
     try {
       Response response = await dio.get(
@@ -130,17 +130,14 @@ class RemoteSourceImplementation implements RemoteSource {
       );
 
       print("Response code of getUserData ${response.statusCode}");
-      print(response.data);
 
       if (response.data["status"] == true) {
-        print(response.data);
         UserDetailsDataModel userDetailsData =
             UserDetailsDataModel.fromJson(response.data["data"]);
 
         // hive.savetoken(userDetailsData: userDetailsData);
 
         // hive.showtoken();
-        print(userDetailsData);
         return userDetailsData;
       } else {
         throw ServerException();
@@ -171,13 +168,7 @@ class RemoteSourceImplementation implements RemoteSource {
     var successOrFailed = useCaseForHiveImpl.getValueByKey(box, "userid");
     successOrFailed.fold(
         (l) => {print("failed")}, (r) => {userid = r!, print(r.toString())});
-    print("this is password");
-
-    print(oldpassword);
-    print(newPassword);
-    print(
-      ApiUrl.changePassword,
-    );
+    
     try {
       Response response = await dio.post(
         ApiUrl.changePassword,
@@ -190,11 +181,7 @@ class RemoteSourceImplementation implements RemoteSource {
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
-      print("this is change passowrd");
-      print(response.statusCode);
       if (response.data["status"] == true) {
-        print(response.data);
-        print("print(response.statusCode);");
         return Future.value('Success');
       } else {
         throw ServerException();
@@ -289,7 +276,6 @@ class RemoteSourceImplementation implements RemoteSource {
       print("inside depot product retailer");
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
-      print(userInfo!.access_token);
       Response response = await dio.get(
         ApiUrl.depotProductAndRetailor,
         options: Options(
@@ -411,28 +397,17 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel) async {
-    print(saveUserDetailsDataModel);
 
     print("saveUserDetailsRemoteDataSource");
 
     String? accessToken;
-    print("okay");
 
     UserDataModel? userInfo =
         await signInLocalDataSource.getUserDataFromLocal();
-    print("okay");
 
     print(userInfo!.access_token);
 
     accessToken = userInfo.access_token;
-
-    print("saveUserDetailsRemoteDataSource access token is $accessToken ");
-
-    print(userInfo);
-
-    print("this is access token");
-
-    print(accessToken);
 
     SaveUserDetailsDataModel saveUserDetailsData = SaveUserDetailsDataModel(
       id: saveUserDetailsDataModel.id,
@@ -455,8 +430,6 @@ class RemoteSourceImplementation implements RemoteSource {
     var saveUserDetailsDataModelInJson = saveUserDetailsData.toJson();
     var jsonEncodedSalesPerson = jsonEncode(saveUserDetailsDataModelInJson);
 
-    print(jsonEncodedSalesPerson);
-
     try {
       Response response = await dio.post(
         ApiUrl.saveUser,
@@ -469,16 +442,11 @@ class RemoteSourceImplementation implements RemoteSource {
 
       print('this is edit repo');
 
-      print(response.statusCode);
-
       if (response.statusCode == 200) {
-        print(response.data);
 
         print('above is response data');
         SaveUserDetailsDataModel salesPerson =
             SaveUserDetailsDataModel.fromJson(response.data["data"]);
-
-        print(salesPerson);
 
         return salesPerson;
       } else {
