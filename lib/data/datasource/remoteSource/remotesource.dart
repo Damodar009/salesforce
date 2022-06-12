@@ -190,7 +190,7 @@ class RemoteSourceImplementation implements RemoteSource {
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer 760a7676-c27b-4d78-83a6-d6322f27e042'
+            'Authorization': 'Bearer e40c9ef6-a065-4b5d-be05-4d4d13d3613e'
           },
         ),
       );
@@ -292,7 +292,7 @@ class RemoteSourceImplementation implements RemoteSource {
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer e51d0831-3b0f-40d9-a8e5-8b88b7234ba9',
+            'Authorization': 'Bearer e40c9ef6-a065-4b5d-be05-4d4d13d3613e',
           },
         ),
       );

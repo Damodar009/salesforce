@@ -45,7 +45,7 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer 823402f6-96dd-4b0d-a0f8-6d0af43a876c'
+            'Authorization': 'Bearer e40c9ef6-a065-4b5d-be05-4d4d13d3613e'
           },
         ),
       );

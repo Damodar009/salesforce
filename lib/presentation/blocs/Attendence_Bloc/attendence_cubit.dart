@@ -299,6 +299,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
             user: userId);
 
         bool checkedIn = await saveDataToApiOrHive(checkInAttendance, true);
+        print("this is the value of checked in $checkedIn");
         if (checkedIn) {
           emit(CheckedInState());
           failed = !checkedIn;
