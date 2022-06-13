@@ -6,7 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
+import 'package:salesforce/presentation/blocs/publish_notification/publish_notification_bloc.dart';
 import 'package:salesforce/presentation/pages/todaysTarget/todaysTarget.dart';
+import 'package:salesforce/presentation/widgets/notice_list_view_widget.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/initialData.dart';
 import '../../../injectable.dart';
@@ -117,262 +119,271 @@ class _HomeScreenState extends State<HomeScreen> {
     double mediaQueryWidth = MediaQuery.of(context).size.width;
     var attendenceCubit = BlocProvider.of<AttendenceCubit>(context);
 
-    return SingleChildScrollView(
-      //todo
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height + 395,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
+    return IndexedStack(
+      children: [
+        Stack(
           children: [
-            Positioned(
-                child: SvgPicture.asset(
-              "assets/images/hometopleft.svg",
-              color: const Color(0xffDAA53B),
-            )),
-            Positioned(
-                right: 0,
-                child: SvgPicture.asset(
-                  "assets/images/hometopright.svg",
-                  color: const Color(0xffDAA53B),
-                )),
-            Positioned(
-                bottom: -50,
-                child: SvgPicture.asset(
-                  "assets/images/homebottomleft.svg",
-                  color: const Color(0xffDAA53B),
-                )),
-            Positioned(
-                bottom: -50,
-                right: 0,
-                child: SvgPicture.asset(
-                  "assets/images/homebottomright.svg",
-                  color: const Color(0xffDAA53B),
-                )),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 60,
-                  ),
-                  Text("Hello $userName!",
-                      style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryColor)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  BlocBuilder<AttendenceCubit, AttendenceState>(
-                      builder: (context, state) {
-                    if (state is CheckedInState) {
-                      return const Text("Please checkout when completed",
-                          style: TextStyle(
-                            fontSize: 18,
-                          ));
-                    } else {
-                      return const Text(
-                          "Please check in to enter your attendance \n for today",
-                          style: TextStyle(
-                            fontSize: 18,
-                          ));
-                    }
-                  }),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Row(
-                    children: [
-                      SvgPicture.asset("assets/images/homeWalked.svg"),
-                      const SizedBox(
-                        width: 40,
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            distanceTraveled,
-                            style: const TextStyle(
-                                fontSize: 35,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryColor),
-                          ),
-                          const Text("Walked Today \nField name",
-                              style: TextStyle(
-                                  fontSize: 18, color: AppColors.primaryColor))
-                        ],
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(13.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: const Color(0xffB5E8FC),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                const Text("ATTENDANCE"),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(todayDateTime.toString(),
-                                    style: const TextStyle(fontSize: 12))
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                BlocBuilder<AttendenceCubit, AttendenceState>(
-                                    builder: (context, state) {
-                                  if (state is CheckedInState) {
-                                    return attendanceRow("Check Out", () async {
-                                      setState(() {
-                                        loading = true;
-                                      });
-                                      bool check =
-                                          await attendenceCubit.checkOut();
-                                      if (!check) {
-                                        Navigator.of(context)
-                                            .pushNamed(Routes.attendanceRoute);
-                                      } else {
-                                        // ScaffoldMessenger.of(context)
-                                        //     .showSnackBar(const SnackBar(
-                                        //         content:
-                                        //             Text('check out failed ')));
-                                      }
-
-                                      setState(() {
-                                        loading = false;
-                                      });
-                                    }, loading);
-                                  } else {
-                                    return attendanceRow("Check In", () async {
-                                      setState(() {
-                                        loading = true;
-                                      });
-                                      // check internet
-                                      bool result =
-                                          await InternetConnectionChecker()
-                                              .hasConnection;
-
-                                      if (result) {
-                                        bool check =
-                                            await attendenceCubit.checkIn();
-                                        if (check) {
-                                          _initialData.getAndSaveInitalData();
-                                          Navigator.of(context).pushNamed(
-                                              Routes.attendanceRoute);
-                                        } else {}
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                content: Text(
-                                                    'Please connect to internet')));
-                                      }
-
-                                      setState(() {
-                                        loading = false;
-                                      });
-                                    }, loading);
-                                  }
-                                }),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Text("TOTAL ATTENDANCE"),
-                  const DoughnutChart(),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  const Text("Today Target"),
-                  Expanded(
-                      child: GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    primary: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2),
-                    itemBuilder: (_, index) => InkWell(
-                        onTap: () {
-                          switch (index) {
-                            case 0:
-                              //todo get all  retailer  data from hive
-                              Navigator.of(context)
-                                  .pushNamed(Routes.totalOutletsRoute);
-                              break;
-                            case 1:
-                              //todo get new retailer  data from hive
-                              Navigator.of(context)
-                                  .pushNamed(Routes.newOutletRoute);
-                              break;
-                            case 2:
-                              // todo get data from hive for today visited outlet
-                              Navigator.of(context)
-                                  .pushNamed(Routes.totalOutLetsVisitedRoute);
-                              break;
-                            case 3:
-                              //todo get data from hive for total sales report
-                              Navigator.of(context)
-                                  .pushNamed(Routes.totalSalesRoute);
-                              break;
-                            default:
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: card(icons[index], title[index],
-                              todayTargets[index] ?? 0, context),
+            SingleChildScrollView(
+              //todo
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height + 395,
+                width: MediaQuery.of(context).size.width,
+                child: Stack(
+                  children: [
+                    Positioned(
+                        child: SvgPicture.asset(
+                      "assets/images/hometopleft.svg",
+                      color: const Color(0xffDAA53B),
+                    )),
+                    Positioned(
+                        right: 0,
+                        child: SvgPicture.asset(
+                          "assets/images/hometopright.svg",
+                          color: const Color(0xffDAA53B),
                         )),
-                    itemCount: 4,
-                  )),
-                ],
+                    Positioned(
+                        bottom: -50,
+                        child: SvgPicture.asset(
+                          "assets/images/homebottomleft.svg",
+                          color: const Color(0xffDAA53B),
+                        )),
+                    Positioned(
+                        bottom: -50,
+                        right: 0,
+                        child: SvgPicture.asset(
+                          "assets/images/homebottomright.svg",
+                          color: const Color(0xffDAA53B),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 60,
+                          ),
+                          Text("Hello $userName!",
+                              style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryColor)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          BlocBuilder<AttendenceCubit, AttendenceState>(
+                              builder: (context, state) {
+                            if (state is CheckedInState) {
+                              return const Text(
+                                  "Please checkout when completed",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ));
+                            } else {
+                              return const Text(
+                                  "Please check in to enter your attendance \n for today",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ));
+                            }
+                          }),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          Row(
+                            children: [
+                              SvgPicture.asset("assets/images/homeWalked.svg"),
+                              const SizedBox(
+                                width: 40,
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    distanceTraveled,
+                                    style: const TextStyle(
+                                        fontSize: 35,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primaryColor),
+                                  ),
+                                  const Text("Walked Today \nField name",
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: AppColors.primaryColor))
+                                ],
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(13.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: const Color(0xffB5E8FC),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        const Text("ATTENDANCE"),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(todayDateTime.toString(),
+                                            style:
+                                                const TextStyle(fontSize: 12))
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        BlocBuilder<AttendenceCubit,
+                                                AttendenceState>(
+                                            builder: (context, state) {
+                                          if (state is CheckedInState) {
+                                            return attendanceRow("Check Out",
+                                                () async {
+                                              setState(() {
+                                                loading = true;
+                                              });
+                                              bool check = await attendenceCubit
+                                                  .checkOut();
+                                              if (!check) {
+                                                Navigator.of(context).pushNamed(
+                                                    Routes.attendanceRoute);
+                                              } else {
+                                                // ScaffoldMessenger.of(context)
+                                                //     .showSnackBar(const SnackBar(
+                                                //         content:
+                                                //             Text('check out failed ')));
+                                              }
+
+                                              setState(() {
+                                                loading = false;
+                                              });
+                                            }, loading);
+                                          } else {
+                                            return attendanceRow("Check In",
+                                                () async {
+                                              setState(() {
+                                                loading = true;
+                                              });
+                                              // check internet
+                                              bool result =
+                                                  await InternetConnectionChecker()
+                                                      .hasConnection;
+
+                                              if (result) {
+                                                bool check =
+                                                    await attendenceCubit
+                                                        .checkIn();
+                                                if (!check) {
+                                                  Navigator.of(context)
+                                                      .pushNamed(Routes
+                                                          .attendanceRoute);
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(const SnackBar(
+                                                          content: Text(
+                                                              'Please go to depot first')));
+                                                }
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(const SnackBar(
+                                                        content: Text(
+                                                            'Please connect to internet')));
+                                              }
+
+                                              setState(() {
+                                                loading = false;
+                                              });
+                                            }, loading);
+                                          }
+                                        }),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text("TOTAL ATTENDANCE"),
+                          const DoughnutChart(),
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          const Text("Today Target"),
+                          Expanded(
+                              child: GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            primary: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemBuilder: (_, index) => InkWell(
+                                onTap: () {
+                                  switch (index) {
+                                    case 0:
+                                      //todo get all  retailer  data from hive
+                                      Navigator.of(context)
+                                          .pushNamed(Routes.totalOutletsRoute);
+                                      break;
+                                    case 1:
+                                      //todo get new retailer  data from hive
+                                      Navigator.of(context)
+                                          .pushNamed(Routes.newOutletRoute);
+                                      break;
+                                    case 2:
+                                      // todo get data from hive for today visited outlet
+                                      Navigator.of(context).pushNamed(
+                                          Routes.totalOutLetsVisitedRoute);
+                                      break;
+                                    case 3:
+                                      //todo get data from hive for total sales report
+                                      Navigator.of(context)
+                                          .pushNamed(Routes.totalSalesRoute);
+                                      break;
+                                    default:
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: card(icons[index], title[index],
+                                      todayTargets[index] ?? 0, context),
+                                )),
+                            itemCount: 4,
+                          )),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            )
+            ),
+            BlocBuilder<PublishNotificationBloc, PublishNotificationState>(
+              builder: (context, state) {
+                if (state is PublishNotificationLoadedState) {
+                  print("shot notice mannnnnnn");
+                  return Center(
+                    child: NoticeListViewWidget(
+                        data: state.publishNotificationState,
+                        widgetIndex: _widgetIndex),
+                  );
+                } else {
+                  print("you have an error so no notice");
+                  return Container();
+                }
+              },
+            ),
           ],
         ),
-      ),
+      ],
     );
   }
 }
-
-// IndexedStack(
-// // index: _widgetIndex,
-// children: [
-// Stack(
-// children: [
-//
-// BlocBuilder<PublishNotificationBloc, PublishNotificationState>(
-// builder: (context, state) {
-// if (state is PublishNotificationLoadedState) {
-// print("shot notice mannnnnnn");
-// return Center(
-// child: NoticeListViewWidget(
-// data: state.publishNotificationState,
-// widgetIndex: _widgetIndex),
-// );
-// } else {
-// print("you have an error so no notice");
-// return Container();
-// }
-// },
-// ),
-// ],
-// ),
-// ],
-//
-// );
