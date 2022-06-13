@@ -177,8 +177,15 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
     //todo implement authorization token
 
-    Box box = await Hive.openBox(HiveConstants.userdata);
     final signInLocalDataSource = getIt<SignInLocalDataSource>();
+
+    String? accessToken;
+    Box box = await Hive.openBox(HiveConstants.userdata);
+
+    var accessTokenSuccessOrFailed =
+        useCaseForHiveImpl.getValueByKey(box, "access_token");
+    accessTokenSuccessOrFailed.fold(
+        (l) => {print("failed")}, (r) => {accessToken = r!});
 
     //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
 
@@ -190,7 +197,7 @@ class RemoteSourceImplementation implements RemoteSource {
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer e40c9ef6-a065-4b5d-be05-4d4d13d3613e'
+            'Authorization': 'Bearer '+ accessToken!
           },
         ),
       );
@@ -292,7 +299,7 @@ class RemoteSourceImplementation implements RemoteSource {
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer e40c9ef6-a065-4b5d-be05-4d4d13d3613e',
+            'Authorization': 'Bearer ' + accessToken!,
           },
         ),
       );

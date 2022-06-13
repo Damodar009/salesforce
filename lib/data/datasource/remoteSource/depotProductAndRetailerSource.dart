@@ -8,6 +8,7 @@ import 'package:salesforce/domain/entities/products.dart';
 import 'package:salesforce/domain/entities/region.dart';
 import 'package:salesforce/domain/entities/retailerDropDown.dart';
 import 'package:salesforce/domain/entities/retailerType.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
 import '../../../error/exception.dart';
@@ -26,6 +27,7 @@ abstract class GetDepotProductAndRetailer {
 
 class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
   Dio dio = Dio();
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
 
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
@@ -36,6 +38,14 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
 
     //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
 
+    String? accessToken;
+    // Box box = await Hive.openBox(HiveConstants.userdata);
+
+    var accessTokenSuccessOrFailed =
+        useCaseForHiveImpl.getValueByKey(box, "access_token");
+    accessTokenSuccessOrFailed.fold(
+        (l) => {print("failed")}, (r) => {accessToken = r!});
+
     try {
       print("inside depot product ");
       UserDataModel? userInfo =
@@ -44,9 +54,7 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
       Response response = await dio.get(
         ApiUrl.depotProductAndRetailor,
         options: Options(
-          headers: <String, String>{
-            'Authorization': 'Bearer e40c9ef6-a065-4b5d-be05-4d4d13d3613e'
-          },
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
 

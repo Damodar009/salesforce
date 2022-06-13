@@ -56,7 +56,8 @@ Future<void> main() async {
     ..registerAdapter(RetailerDropDownAdapter())
     ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(SalesAdapter())
-    ..registerAdapter(MerchandiseDropDownAdapter());
+    ..registerAdapter(MerchandiseDropDownAdapter())
+     ..registerAdapter(PublishNotificationAdapter());
 
   final StreamSubscription<InternetConnectionStatus> listener =
       InternetConnectionChecker().onStatusChange.listen(

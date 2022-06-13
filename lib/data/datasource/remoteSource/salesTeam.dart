@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/salesPerson.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
+import 'package:salesforce/injectable.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 import '../../../error/exception.dart';
 import '../../../utils/apiUrl.dart';
 import '../../models/salesPersonModel.dart';
@@ -12,6 +16,7 @@ abstract class SalesTeamRemoteSource {
 
 @Injectable(as: SalesTeamRemoteSource)
 class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   Dio dio = Dio();
   @override
   Future<SalesPerson> saveSalesPerson(SalesPerson salesPerson) async {
@@ -26,6 +31,15 @@ class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
     var salesPersonInJson = salesPersonModel.toJson();
     var jsonEncodedSalesPerson = jsonEncode(salesPersonInJson);
 
+     String? accessToken;
+
+      Box box = await Hive.openBox(HiveConstants.userdata);
+
+      var accessTokenSuccessOrFailed =
+          useCaseForHiveImpl.getValueByKey(box, "access_token");
+      accessTokenSuccessOrFailed.fold((l) => {print("failed")},
+          (r) => {accessToken = r!, print(r.toString())});
+
     try {
       Response response = await dio.post(
         ApiUrl.saveUser,
@@ -33,7 +47,7 @@ class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
+            'Authorization': 'Bearer '+ accessToken!
           },
         ),
       );
