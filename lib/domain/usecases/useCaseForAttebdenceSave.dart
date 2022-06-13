@@ -7,7 +7,7 @@ import '../../injectable.dart';
 import '../repositories/repository.dart';
 
 abstract class UseCaseForAttendence {
-  Future<Either<Failure, Attendence>> attendenceSave(Attendence attendence);
+  Future<Either<Failure, Attendence?>> attendenceSave(Attendence attendence);
 }
 
 @injectable
@@ -16,8 +16,9 @@ class UseCaseForAttendenceImpl implements UseCaseForAttendence {
   UseCaseForAttendenceImpl({required this.attendenceRepository});
 
   @override
-  Future<Either<Failure, Attendence>> attendenceSave(
+  Future<Either<Failure, Attendence?>> attendenceSave(
       Attendence attendence) async {
+    print("use case for attendence repository");
     return await attendenceRepository.saveAttendence(attendence);
   }
 }

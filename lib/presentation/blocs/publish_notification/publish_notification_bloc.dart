@@ -27,7 +27,6 @@ class PublishNotificationBloc
 
         final iisSuccessful =
             await useCaseForPublishNotificationImpl.getAllPublishNotification();
-
         iisSuccessful.fold((l) {
           if (l is ServerFailure) {
             emit(PublishNotificationFailedState());

@@ -15,7 +15,7 @@ abstract class UseCaseForSalesData {
 @injectable
 class UseCaseForSalesDataImpl implements UseCaseForSalesData {
   var salesDataRepository = getIt<SaveSalesDataRepository>();
-  UseCaseForSalesDataImpl();
+  //UseCaseForSalesDataImpl();
 
   @override
   Future<Either<Failure, String?>> saveSalesData(

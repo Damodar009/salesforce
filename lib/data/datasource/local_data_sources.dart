@@ -25,10 +25,6 @@ abstract class SignInLocalDataSource {
 
 @Injectable(as: SignInLocalDataSource)
 class SignInLocalDataSourceImpl extends SignInLocalDataSource {
-  // final SharedPreferences preferences;
-
-  // SignInLocalDataSourceImpl({required this.preferences});
-
   final prefs = getIt<SharedPreferences>();
 
   @override
@@ -37,37 +33,31 @@ class SignInLocalDataSourceImpl extends SignInLocalDataSource {
     if (userInfo != null) {
       UserDataModel userInfoDecoded =
           UserDataModel.fromJson(jsonDecode(userInfo) as Map<String, dynamic>);
-
-      print(userInfoDecoded.access_token);
-
       return userInfoDecoded;
     }
-
     return null;
   }
 
   @override
   Future<void> saveUserDataToLocal(UserDataModel? user) async {
-    // SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    print("helo helo helo");
     try {
-      print("saveUserDataToLocal");
       if (user != null) {
-        print("user data is not null");
         await prefs.setString(
             HiveConstants.userdata, jsonEncode(user.toJson()));
 
-        final Map<String, dynamic>? keys =
-            jsonDecode(prefs.getString(HiveConstants.userdata)!)
-                as Map<String, dynamic>;
-
-        print("The below is the keys heppeno");
-
-        print(keys!["access_token"]);
+        ;
       }
     } catch (e) {
       throw CacheException();
     }
+  }
+
+  setLocalDataChecker(bool isThereLocalData) {
+    prefs.setBool("isThereLocalData", isThereLocalData);
+  }
+
+  bool? getLocalDataChecker() {
+    bool? isThereLocalData = prefs.getBool("isThereLocalData");
+    return isThereLocalData;
   }
 }

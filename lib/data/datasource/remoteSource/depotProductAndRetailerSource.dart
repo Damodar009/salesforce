@@ -37,7 +37,7 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
     //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
 
     try {
-      print("inside depot product retailer");
+      print("inside depot product ");
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
       print(userInfo!.access_token);

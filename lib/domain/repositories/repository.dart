@@ -30,7 +30,7 @@ abstract class Repository {
 }
 
 abstract class AttendenceRepository {
-  Future<Either<Failure, Attendence>> saveAttendence(Attendence attendence);
+  Future<Either<Failure, Attendence?>> saveAttendence(Attendence attendence);
 }
 
 abstract class SalesDataTrackCollectionRepository {

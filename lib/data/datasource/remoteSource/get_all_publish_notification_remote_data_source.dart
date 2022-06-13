@@ -38,7 +38,6 @@ class GetAllPublishNotificationRemoteDataSourceImpl
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
-
       if (response.data["status"] == true) {
         List<PublishNotification> notificationResponse =
             (response.data["data"] as List)

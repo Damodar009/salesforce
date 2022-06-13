@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/Userdata.dart';
 import 'package:salesforce/domain/entities/publish_notification.dart';
@@ -29,6 +31,7 @@ import 'domain/entities/retailerType.dart';
 import 'domain/entities/returns.dart';
 import 'domain/entities/sales.dart';
 import 'domain/entities/saleslocationTrack.dart';
+import 'domain/usecases/useCaseTosendAllLocalData.dart';
 import 'injectable.dart';
 import 'package:path_provider/path_provider.dart' as pathprovider;
 
@@ -38,9 +41,7 @@ Future<void> main() async {
   final directory = await pathprovider.getApplicationDocumentsDirectory();
   // Hive.initFlutter());
   Hive.init(directory.path);
-
   Hive
-    // ..initFlutter()
     ..init(directory.path)
     ..registerAdapter(AttendenceAdapter())
     ..registerAdapter(DepotAdapter())
@@ -55,11 +56,35 @@ Future<void> main() async {
     ..registerAdapter(RetailerDropDownAdapter())
     ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(SalesAdapter())
-    ..registerAdapter(MerchandiseDropDownAdapter())
-    ..registerAdapter(PublishNotificationAdapter());
-  Future.delayed(const Duration(seconds: 2), (() {
-    runApp(const MyApp());
-  }));
+    ..registerAdapter(MerchandiseDropDownAdapter());
+
+  final StreamSubscription<InternetConnectionStatus> listener =
+      InternetConnectionChecker().onStatusChange.listen(
+    (InternetConnectionStatus status) {
+      switch (status) {
+        case InternetConnectionStatus.connected:
+          // ignore: avoid_print
+          print("///////////////////////////");
+          var localDataSend = getIt<AllLocalDataToApi>();
+          var checklocalDataSend = getIt<SignInLocalDataSourceImpl>();
+          bool? checkData = checklocalDataSend.getLocalDataChecker();
+          if (checkData != null) {
+            if (checkData == true) {
+              localDataSend.getAllDatFromApiAndSend();
+            }
+          }
+          print('Data connection is available.');
+          break;
+        case InternetConnectionStatus.disconnected:
+          // ignore: avoid_print
+          print('You are disconnected from the internet.');
+          print("*******************************");
+          break;
+      }
+    },
+  );
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {

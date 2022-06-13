@@ -36,8 +36,6 @@ class _MyBackgroundState extends State<MyBackground> {
                     icon: '@mipmap/ic_launcher',
                   );
                   BackgroundLocation().getCurrentLocation().then((location) {
-                    print('This is not background Location ' +
-                        location.toMap().toString());
                     setState(() {
                       latitude = location.latitude.toString();
                       longitude = location.longitude.toString();
@@ -46,21 +44,12 @@ class _MyBackgroundState extends State<MyBackground> {
                   await BackgroundLocation.setAndroidConfiguration(1000);
                   await BackgroundLocation.startLocationService(
                       distanceFilter: 0.1);
-                  print("distance filter 2 ");
 
                   BackgroundLocation.getLocationUpdates((location) {
-                    print(location);
-                    print("this is working");
                     setState(() {
-                      print("this is running succesfully ");
                       latitude = location.latitude.toString();
                       longitude = location.longitude.toString();
                     });
-                    print('''\n
-                        Latitude:  $latitude
-                        Longitude: $longitude
-
-                      ''');
                   });
                 },
                 child: Text('Start Location Service')),
@@ -83,7 +72,7 @@ class _MyBackgroundState extends State<MyBackground> {
   Widget locationData(String data) {
     return Text(
       data,
-      style: TextStyle(
+      style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),
@@ -92,9 +81,7 @@ class _MyBackgroundState extends State<MyBackground> {
   }
 
   void getCurrentLocation() {
-    BackgroundLocation().getCurrentLocation().then((location) {
-      print('This is current Location ' + location.toMap().toString());
-    });
+    BackgroundLocation().getCurrentLocation().then((location) {});
   }
 
   @override

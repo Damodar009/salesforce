@@ -111,10 +111,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         (r) => {
               for (var i = 0; i < r.length; i++)
                 {
+                  print("this is the list of retailer drop down"),
                   print(r[i].id),
                   print(r[i].name),
                   retailerList.add(r[i].name),
                   retailerIdList.add(r[i].id),
+                  print(retailerList.length),
+                  print(retailerIdList.length)
                 },
             });
   }
@@ -151,6 +154,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     sucessOrNot.fold(
         (l) => {print("no success")},
         (r) => {
+              print("getting products from hive is spasseds"),
               products = r,
               for (var i = 0; i < products.length; i++)
                 {
@@ -909,54 +913,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 });
                               }),
                         ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-
-                    //todo true and false
-                    Row(
-                      children: [
-                        textButton("True", boolbuttonSize!, false, () {
-                          setState(() {
-                            if (checkIndex(availability, i)) {
-                              availability[i].setavailability(true);
-                            } else {
-                              OrderAvailability availabilitsy =
-                                  OrderAvailability();
-                              availabilitsy.availability = true;
-                              availability.add(availabilitsy);
-                            }
-                          });
-                        },
-                            color: checkIndex(availability, i) &&
-                                    availability[i].getavailability() != null
-                                ? availability[i].getavailability()
-                                    ? AppColors.buttonColor
-                                    : null
-                                : null),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        textButton("False", boolbuttonSize!, false, () {
-                          setState(() {
-                            if (checkIndex(availability, i)) {
-                              availability[i].setavailability(false);
-                            } else {
-                              OrderAvailability availabilitsy =
-                                  OrderAvailability();
-                              availabilitsy.availability = false;
-                              availability.add(availabilitsy);
-                            }
-                          });
-                        },
-                            color: checkIndex(availability, i) &&
-                                    availability[i].getavailability() != null
-                                ? availability[i].getavailability()
-                                    ? null
-                                    : AppColors.buttonColor
-                                : null),
                         InkWell(
                             onTap: () {
                               if (availability.isNotEmpty) {

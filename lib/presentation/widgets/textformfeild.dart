@@ -261,7 +261,7 @@ Widget textFeildWithDropDownFor(
     decoration: InputDecoration(
         suffixIcon: PopupMenuButton<String>(
           icon: Container(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: Colors.amber,
@@ -273,8 +273,6 @@ Widget textFeildWithDropDownFor(
             ),
           ),
           onSelected: (string) {
-            print("this is clicked ");
-
             onselect(string);
           },
           itemBuilder: (BuildContext context) {

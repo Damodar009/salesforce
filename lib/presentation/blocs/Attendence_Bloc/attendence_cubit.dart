@@ -8,6 +8,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/domain/entities/depotProductRetailer.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/utils/macAddress.dart';
+import '../../../data/datasource/local_data_sources.dart';
 import '../../../domain/entities/attendence.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
@@ -41,9 +42,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
     DateTime moonLanding;
 
     Box box = await Hive.openBox(HiveConstants.attendence);
-    print("the keys of attendance box are ");
-    print(box.keys.toList());
-    var failureOrSuccess = useCaseForHiveImpl.getValueByKey(
+    var failureOrSuccess = await useCaseForHiveImpl.getValueByKey(
         box, HiveConstants.attendenceCheckinKey);
     failureOrSuccess.fold(
         (l) => {
@@ -51,31 +50,33 @@ class AttendenceCubit extends Cubit<AttendenceState> {
             },
         (r) => {
               print(r),
-              moonLanding = DateTime.parse(r.checkin!),
-              if (now.day == moonLanding.day)
-                {isCheckIn = true, print("this is the check in greater ")}
-              // r.map((e) => {
-              //       moonLanding = DateTime.parse(e.checkin!),
-              //       if (now.day == moonLanding.day)
-              //         {
-              //           isCheckIn = true,
-              //         }
-              //     }),
+              if (r != null)
+                {
+                  moonLanding = DateTime.parse(r.checkin!),
+                  if (now.day == moonLanding.day)
+                    {isCheckIn = true, print("this is the check in greater ")}
+                }
             });
     if (isCheckIn == true) {
-      var failureOrSucess = useCaseForHiveImpl.getValuesByKey(
-          box, HiveConstants.attendenceCheckinKey);
+      var failureOrSucess = useCaseForHiveImpl.getValueByKey(
+          box, HiveConstants.attendenceCheckOutKey);
       failureOrSucess.fold(
           (l) => {print("data from checkout hive box is failed")},
           (r) => {
                 print("data from hive attendance is passed"),
-                r.map((e) => {
-                      moonLanding = DateTime.parse(e.checkout!),
-                      if (now.day == moonLanding.day)
-                        {
-                          isCheckIn = false,
-                        }
-                    }),
+                print(r),
+                if (r != null)
+                  {
+                    print("the checkout data is here"),
+                    print(r),
+                    moonLanding = DateTime.parse(r.checkout!),
+                    if (now.day == moonLanding.day)
+                      {
+                        isCheckIn = false,
+                      }
+                  }
+                else
+                  {print("the attendence data is not passed")},
               });
     }
     if (isCheckIn == true) {
@@ -102,6 +103,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   /// check current location with depot list location
   Future<bool> checkCurrentLocationWithDepots(
       List<dynamic> depots, double latitude, double longitude) async {
+    print("we are inside depot ");
     bool isIndepot = false;
     int minimumDistance = 20; // in meters
     var p = 0.017453292519943295;
@@ -135,6 +137,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
   /// get the depot list
   Future<List<dynamic>?> getDepotList() async {
+    print("get depot list");
     List<dynamic>? depots = await getDepotFromHive();
     if (depots != null) {
       return depots;
@@ -157,6 +160,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   Future<bool> saveDataToApiOrHive(
       Attendence attendance, bool isCheckIn) async {
     bool isSaved = false;
+    print("saving data to the hive");
     Box box = await Hive.openBox(HiveConstants.attendence);
 
     if (isCheckIn) {
@@ -193,27 +197,22 @@ class AttendenceCubit extends Cubit<AttendenceState> {
                           },
                       (r) => {
                             isSaved = true,
-                            // print("check out data is  passed"),
-                            // emit(CheckedOutState()),
                           })
                 });
       } else {
-        print("there is no internet ");
-        var successOrFailedApi = useCaseForHiveImpl.saveValueByKey(
-            box, HiveConstants.attendenceCheckinKey, attendance);
-        successOrFailedApi.fold(
-            (l) => {
-                  // print("saving check out attendance data to hive is failed"),
-                },
-            (r) => {
-                  // print("saving check out attendance data to hive is success"),
-                  isSaved = true,
-                  //  emit(CheckedOutState())
-                });
+        var checklocalDataSend = getIt<SignInLocalDataSourceImpl>();
+        checklocalDataSend.setLocalDataChecker(true);
       }
+      var successOrFailedApi = useCaseForHiveImpl.saveValueByKey(
+          box, HiveConstants.attendenceCheckOutKey, attendance);
+      successOrFailedApi.fold(
+          (l) => {},
+          (r) => {
+                isSaved = true,
+              });
     }
-    // print("this is the value of is saved without internet ");
-    // print(isSaved);
+    print("this is the value of is saved without internet ");
+    print(isSaved);
     return isSaved;
   }
 
@@ -268,50 +267,81 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
   /// check in
   Future<bool> checkIn() async {
-    bool failed = false;
-    Position? position = await geolocator.getCurrentLocation();
-    List<dynamic>? depots = await getDepotList();
-    if (position != null && depots != null) {
-      bool isInDepot = await checkCurrentLocationWithDepots(
-          depots, position.latitude, position.longitude);
+    //check today date with check in
+    DateTime now = DateTime.now();
+    bool checkedInBool = false;
+    Attendence? checkInAttendance =
+        await getAttendanceDataFromHiveBox(HiveConstants.attendenceCheckinKey);
+    //todo check day not others
 
-      // if (Platform.isAndroid) {
-      //   deviceData =
-      //       _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-      // } else if (Platform.isIOS) {
-      //   deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+    if (now.day == DateTime.parse(checkInAttendance!.checkin!).day) {
+      Fluttertoast.showToast(
+          msg: "you have already checked in for today",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      print("this is  check in");
 
-      if (isInDepot) {
-        print(true);
-        MacAddress macAddress = MacAddress();
-        String dateTime = DateTime.now().toString();
-        String macAddresss = await macAddress.getMacAddress();
-        String userId = await getUserIdFromHiveBox();
-        Attendence checkInAttendance = Attendence(
-            id: null,
-            macAddress: macAddresss,
-            checkin: dateTime,
-            checkin_latitude: position.latitude,
-            checkin_longitude: position.longitude,
-            checkout: null,
-            checkout_latitude: null,
-            checkout_longitude: null,
-            user: userId);
+      Position? position = await geolocator.getCurrentLocation();
+      List<dynamic>? depots = await getDepotList();
+      print("this is depots list");
+      if (position != null && depots != null) {
+        bool isInDepot = await checkCurrentLocationWithDepots(
+            depots, position.latitude, position.longitude);
 
-        bool checkedIn = await saveDataToApiOrHive(checkInAttendance, true);
-        print("this is the value of checked in $checkedIn");
-        if (checkedIn) {
-          emit(CheckedInState());
-          failed = !checkedIn;
+        // if (Platform.isAndroid) {
+        //   deviceData =
+        //       _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+        // } else if (Platform.isIOS) {
+        //   deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+
+        if (isInDepot) {
+          print("you are inside depot");
+          MacAddress macAddress = MacAddress();
+          String dateTime = DateTime.now().toString();
+          String macAddresss = await macAddress.getMacAddress();
+
+          String userId = await getUserIdFromHiveBox();
+          Attendence checkInAttendance = Attendence(
+              id: null,
+              macAddress: macAddresss,
+              checkin: dateTime,
+              checkin_latitude: position.latitude,
+              checkin_longitude: position.longitude,
+              checkout: null,
+              checkout_latitude: null,
+              checkout_longitude: null,
+              user: userId);
+          print("before save data to api or hive");
+
+          bool checkedIn = await saveDataToApiOrHive(checkInAttendance, true);
+
+          if (checkedIn) {
+            emit(CheckedInState());
+            checkedInBool = checkedIn;
+          } else {
+            checkedInBool = false;
+            print("check in is not successful");
+          }
         } else {
-          failed = true;
-          print("check in is not successful");
+          Fluttertoast.showToast(
+              msg: "you have already checked in for today",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          checkedInBool = false;
         }
-      } else {
-        failed = true;
       }
     }
-    return failed;
+
+    return checkedInBool;
   }
 
   checkOut() async {
@@ -348,8 +378,8 @@ class AttendenceCubit extends Cubit<AttendenceState> {
           checkout_latitude: position.latitude,
           checkout_longitude: position.longitude,
           user: userId);
-      // print("the attendance is");
-      // print(checkInAttendance);
+      print("the attendance is");
+      print(checkInAttendance);
 
       bool checkedIn = await saveDataToApiOrHive(checkOutAttendance, false);
       //  print("the value of checkIn in check out is $checkedIn");

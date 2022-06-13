@@ -18,7 +18,7 @@ class TodayTarget {
     var successOrFailed = useCaseForHiveImpl.getValuesByKey(
         totalOutletBox, HiveConstants.retailerDropdownKey);
     successOrFailed.fold(
-        (l) => {print("getting retailer from local database is failed ")},
+        (l) => {},
         (r) => {
               totalOutlets = r.length,
             });
@@ -32,7 +32,7 @@ class TodayTarget {
     var successOrFailed =
         useCaseForHiveImpl.getAllValuesFromHiveBox(newRetailerBox);
     successOrFailed.fold(
-        (l) => {print("this is so sad")},
+        (l) => {},
         (r) => {
               retailer = r.length,
             });
@@ -62,7 +62,7 @@ class TodayTarget {
     Box salesBox = await Hive.openBox(HiveConstants.salesDataCollection);
     var successOrFailed = useCaseForHiveImpl.getAllValuesFromHiveBox(salesBox);
     successOrFailed.fold(
-        (l) => {print("this is so sad")},
+        (l) => {},
         (r) => {
               salesData.addAll(r),
             });
@@ -76,11 +76,10 @@ class TodayTarget {
         useCaseForHiveImpl.getAllValuesFromHiveBox(newRetailerBox);
     int length;
     successOrFailed.fold(
-        (l) => {print("this is so sad")},
+        (l) => {},
         (r) => {
               length = r.length,
-              for (var i = 0; i < r.length; i++)
-                {retailer.add(r[i]), print(retailer)}
+              for (var i = 0; i < r.length; i++) {retailer.add(r[i])}
             });
 
     if (retailer.isNotEmpty) {
@@ -88,11 +87,7 @@ class TodayTarget {
       var successOrFailed =
           await useCaseForRemoteSourceimpl.saveAllRetailer(retailer);
 
-      successOrFailed.fold(
-          (l) => {
-                print("retailer api is failed"),
-              },
-          (r) => {print(r)});
+      successOrFailed.fold((l) => {}, (r) => {});
     } else {}
   }
 
@@ -100,13 +95,9 @@ class TodayTarget {
     List<SalesData> salesDataList = [];
     for (var i = 0; i < salesData.length; i++) {
       salesDataList.add(salesData[i]);
-      print(salesData[i]);
     }
-    print(" sending sales data to api");
+
     useCaseForSalesDataImpl.saveSalesData(salesDataList);
-    print("success sending sales data to api");
-    print("this is the length of sales data ");
-    print(salesData.length);
   }
 
   sendCheckInAndCheckoutDataToApi() async {
