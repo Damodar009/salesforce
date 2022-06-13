@@ -43,13 +43,7 @@ class _LOginScreenState extends State<LOginScreen> {
     prefs.setBool("remember_me", value);
     setState(() {
       _isChecked = value;
-      print(_isChecked);
-      print("this is remember me bool value1");
     });
-    print("ththhththhththth");
-    // prefs.getBool("remember_me");
-    print(prefs.getBool("remember_me"));
-    print("hhhhhhhh");
 
     // prefs.getKeys("remember_me");
   }

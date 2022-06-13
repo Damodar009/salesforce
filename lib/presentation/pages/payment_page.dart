@@ -152,7 +152,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   paymentdocument: image!.path);
                               print("save sales data");
 
-                              newOrderCubit.saveSalesDataToHive(sales);
+                              newOrderCubit.saveSalesDataToHive(model);
                               print("save payment data");
                               Navigator.of(context)
                                   .pushNamed(Routes.merchandiseSupportScreen);

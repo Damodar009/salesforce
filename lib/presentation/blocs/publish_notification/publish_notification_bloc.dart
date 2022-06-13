@@ -20,9 +20,6 @@ class PublishNotificationBloc
       (event, emit) async {
         final iisSuccessful =
             await useCaseForPublishNotificationImpl.getAllPublishNotification();
-
-            print("you are in bloc");
-
         iisSuccessful.fold((l) {
           if (l is ServerFailure) {
             emit(PublishNotificationFailedState());
@@ -30,7 +27,6 @@ class PublishNotificationBloc
             emit(PublishNotificationFailedState());
           }
         }, (r) {
-          print(r);
           emit(PublishNotificationLoadedState(publishNotificationState: r));
         });
       },

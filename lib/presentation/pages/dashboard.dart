@@ -22,7 +22,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     selectedIndex = widget.index;
-
     super.initState();
   }
 

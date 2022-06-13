@@ -5,14 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:salesforce/domain/entities/attendence.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/pages/todaysTarget/todaysTarget.dart';
-import 'package:salesforce/presentation/blocs/publish_notification/publish_notification_bloc.dart';
-import 'package:salesforce/presentation/widgets/notice_list_view_widget.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/initialData.dart';
-import '../../../domain/usecases/useCaseForAttebdenceSave.dart';
 import '../../../injectable.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/geolocation.dart';
@@ -51,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   String distanceTraveled = "0 km";
   String userName = "";
-
   bool? checkNotice;
 
   noticeCheck() {
@@ -76,32 +71,34 @@ class _HomeScreenState extends State<HomeScreen> {
     newOutletsCount = await todayTarget.getNewOutlets();
     totalOutletsCount = await todayTarget.getTotalOutlets();
     visitedOutletCount = await todayTarget.getTotalOutletsVisitedToday();
+    if (mounted) {
+      setState(() {
+        todayTargets.add(totalOutletsCount);
+        todayTargets.add(newOutletsCount);
+        todayTargets.add(visitedOutletCount);
+        todayTargets.add(totalSalesCount);
+      });
+    }
 
-    setState(() {
-      todayTargets.add(totalOutletsCount);
-      todayTargets.add(newOutletsCount);
-      todayTargets.add(visitedOutletCount);
-      todayTargets.add(totalSalesCount);
-    });
     // todayTarget.getAndSendSalesDataToApi(salesData);
   }
 
-  saveCheckOutDataToApi() {
-    Attendence attendence = Attendence(
-      id: null,
-      macAddress: "30-65-EC-6F-C4-58",
-      checkin: "2022-12-21 09:30:00",
-      checkin_latitude: 21.21,
-      checkin_longitude: 122.12,
-      checkout: null,
-      checkout_latitude: null,
-      checkout_longitude: null,
-      user: "NGBifEuwYylJoyRt7a8bkA==",
-    );
-    print("started");
-    var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
-    useCaseForAttendenceImpl.attendenceSave(attendence);
-  }
+  // saveCheckOutDataToApi() {
+  //   Attendence attendence = Attendence(
+  //     id: null,
+  //     macAddress: "30-65-EC-6F-C4-58",
+  //     checkin: "2022-12-21 09:30:00",
+  //     checkin_latitude: 21.21,
+  //     checkin_longitude: 122.12,
+  //     checkout: null,
+  //     checkout_latitude: null,
+  //     checkout_longitude: null,
+  //     user: "NGBifEuwYylJoyRt7a8bkA==",
+  //   );
+  //   print("started");
+  //   var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
+  //   useCaseForAttendenceImpl.attendenceSave(attendence);
+  // }
 
   // TodayTarget todayTarget = TodayTarget();
   // todayTarget.sendListOfNewRetailer();
@@ -109,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     BlocProvider.of<AttendenceCubit>(context).getCheckInStatus();
-    _initialData.getAndSaveInitalData();
     getTodayTargetData();
     getUserName();
     super.initState();
@@ -270,14 +266,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       if (result) {
                                         bool check =
                                             await attendenceCubit.checkIn();
-                                        if (!check) {
+                                        if (check) {
+                                          _initialData.getAndSaveInitalData();
                                           Navigator.of(context).pushNamed(
                                               Routes.attendanceRoute);
                                         } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                                  content: Text(
-                                                      'Please go to depot first')));
+
                                         }
                                       } else {
                                         ScaffoldMessenger.of(context)

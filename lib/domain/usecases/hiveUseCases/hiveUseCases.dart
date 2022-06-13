@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
@@ -82,5 +84,8 @@ class UseCaseForHiveImpl implements UseCaseForHive {
       print(e);
       return Left(CacheFailure());
     }
+  }
+  saveLoactionDataInHiveBox(StreamSubscription df){
+
   }
 }
