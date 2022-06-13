@@ -73,6 +73,8 @@ dependencies:
   fullscreen: ^1.0.3
   flutter_launcher_icons: ^0.9.3
   syncfusion_flutter_xlsio: ^20.1.59-beta
+  searchfield: ^0.6.6
+  textfield_search: ^0.10.0
 
 
 

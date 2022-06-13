@@ -28,20 +28,13 @@ class PublishNotificationBloc
         final iisSuccessful =
             await useCaseForPublishNotificationImpl.getAllPublishNotification();
 
-        print("you are in notice bloc");
-
         iisSuccessful.fold((l) {
           if (l is ServerFailure) {
-            print("ServerFailure notice");
             emit(PublishNotificationFailedState());
           } else if (l is CacheFailure) {
-            print("CacheFailure notice");
             emit(PublishNotificationFailedState());
           }
         }, (r) async {
-          print(r);
-
-          print("yess you are right and this is notice bloc right");
 
           useCaseForHiveImpl.savePublishNoticeInHive(
               box, HiveConstants.publishNotice, r);

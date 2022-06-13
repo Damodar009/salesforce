@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:salesforce/domain/entities/retailer.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
+import 'package:salesforce/presentation/widgets/dropdown_search_widget.dart';
 import '../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../injectable.dart';
 import '../../utils/app_colors.dart';
@@ -328,17 +329,24 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    textFeildWithDropDownFor(
-                        item: retailerTypes,
-                        validator: (string) {
-                          return validator(string);
-                        },
-                        onselect: (string) {
-                          setState(() {
-                            initialValue = string;
-                          });
-                        },
-                        initialText: initialValue),
+
+                    dropDownSearchWidget(retailerTypes, (string) {
+                      setState(() {
+                        initialValue = string!;
+                      });
+                    }),
+
+                    // textFeildWithDropDownFor(
+                    //     item: retailerTypes,
+                    //     validator: (string) {
+                    //       return validator(string);
+                    //     },
+                    //     onselect: (string) {
+                    //       setState(() {
+                    //         initialValue = string;
+                    //       });
+                    //     },
+                    //     initialText: initialValue),
 
                     const SizedBox(
                       height: 20,

@@ -15,6 +15,7 @@ import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:salesforce/presentation/blocs/upload_image/upload_image_bloc.dart';
+import 'package:salesforce/presentation/widgets/dropdown_search_widget.dart';
 import 'package:salesforce/presentation/widgets/radioBotton.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
@@ -40,6 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
 
   File? image;
+  String initialValue = "";
 
   String selectedValue = "";
 
@@ -175,9 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         enableTextField: false,
                         validator: (value) {},
                         controller: _emailController,
-                        hintText:
-                            widget.getProfileState.email ??
-                            "Email",
+                        hintText: widget.getProfileState.email ?? "Email",
                         obsecureText1: () {
                           setState(() {});
                         }),
@@ -321,13 +321,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      child: textFeildWithDropDown(
-                          controller: _documentTypesController,
-                          validator: (string) {},
-                          hintText:
-                              // widget.getProfileState.userDetail!.userDocument ??
-                              "Choose",
-                          item: items),
+                      child: dropDownSearchWidget(items, (string) {
+                        setState(() {
+                          initialValue = string!;
+                        });
+                      }),
+                      // textFeildWithDropDown(
+                      //     controller: _documentTypesController,
+                      //     validator: (string) {},
+                      //     hintText:
+                      //         // widget.getProfileState.userDetail!.userDocument ??
+                      //         "Choose",
+                      //     item: items),
                     ),
                     SizedBox(
                       height: heightBetweenTextField,
