@@ -9,6 +9,7 @@ import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/routes.dart';
 
 import '../../utils/app_colors.dart';
+import '../widgets/delete_theory_testPopup_widget.dart';
 
 class MenuScreen extends StatefulWidget {
   final IconData? icon;
@@ -33,14 +34,14 @@ class _MenuScreenState extends State<MenuScreen> {
         return BlocListener<PublishNotificationBloc, PublishNotificationState>(
           listener: (context, state) {},
           child: SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               height: (mediaQueryHeight > mediaQueryWidth)
                   ? mediaQueryHeight
                   : mediaQueryWidth,
               child: Scaffold(
                   body: Stack(
                 children: [
-                  BackgroundShades(),
+                  const BackgroundShades(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -84,13 +85,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                   builder: (BuildContext context) =>
                                       ProfileScreen()));
                         }),
-                        child: ProfileOptions(mediaQueryWidth, context,
+                        child: profileOptions(mediaQueryWidth, context,
                             Icons.edit_outlined, 'Edit Account Info'),
                       ),
                       SizedBox(
                         height: mediaQueryHeight * 0.001,
                       ),
-                      ProfileOptions(mediaQueryWidth, context,
+                      profileOptions(mediaQueryWidth, context,
                           Icons.location_on_sharp, 'Address Info'),
                       SizedBox(
                         height: mediaQueryHeight * 0.001,
@@ -186,28 +187,34 @@ class _MenuScreenState extends State<MenuScreen> {
                       SizedBox(
                         height: mediaQueryHeight * 0.001,
                       ),
-                      ProfileOptions(mediaQueryWidth, context,
+                      profileOptions(mediaQueryWidth, context,
                           Icons.sticky_note_2_outlined, 'Privacy Policy'),
                       InkWell(
                         onTap: () {
-                          // BlocProvider.of<PublishNotificationBloc>(context)
-                          //     .add(GetAllPublishNotificationEvent());
-                          // if (state is PublishNotificationLoadedState) {
-                            print(
-                                "psuh me to this page NoticeBoardTableScreen");
+                          BlocProvider.of<PublishNotificationBloc>(context)
+                              .add(GetAllPublishNotificationEvent());
+                          if (state is PublishNotificationLoadedState) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        NoticeBoardTableScreen()));
-                          // }
+                                        const NoticeBoardTableScreen()));
+                          }
                         },
-                        child: ProfileOptions(mediaQueryWidth, context,
+                        child: profileOptions(mediaQueryWidth, context,
                             Icons.notifications, 'Notice Board'),
+                      ),
+                      InkWell(
+                        onTap: (() {
+                          displayTextInputDialog(context);
+                          //pop up for request
+                        }),
+                        child: profileOptions(mediaQueryWidth, context,
+                            Icons.edit_outlined, 'Request a Leave'),
                       ),
                       // const Spacer(),
                       SizedBox(
-                        height: mediaQueryHeight * 0.12,
+                        height: mediaQueryHeight * 0.095,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(13),
@@ -226,7 +233,7 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  Widget ProfileOptions(double mediaQueryWidth, BuildContext context,
+  Widget profileOptions(double mediaQueryWidth, BuildContext context,
       IconData icon, String title) {
     return Padding(
       padding: const EdgeInsets.all(13.0),
@@ -254,7 +261,7 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             ],
           ),
-          Icon(Icons.arrow_forward_ios_outlined)
+          const Icon(Icons.arrow_forward_ios_outlined)
         ],
       ),
     );

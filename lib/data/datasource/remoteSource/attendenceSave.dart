@@ -34,8 +34,6 @@ class AttendenceSave implements AttendenceRemoteSource {
 
     var attendenceInJson = attendenceModel.toJson();
     var jsonEncodedAnswer = jsonEncode(attendenceInJson);
-    print("this is attendence save ");
-    print(jsonEncodedAnswer);
 
     String? accessToken;
     Box box = await Hive.openBox(HiveConstants.userdata);
@@ -55,9 +53,7 @@ class AttendenceSave implements AttendenceRemoteSource {
         ),
       );
       if (response.data["status"] == true) {
-        print(response);
         Attendence attendence = AttendenceModel.fromJson(response.data["data"]);
-
         return attendence;
       } else {
         throw ServerException();

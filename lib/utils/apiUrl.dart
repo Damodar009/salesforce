@@ -19,4 +19,5 @@ class ApiUrl {
 
   static const String getAllPublishNotification =
       baseUrl + "/api/publishNotification/getallmobile";
+  static const String requestLeave = baseUrl + "/api/absent/save";
 }

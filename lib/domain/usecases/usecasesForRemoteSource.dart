@@ -8,6 +8,7 @@ import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
 
 import '../../error/failure.dart';
+import '../entities/Leave.dart';
 import '../entities/depotProductRetailer.dart';
 import '../entities/retailer.dart';
 import '../entities/userData.dart';
@@ -48,10 +49,10 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
     return await repository.changePassword(oldPassword, newPassword);
   }
 
-  // @override
-  // Future<Either<Failure, String>> attendenceSave() async {
-  //   return await repository.attendenceSave();
-  // }
+  @override
+  Future<Either<Failure, String>> requestLeave(Leave leave) async {
+    return await repository.requestLeave(leave);
+  }
 
   @override
   Future<Either<Failure, DepotProductRetailer>>

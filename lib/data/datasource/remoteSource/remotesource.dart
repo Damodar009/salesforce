@@ -6,7 +6,9 @@ import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/RetailerPojo.dart';
 import 'package:salesforce/data/models/SalesDataCollection.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
+import 'package:salesforce/data/models/leaveModel.dart';
 import 'package:salesforce/data/models/userDetailsDataModel.dart';
+import 'package:salesforce/domain/entities/Leave.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
@@ -47,6 +49,7 @@ abstract class RemoteSource {
 
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel);
+  Future<String> requestLeave(Leave leave);
 }
 
 @Injectable(as: RemoteSource)
@@ -319,18 +322,10 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel) async {
-
-    print("saveUserDetailsRemoteDataSource");
-
     String? accessToken;
-
     UserDataModel? userInfo =
         await signInLocalDataSource.getUserDataFromLocal();
-
-    print(userInfo!.access_token);
-
-    accessToken = userInfo.access_token;
-
+    accessToken = userInfo!.access_token;
     SaveUserDetailsDataModel saveUserDetailsData = SaveUserDetailsDataModel(
       id: saveUserDetailsDataModel.id,
       email: saveUserDetailsDataModel.email,
@@ -351,7 +346,6 @@ class RemoteSourceImplementation implements RemoteSource {
 
     var saveUserDetailsDataModelInJson = saveUserDetailsData.toJson();
     var jsonEncodedSalesPerson = jsonEncode(saveUserDetailsDataModelInJson);
-
     try {
       Response response = await dio.post(
         ApiUrl.saveUser,
@@ -361,16 +355,45 @@ class RemoteSourceImplementation implements RemoteSource {
           'Authorization': 'Bearer ' + accessToken!,
         }),
       );
-
-      print('this is edit repo');
-
       if (response.statusCode == 200) {
-
-        print('above is response data');
         SaveUserDetailsDataModel salesPerson =
             SaveUserDetailsDataModel.fromJson(response.data["data"]);
-
         return salesPerson;
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      print(e);
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<String> requestLeave(Leave leave) async {
+    String? accessToken;
+    UserDataModel? userInfo =
+        await signInLocalDataSource.getUserDataFromLocal();
+    accessToken = userInfo!.access_token;
+    LeaveModel leaveModel = LeaveModel(
+        fromDate: leave.fromDate,
+        toDate: leave.toDate,
+        userId: leave.userId,
+        reason: leave.reason);
+
+    var leaveInJson = leaveModel.toJson();
+    var encodedJson = jsonEncode(leaveInJson);
+    try {
+      Response response = await dio.post(
+        ApiUrl.requestLeave,
+        data: encodedJson,
+        options:
+            Options(contentType: "application/json", headers: <String, String>{
+          'Authorization': 'Bearer 37edcf52-eaad-40aa-9366-1211a2f0e397'
+          //+ accessToken!,
+        }),
+      );
+      if (response.data["status"] == true) {
+        return response.data["message"];
       } else {
         throw ServerException();
       }

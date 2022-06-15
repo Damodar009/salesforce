@@ -1,35 +1,3 @@
-// title("Available Time for delivery"),
-// const SizedBox(
-// height: 12,
-// ),
-// textFormField(
-// controller: _textEditingController,
-// validator: (string) {},
-// obsecureText1: () {},
-// hintText: 'From'),
-// const SizedBox(
-// height: 12,
-// ),
-// textFormField(
-// controller: _textEditingController,
-// validator: (string) {},
-// obsecureText1: () {},
-// hintText: 'To '),
-// const SizedBox(
-// height: 12,
-// ),
-//
-// title("Availability"),
-//
-// textFormField(
-// controller: _textEditingController,
-// validator: (string) {},
-// obsecureText1: () {},
-// hintText: 'What is the status'),
-// const SizedBox(
-// height: 20,
-// ),
-
 import 'package:flutter/material.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
@@ -73,3 +41,188 @@ Widget circleContainer() {
     ),
   );
 }
+
+Widget title(String title) {
+  return Text(title);
+}
+
+Widget titles(String title) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Center(
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ),
+  );
+}
+
+// Widget returnsWidget(BuildContext context, Function() cancleWidgetOnClick) {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     mainAxisAlignment: MainAxisAlignment.start,
+//     children: [
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           const Spacer(),
+//           titles("Return"),
+//           SizedBox(
+//             width: MediaQuery.of(context).size.width * 0.36,
+//           ),
+//           cancleWidget(() {
+//             cancleWidgetOnClick;
+//           }),
+//         ],
+//       ),
+//       const SizedBox(
+//         height: 12,
+//       ),
+//       //todo if empty show 1 else list length
+//       for (var i = 0; i < returnLength + 1; i++)
+//         Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+//           child: Container(
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.circular(20),
+//               border: Border.all(color: Colors.grey),
+//               shape: BoxShape.rectangle,
+//             ),
+//             child: Padding(
+//               padding:
+//                   const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   title("Product Name"),
+//                   const SizedBox(
+//                     height: 12,
+//                   ),
+//                   textFeildWithDropDownFor(
+//                       validator: (string) {},
+//                       item: productName,
+//                       onselect: (string) {
+//                         setState(() {
+//                           if (checkIndex(returnParentProduct, i)) {
+//                             returnParentProduct[i] = string;
+//                             print(returnParentProduct[i]);
+//                           } else {
+//                             returnParentProduct.add(string);
+//                           }
+//                         });
+//                       },
+//                       initialText: checkIndex(returnParentProduct, i)
+//                           ? returnParentProduct[i]
+//                           : ""),
+//                   const SizedBox(
+//                     height: 12,
+//                   ),
+//                   title("Types of Product"),
+//                   const SizedBox(
+//                     height: 12,
+//                   ),
+//                   Row(
+//                     children: [
+//                       SizedBox(
+//                           width: 150,
+//                           //todo unchanged
+//                           child: textFeildWithDropDownFor(
+//                               validator: (string) {},
+//                               item: checkIndex(returnParentProduct, i)
+//                                   ? getChildProducts(returnParentProduct[i])
+//                                   : [],
+//                               onselect: (string) {
+//                                 print(string);
+//                                 setState(() {
+//                                   if (checkIndex(returns, i)) {
+//                                     returns[i].setProduct(string);
+//                                   } else {
+//                                     RerturnAndSale returna = RerturnAndSale();
+//                                     returna.setProduct(string);
+//
+//                                     returns.add(returna);
+//                                   }
+//                                 });
+//                               },
+//                               initialText: checkIndex(returns, i)
+//                                   ? returns[i].getProduct() ?? ""
+//                                   : "")),
+//                       SizedBox(
+//                         width: 130,
+//                         child: textFormFeildIncreAndDecre(
+//                             validator: (string) {},
+//                             initialValue: checkIndex(returns, i)
+//                                 ? returns[i].getReturn() != null
+//                                     ? returns[i].getReturn().toString()
+//                                     : ""
+//                                 : "",
+//                             onChanged: (string) {
+//                               if (checkIndex(returns, i)) {
+//                                 returns[i].setReturn(int.parse(string!));
+//                               } else {
+//                                 RerturnAndSale returna = RerturnAndSale();
+//                                 returna.setReturn(int.parse(string!));
+//
+//                                 returns.add(returna);
+//                               }
+//                             }),
+//                       ),
+//                       InkWell(
+//                           onTap: () {
+//                             if (returns.isNotEmpty) {
+//                               setState(() {
+//                                 if (checkIndex(returns, i)) {
+//                                   print("this is index at $i for remove ");
+//                                   print(returns[i].getProduct());
+//                                   print(returns[i].getReturn());
+//
+//                                   setState(() {
+//                                     returnParentProduct.removeAt(i);
+//                                     returns.removeAt(i);
+//                                     returnLength = returns.length;
+//                                   });
+//                                   print(returnParentProduct.length);
+//                                   print(returns.length);
+//                                 } else {
+//                                   returnLength = returnLength - 1;
+//                                 }
+//                               });
+//                             } else {
+//                               print("no way what");
+//                               returnLength = returns.length;
+//                             }
+//                           },
+//                           child: circleContainer())
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       textButton("Add more Products", textbuttonSize!, false, () {
+//         setState(() {
+//           print("the return length ${returns.length}");
+//
+//           returnLength = returns.length;
+//           print(returns);
+//         });
+//       }),
+//       const SizedBox(
+//         height: 12,
+//       ),
+//       textFeildWithMultipleLines(
+//           hintText: 'Remarks',
+//           controller: _returnRemarks,
+//           validator: (string) {
+//             Validators.validator(string);
+//           })
+//     ],
+//   );
+// }
+//
+// // setState(() {
+// // returnPressed = false;
+// // });

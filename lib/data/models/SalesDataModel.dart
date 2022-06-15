@@ -83,8 +83,12 @@ class SalesDataModel extends SalesData {
       <String, dynamic>{
         'salesPojo': salesDataModel.sales != null
             ? salesDataModel.sales
-                ?.map((e) =>
-                    SalesModel(sales: e.sales, product: e.product).toJson())
+                ?.map((e) => SalesModel(
+                        sales: e.sales,
+                        product: e.product,
+                        orderStatus: e.orderStatus,
+                        requestedDate: e.requestedDate)
+                    .toJson())
                 .toList()
             : [],
         'availabilityPojo': salesDataModel.availability != null

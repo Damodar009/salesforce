@@ -60,4 +60,13 @@ class SignInLocalDataSourceImpl extends SignInLocalDataSource {
     bool? isThereLocalData = prefs.getBool("isThereLocalData");
     return isThereLocalData;
   }
+
+  setInitialFlag(bool flag) {
+    prefs.setBool("initialFlag", flag);
+  }
+
+  bool? getInitialFlag() {
+    bool? isThereLocalData = prefs.getBool("initialFlag");
+    return isThereLocalData;
+  }
 }

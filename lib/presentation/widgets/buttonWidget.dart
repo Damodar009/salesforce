@@ -8,7 +8,6 @@ Widget button(String title, Function() onclick, bool isLoading, Color color) {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0))),
       ),
       onPressed: () {
-
         onclick();
       },
       child: Padding(
