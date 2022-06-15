@@ -1,29 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:fullscreen/fullscreen.dart';
 import 'package:salesforce/domain/entities/publish_notification.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
-class NoticeBoardScreen extends StatefulWidget {
+class NoticeBoardScreen extends StatelessWidget {
   NoticeBoardScreen({Key? key, required this.publishNotificationlist})
       : super(key: key);
 
   PublishNotification publishNotificationlist;
-
-  @override
-  State<NoticeBoardScreen> createState() => _NoticeBoardScreenState();
-}
-
-class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
-  void enterFullScreen(FullScreenMode fullScreenMode) async {
-    await FullScreen.enterFullScreen(fullScreenMode);
-  }
-
-  void exitFullScreen() async {
-    await FullScreen.exitFullScreen();
-  }
-
-  bool fullScreenImage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -59,47 +43,35 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
                   //             "assets/images/total_order_complete.png",
                   //           ) as ImageProvider),
 
-                  widget.publishNotificationlist.path != null
-                      ? InkWell(
-                          // onTap: (() => {
-                          //       setState(() {
-                          //         fullScreenImage = !fullScreenImage;
-                          //       }),
-                          //       print(fullScreenImage),
-                          //       print("image full screen function"),
-                          //       // enterFullScreen(FullScreenMode.EMERSIVE_STICKY)
-                          //     })
-                              
-                          child: fullScreenImage
-                              ? Container(
-                                  height: MediaQuery.of(context).size.height,
-                                  // width: 100,
-                                  decoration: BoxDecoration(
-                                      color: Colors.amber,
-                                      image: DecorationImage(
-                                          image: NetworkImage(widget
-                                              .publishNotificationlist.path!),
-                                          fit: BoxFit.fill)),
-                                )
-                              : Container(
-                                  height: 200,
-                                  // width: 100,
-                                  decoration: BoxDecoration(
-                                      color: Colors.amber,
-                                      image: DecorationImage(
-                                          image: NetworkImage(widget
-                                              .publishNotificationlist.path!),
-                                          fit: BoxFit.cover)),
-                                ),
+                  publishNotificationlist.path != null
+                      ? Container(
+                          height: 100,
+                          // width: 100,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      publishNotificationlist.path!),
+                                  fit: BoxFit.contain)),
                         )
-                      : Container(),
+                      : Container(
+                          height: 100,
+                          // width: 100,
+                          decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                    "assets/images/total_order_complete.png",
+                                  ),
+                                  fit: BoxFit.contain)),
+                        ),
                   SizedBox(
                     height: mediaQueryHeight * 0.01,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      widget.publishNotificationlist.title!.toUpperCase(),
+                      publishNotificationlist.title != null
+                          ? publishNotificationlist.title!.toUpperCase()
+                          : "",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
@@ -120,7 +92,9 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      widget.publishNotificationlist.body!,
+                      publishNotificationlist.body != null
+                          ? publishNotificationlist.body!
+                          : "",
                       // "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
@@ -147,7 +121,7 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
                           // height: 10,
                           width: 10,
                         ),
-                        Text(widget.publishNotificationlist.created_date ?? ""),
+                        Text(publishNotificationlist.created_date ?? ""),
                       ],
                     ),
                   )

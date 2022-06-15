@@ -22,9 +22,6 @@ class UploadImageRemoteDataSourceImpl implements UploadImageRemoteDataSource {
   Future<String> uploadImageSave(String imageName) async {
     try {
       print("upload image repo");
-      print(ApiUrl.imageUpload);
-
-      print("image :$imageName");
 
       String? accessToken;
       Box box = await Hive.openBox(HiveConstants.userdata);
@@ -40,8 +37,6 @@ class UploadImageRemoteDataSourceImpl implements UploadImageRemoteDataSource {
         "image": await MultipartFile.fromFile(imageName),
       });
 
-      print(data);
-
       print("you have reached here man");
       Response response = await dio.post(
         ApiUrl.imageUpload,
@@ -52,12 +47,8 @@ class UploadImageRemoteDataSourceImpl implements UploadImageRemoteDataSource {
         ),
       );
       print("you have reached here man");
-      print(response.data);
-
-      print(response.statusCode);
 
       if (response.data["status"] == true) {
-        print(response.data);
         String imageResponse = response.data["data"]["id"];
         // ImageResponseModel.fromJson(response.data);
 

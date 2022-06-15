@@ -249,6 +249,7 @@ Widget textFeildWithDropDownFor(
     required List<String> item,
     required Function(String) onselect}) {
   return TextFormField(
+    // enabled: false,
     key: Key(initialText),
     initialValue: initialText,
     validator: (val) => validator(val),

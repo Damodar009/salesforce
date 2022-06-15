@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:salesforce/data/models/RetailerModel.dart';
 import 'package:salesforce/data/models/merchandiseOrderModel.dart';
 import 'package:salesforce/data/models/returnModel.dart';
@@ -13,6 +14,7 @@ import 'merchndiseOrder.dart';
 
 part 'SalesData.g.dart';
 
+@JsonSerializable()
 @HiveType(typeId: 9)
 class SalesData extends Equatable {
   @HiveField(0)
@@ -123,4 +125,9 @@ class SalesData extends Equatable {
         retailerPojo,
         merchandiseOrderPojo
       ];
+
+  // factory SalesData.fromJson(Map<String, dynamic> json) =>
+  //     _$SalesDataFromJson(json);
+
+  // Map<String, dynamic> toJson() => _$SalesDataToJson(this);
 }

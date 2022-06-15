@@ -71,6 +71,12 @@ dependencies:
   device_info_plus: ^0.0.1
   dropdown_search: ^4.0.0
   fullscreen: ^1.0.3
+  flutter_launcher_icons: ^0.9.3
+  syncfusion_flutter_xlsio: ^20.1.59-beta
+  searchfield: ^0.6.6
+  textfield_search: ^0.10.0
+
+
 
 
 dev_dependencies:
@@ -82,6 +88,12 @@ dev_dependencies:
   hive_generator: ^1.1.2
 
   flutter_lints: ^1.0.0
+
+flutter_icons:
+  image_path: "assets/images/logo.jpeg"
+  android: true
+  ios: true  
+
 flutter_native_splash:
   color: "#ffffff"
   backgroundimage: "assets/images/Splash.png"

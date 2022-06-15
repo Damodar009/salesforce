@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/saleslocationTrack.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
+import 'package:salesforce/injectable.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 import '../../../error/exception.dart';
 import '../../../utils/apiUrl.dart';
 import '../../models/SalesLocationTrackModel.dart';
@@ -14,6 +18,7 @@ abstract class SalesDataAndTrackCollectionRemoteSource {
 @Injectable(as: SalesDataAndTrackCollectionRemoteSource)
 class SalesDataAndTrackCollectionRemoteSourceimpl
     implements SalesDataAndTrackCollectionRemoteSource {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   @override
   Future<List<SalesLocationTrack>> saveSalesDataAndTrackCollection(
       List<SalesLocationTrack> listSalesLocationTrack) async {
@@ -21,9 +26,8 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
     List<SalesLocationTrackModel> salesLocationTrackModelList = [];
 
     for (var i = 0; i < listSalesLocationTrack.length; i++) {
-
       var salesLocationTRack = listSalesLocationTrack[i];
-      
+
       SalesLocationTrackModel salesLocationTrackModel = SalesLocationTrackModel(
           salesLocationTRack.latitude,
           salesLocationTRack.longitude,
@@ -38,7 +42,15 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
 
     var jsonEncodedAnswer = jsonEncode(salesTrackInJson);
     print("this is list of sales data colletion");
-    print(jsonEncodedAnswer);
+
+    String? accessToken;
+
+    Box box = await Hive.openBox(HiveConstants.userdata);
+
+    var accessTokenSuccessOrFailed =
+        useCaseForHiveImpl.getValueByKey(box, "access_token");
+    accessTokenSuccessOrFailed.fold((l) => {print("failed")},
+        (r) => {accessToken = r!, print(r.toString())});
 
     try {
       Response response = await dio.post(
@@ -46,9 +58,7 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
         data: jsonEncodedAnswer,
         options: Options(
           contentType: "application/json",
-          headers: <String, String>{
-            'Authorization': 'Bearer 4ff45a34-268d-44e0-9f04-6dc95acd4044'
-          },
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
       if (response.data["status"] == true) {
@@ -56,8 +66,6 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
             (response.data["data"] as List).map((salesLocationTrack) {
           return SalesLocationTrackModel.fromJson(salesLocationTrack);
         }).toList();
-
-
 
         return salesLocationTrack;
       } else {

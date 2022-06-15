@@ -5,6 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/Userdata.dart';
+import 'package:salesforce/domain/entities/publish_notification.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
@@ -54,8 +55,9 @@ Future<void> main() async {
     ..registerAdapter(ReturnsAdapter())
     ..registerAdapter(RetailerDropDownAdapter())
     ..registerAdapter(RegionDropDownAdapter())
+    ..registerAdapter(SalesAdapter())
     ..registerAdapter(MerchandiseDropDownAdapter())
-    ..registerAdapter(SalesAdapter());
+     ..registerAdapter(PublishNotificationAdapter());
 
   final StreamSubscription<InternetConnectionStatus> listener =
       InternetConnectionChecker().onStatusChange.listen(

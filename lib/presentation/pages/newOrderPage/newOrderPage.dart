@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/data/models/Userdata.dart';
@@ -12,6 +11,7 @@ import 'package:salesforce/presentation/pages/newOrderPage/widgets/newOutletsPag
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/wid.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/utils/geolocation.dart';
+import 'package:searchfield/searchfield.dart';
 import '../../../data/datasource/local_data_sources.dart';
 import '../../../data/models/AvailabilityModel.dart';
 import '../../../data/models/RetailerModel.dart';
@@ -102,11 +102,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     return childProducts;
   }
 
+//todo do retiler in another page
   getRetailerList() async {
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
-    var successOrNot = useCaseForHiveImpl.getValuesByKey(
-        box, HiveConstants.retailerDropdownKey);
-    successOrNot.fold(
+    var sucessOrNot = useCaseForHiveImpl.getValuesByKey(box, "retailerTypes");
+    sucessOrNot.fold(
         (l) => {print("no success")},
         (r) => {
               for (var i = 0; i < r.length; i++)
@@ -179,15 +179,21 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    textFeildWithDropDownFor(
-                        validator: (string) {},
-                        item: retailerList,
-                        onselect: (string) {
-                          setState(() {
-                            nameOfOutlet = string;
-                          });
-                        },
-                        initialText: nameOfOutlet),
+                    // textFeildWithDropDownFor(
+                    //     validator: (string) {},
+                    //     item: retailerList,
+                    //     onselect: (string) {
+                    //       setState(() {
+                    //         nameOfOutlet = string;
+                    //       });
+                    //     },
+                    //     initialText: nameOfOutlet),
+
+                    dropDownSearchWidget(retailerList, (string) {
+                      setState(() {
+                        nameOfOutlet = string!;
+                      });
+                    }),
                   ],
                 );
               }
@@ -302,26 +308,34 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               double latitude = position!.latitude;
               double longitude = position.longitude;
 
-              String assignedDepots = "";
-              String userId = "";
-              Box box = await Hive.openBox(HiveConstants.attendence);
-              var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
-                  box, HiveConstants.assignedDepot);
+              print(returnspojo[i]);
+            }
+            for (var i = 0; i < availability.length; i++) {
+              AvailabilityModel availabilityx = AvailabilityModel(
+                  availability: availability[i].getavailability(),
+                  stock: availability[i].getStock(),
+                  product: availability[i].getproduct());
+              availabilityPojo.add(availabilityx);
+              print(availabilityPojo[i]);
+            }
+            for (var i = 0; i < sales.length; i++) {
+              SalesModel salesmodel = SalesModel(
+                  sales: sales[i].getReturn(), product: sales[i].getProduct());
+              salessPojo.add(salesmodel);
+              print(salessPojo[i]);
+            }
 
               failureOrsucess.fold((l) => {print("this is failed")},
                   (r) => {assignedDepots = r[0]});
 
-              UserDataModel? userDataModel =
-                  await sharedPreference.getUserDataFromLocal();
-              if (userDataModel != null) {
-                userId = userDataModel.userid!;
-              }
+            double longitude = position.longitude;
+            DateTime dateTimeNow = DateTime.now();
 
-              if (newOrderCubit.state is NewRetailerCreated) {
-                Object? sdm = newOrderCubit.state.props[0];
-                RetailerModel retailerModel;
-                if (sdm is RetailerModel) {
-                  retailerModel = sdm;
+            String assignedDepots = "";
+            String userId = "";
+            Box box = await Hive.openBox(HiveConstants.attendence);
+            var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
+                box, HiveConstants.assignedDepot);
 
                   salesDataModel = SalesData(
                       sales: salessPojo,
@@ -378,10 +392,21 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       textColor: Colors.white,
                       fontSize: 16.0);
 
-                  setState(() {
-                    loading = false;
-                  });
-                }
+                salesDataModel = SalesData(
+                    sales: salessPojo,
+                    returns: returnspojo,
+                    availability: availabilityPojo,
+                    salesDescription: _salesRemarks.text,
+                    returnedDescription: _returnRemarks.text,
+                    availabilityDescription: _availabilityRemarks.text,
+                    userId: userId,
+                    assignedDepot: assignedDepots,
+                    longitude: longitude,
+                    collectionDate: dateTimeNow.toString(),
+                    latitude: latitude,
+                    retailerPojo: retailerModel);
+                newOrderCubit.getOrders(salesDataModel);
+                print("okay");
               }
             } else {
               Fluttertoast.showToast(
@@ -509,6 +534,16 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   ///sales
   Widget salesWidget() {
+    List<String> countries = [
+      'United States',
+      'America',
+      'Washington',
+      'India',
+      'Paris',
+      'Jakarta',
+      'Australia',
+      'Lorem Ipsum'
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -551,22 +586,33 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    textFeildWithDropDownFor(
-                        validator: (string) {},
-                        item: productName,
-                        onselect: (string) {
-                          setState(() {
-                            if (checkIndex(salesParentProduct, i)) {
-                              salesParentProduct[i] = string;
-                              print(salesParentProduct[i]);
-                            } else {
-                              salesParentProduct.add(string);
-                            }
-                          });
-                        },
-                        initialText: checkIndex(salesParentProduct, i)
-                            ? salesParentProduct[i]
-                            : ""),
+                    dropDownSearchWidget(productName, (string) {
+                      setState(() {
+                        if (checkIndex(salesParentProduct, i)) {
+                          salesParentProduct[i] = string!;
+                          print(salesParentProduct[i]);
+                        } else {
+                          salesParentProduct.add(string!);
+                        }
+                      });
+                    }),
+
+                    // textFeildWithDropDownFor(
+                    //     validator: (string) {},
+                    //     item: productName,
+                    //     onselect: (string) {
+                    //       setState(() {
+                    //         if (checkIndex(salesParentProduct, i)) {
+                    //           salesParentProduct[i] = string;
+                    //           print(salesParentProduct[i]);
+                    //         } else {
+                    //           salesParentProduct.add(string);
+                    //         }
+                    //       });
+                    //     },
+                    //     initialText: checkIndex(salesParentProduct, i)
+                    //         ? salesParentProduct[i]
+                    //         : ""),
                     const SizedBox(
                       height: 12,
                     ),
@@ -578,9 +624,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       children: [
                         SizedBox(
                           width: 150,
-                          child: textFeildWithDropDownFor(
-                              validator: (string) {},
-                              item: checkIndex(salesParentProduct, i)
+                          height: 47,
+                          //todo unchanged
+                          child: dropDownSearchWidget(
+                              checkIndex(salesParentProduct, i)
                                   ? getChildProducts(salesParentProduct[i])
                                   : [],
                               // incrementReturn;
@@ -592,13 +639,33 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                     ReturnAndSale saless = ReturnAndSale();
                                     saless.setProduct(string);
 
-                                    sales.add(saless);
-                                  }
-                                });
-                              },
-                              initialText: checkIndex(sales, i)
-                                  ? sales[i].getProduct() ?? ""
-                                  : ""),
+                                sales.add(saless);
+                              }
+                            });
+                          }),
+
+                          //  textFeildWithDropDownFor(
+                          //     validator: (string) {},
+                          //     item: checkIndex(salesParentProduct, i)
+                          //         ? getChildProducts(salesParentProduct[i])
+                          //         : [],
+                          //     // incrementReturn;
+                          //     onselect: (string) {
+                          //       setState(() {
+                          //         if (checkIndex(sales, i)) {
+                          //           sales[i].setProduct(string);
+                          //         } else {
+                          //           RerturnAndSale saless = RerturnAndSale();
+                          //           saless.setProduct(string);
+
+                          //           sales.add(saless);
+                          //         }
+                          //       });
+                          //     },
+                          //     initialText: checkIndex(sales, i)
+                          //         ? sales[i].getProduct() ?? ""
+                          //         : ""
+                          //         ),
                         ),
                         SizedBox(
                           width: 130,
@@ -717,25 +784,37 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    textFeildWithDropDownFor(
-                        validator: (string) {},
-                        item: productName,
-                        onselect: (string) {
-                          setState(() {
-                            if (checkIndex(availabilityParentProduct, i)) {
-                              availabilityParentProduct[i] = string;
-                              print(availabilityParentProduct[i]);
-                            } else {
-                              availabilityParentProduct.add(string);
-                            }
-                          });
-                        },
-                        initialText: checkIndex(availabilityParentProduct, i)
-                            ? availabilityParentProduct[i]
-                            : "choose"),
+
+                    dropDownSearchWidget(productName, (string) {
+                      setState(() {
+                        if (checkIndex(availabilityParentProduct, i)) {
+                          availabilityParentProduct[i] = string!;
+                          print(availabilityParentProduct[i]);
+                        } else {
+                          availabilityParentProduct.add(string!);
+                        }
+                      });
+                    }),
+                    // textFeildWithDropDownFor(
+                    //     validator: (string) {},
+                    //     item: productName,
+                    //     onselect: (string) {
+                    //       setState(() {
+                    //         if (checkIndex(availabilityParentProduct, i)) {
+                    //           availabilityParentProduct[i] = string;
+                    //           print(availabilityParentProduct[i]);
+                    //         } else {
+                    //           availabilityParentProduct.add(string);
+                    //         }
+                    //       });
+                    //     },
+                    //     initialText: checkIndex(availabilityParentProduct, i)
+                    //         ? availabilityParentProduct[i]
+                    //         : "choose"),
                     const SizedBox(
                       height: 12,
                     ),
+
                     // title("Types of Product"),
                     // const SizedBox(
                     //   height: 12,
@@ -774,30 +853,87 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       children: [
                         SizedBox(
                           width: 150,
+                          height: 47,
                           //todo unchanged
-                          child: textFeildWithDropDownFor(
-                              validator: (string) {},
-                              item: checkIndex(availabilityParentProduct, i)
-                                  ? getChildProducts(
-                                      availabilityParentProduct[i])
-                                  : [],
-                              onselect: (string) {
-                                setState(() {
-                                  if (checkIndex(availability, i)) {
-                                    availability[i].setproduct(string);
-                                  } else {
-                                    //todo
-                                    OrderAvailability available =
-                                        OrderAvailability();
-                                    available.setproduct(string);
+                          child: DropdownSearch<String>(
+                            popupProps: const PopupProps.menu(
+                              showSearchBox: true,
+                              showSelectedItems: true,
+                            ),
+                            items: checkIndex(availabilityParentProduct, i)
+                                ? getChildProducts(
+                                        availabilityParentProduct[i]) ??
+                                    []
+                                : [],
+                            dropdownSearchDecoration: const InputDecoration(
+                                fillColor: Colors.white,
+                                errorStyle: TextStyle(
+                                    color: Color.fromRGBO(2, 40, 89, 1)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(30.0),
+                                  ),
+                                  borderSide: BorderSide(
+                                      color: AppColors.textFeildINputBorder),
+                                ),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Inter',
+                                  fontSize: 15,
+                                ),
+                                hintText: "Select",
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 5),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30.0),
+                                    )),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.blue),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30.0),
+                                    ))),
+                            onChanged: (string) {
+                              setState(() {
+                                if (checkIndex(availability, i)) {
+                                  availability[i].setproduct(string);
+                                } else {
+                                  //todo
+                                  OrderAvailability available =
+                                      OrderAvailability();
+                                  available.setproduct(string);
 
-                                    availability.add(available);
-                                  }
-                                });
-                              },
-                              initialText: checkIndex(availability, i)
-                                  ? availability[i].getproduct() ?? ""
-                                  : ""),
+                                  availability.add(available);
+                                }
+                              });
+                            },
+                          ),
+                          // textFeildWithDropDownFor(
+                          //     validator: (string) {},
+                          //     item: checkIndex(availabilityParentProduct, i)
+                          //         ? getChildProducts(
+                          //                 availabilityParentProduct[i]) ??
+                          //             []
+                          //         : [],
+                          //     onselect: (string) {
+                          //       setState(() {
+                          //         if (checkIndex(availability, i)) {
+                          //           availability[i].setproduct(string);
+                          //         } else {
+                          //           //todo
+                          //           OrderAvailability available =
+                          //               OrderAvailability();
+                          //           available.setproduct(string);
+
+                          //           availability.add(available);
+                          //         }
+                          //       });
+                          //     },
+                          //     initialText: checkIndex(availability, i)
+                          //         ? availability[i].getproduct()!
+                          //         : ""),
                         ),
                         SizedBox(
                           width: 140,
@@ -915,22 +1051,32 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    textFeildWithDropDownFor(
-                        validator: (string) {},
-                        item: productName,
-                        onselect: (string) {
-                          setState(() {
-                            if (checkIndex(returnParentProduct, i)) {
-                              returnParentProduct[i] = string;
-                              print(returnParentProduct[i]);
-                            } else {
-                              returnParentProduct.add(string);
-                            }
-                          });
-                        },
-                        initialText: checkIndex(returnParentProduct, i)
-                            ? returnParentProduct[i]
-                            : ""),
+                    // textFeildWithDropDownFor(
+                    //     validator: (string) {},
+                    //     item: productName,
+                    //     onselect: (string) {
+                    //       setState(() {
+                    //         if (checkIndex(returnParentProduct, i)) {
+                    //           returnParentProduct[i] = string;
+                    //           print(returnParentProduct[i]);
+                    //         } else {
+                    //           returnParentProduct.add(string);
+                    //         }
+                    //       });
+                    //     },
+                    //     initialText: checkIndex(returnParentProduct, i)
+                    //         ? returnParentProduct[i]
+                    //         : ""),
+                    dropDownSearchWidget(productName, (string) {
+                      setState(() {
+                        if (checkIndex(returnParentProduct, i)) {
+                          returnParentProduct[i] = string!;
+                          print(returnParentProduct[i]);
+                        } else {
+                          returnParentProduct.add(string!);
+                        }
+                      });
+                    }),
                     const SizedBox(
                       height: 12,
                     ),
@@ -957,13 +1103,30 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                       ReturnAndSale returna = ReturnAndSale();
                                       returna.setProduct(string);
 
-                                      returns.add(returna);
-                                    }
-                                  });
-                                },
-                                initialText: checkIndex(returns, i)
-                                    ? returns[i].getProduct() ?? ""
-                                    : "")),
+                              //           returns.add(returna);
+                              //         }
+                              //       });
+                              //     },
+                              //     initialText: checkIndex(returns, i)
+                              //         ? returns[i].getProduct() ?? ""
+                              //         : ""),
+
+                              dropDownSearchWidget(
+                                  checkIndex(returnParentProduct, i)
+                                      ? getChildProducts(returnParentProduct[i])
+                                      : [], (string) {
+                            setState(() {
+                              if (checkIndex(returns, i)) {
+                                returns[i].setProduct(string!);
+                              } else {
+                                RerturnAndSale returna = RerturnAndSale();
+                                returna.setProduct(string!);
+
+                                returns.add(returna);
+                              }
+                            });
+                          }),
+                        ),
                         SizedBox(
                           width: 130,
                           child: textFormFeildIncreAndDecre(
@@ -980,26 +1143,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   ReturnAndSale returna = ReturnAndSale();
                                   returna.setReturn(int.parse(string!));
 
-                                  returns.add(returna);
-                                }
+                                    returns.add(returna);
+                                  }
+                                });
                               }),
                         ),
                         InkWell(
                             onTap: () {
                               if (returns.isNotEmpty) {
+                                print("this is niot what i want");
                                 setState(() {
                                   if (checkIndex(returns, i)) {
-                                    print("this is index at $i for remove ");
-                                    print(returns[i].getProduct());
-                                    print(returns[i].getReturn());
-
-                                    setState(() {
-                                      returnParentProduct.removeAt(i);
-                                      returns.removeAt(i);
-                                      returnLength = returns.length;
-                                    });
-                                    print(returnParentProduct.length);
-                                    print(returns.length);
+                                    returnParentProduct.removeAt(i);
+                                    returns.removeAt(i);
+                                    returnLength = returns.length;
                                   } else {
                                     returnLength = returnLength - 1;
                                   }

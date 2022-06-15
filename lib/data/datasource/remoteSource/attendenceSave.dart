@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/AttendenceModel.dart';
 import 'package:salesforce/domain/entities/attendence.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
+import 'package:salesforce/injectable.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 import '../../../error/exception.dart';
 import '../../../utils/apiUrl.dart';
 
@@ -12,6 +16,7 @@ abstract class AttendenceRemoteSource {
 
 @Injectable(as: AttendenceRemoteSource)
 class AttendenceSave implements AttendenceRemoteSource {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   Dio dio = Dio();
   @override
   Future<Attendence> saveAttendence(Attendence attendence) async {
@@ -30,15 +35,21 @@ class AttendenceSave implements AttendenceRemoteSource {
     var attendenceInJson = attendenceModel.toJson();
     var jsonEncodedAnswer = jsonEncode(attendenceInJson);
 
+    String? accessToken;
+    Box box = await Hive.openBox(HiveConstants.userdata);
+
+    var accessTokenSuccessOrFailed =
+        useCaseForHiveImpl.getValueByKey(box, "access_token");
+    accessTokenSuccessOrFailed.fold(
+        (l) => {print("failed")}, (r) => {accessToken = r!});
+
     try {
       Response response = await dio.post(
         ApiUrl.saveAttendence,
         data: jsonEncodedAnswer,
         options: Options(
           contentType: "application/json",
-          headers: <String, String>{
-            'Authorization': 'Bearer 37edcf52-eaad-40aa-9366-1211a2f0e397'
-          },
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
       if (response.data["status"] == true) {

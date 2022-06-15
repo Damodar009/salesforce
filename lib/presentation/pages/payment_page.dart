@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
+import 'package:salesforce/presentation/widgets/createExcelFile.dart';
 import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
 import '../../domain/entities/SalesData.dart';
@@ -152,6 +153,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   paymentdocument: image!.path);
                               print("save sales data");
 
+                              // ExcelFile.generateExcel(model, "newOrder");
+
                               newOrderCubit.saveSalesDataToHive(model);
                               print("save payment data");
                               Navigator.of(context)
@@ -199,6 +202,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             if (sdm is SalesData) {
                               sales = sdm;
 
+                              ExcelFile.generateExcel(sales, "newOrder");
+
                               newOrderCubit.saveSalesDataToHive(sales);
                               //todo replacement
                               Navigator.of(context).push(MaterialPageRoute(
@@ -227,6 +232,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     print(model.toString());
 
                     newOrderCubit.getOrders(model);
+
+                    // JsonFile.writeJson(_controllerKey.text, _controllerValue.text);
+
+                    ExcelFile.generateExcel(model, "newOrder");
 
                     newOrderCubit.saveSalesDataToHive(model);
 

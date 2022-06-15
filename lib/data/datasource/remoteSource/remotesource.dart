@@ -106,11 +106,11 @@ class RemoteSourceImplementation implements RemoteSource {
 
     var access_Token = useCaseForHiveImpl.getValueByKey(box, "access_token");
     access_Token.fold((l) => {print("failed")},
-        (r) => {accessToken = r!, print(r.toString())});
+        (r) => {accessToken = r!});
 
     var successOrFailed = useCaseForHiveImpl.getValueByKey(box, "userid");
     successOrFailed.fold(
-        (l) => {print("failed")}, (r) => {userid = r!, print(r.toString())});
+        (l) => {print("failed")}, (r) => {userid = r!});
 
     try {
       Response response = await dio.get(
@@ -121,17 +121,14 @@ class RemoteSourceImplementation implements RemoteSource {
       );
 
       print("Response code of getUserData ${response.statusCode}");
-      print(response.data);
 
       if (response.data["status"] == true) {
-        print(response.data);
         UserDetailsDataModel userDetailsData =
             UserDetailsDataModel.fromJson(response.data["data"]);
 
         // hive.savetoken(userDetailsData: userDetailsData);
 
         // hive.showtoken();
-        print(userDetailsData);
         return userDetailsData;
       } else {
         throw ServerException();
@@ -156,8 +153,7 @@ class RemoteSourceImplementation implements RemoteSource {
     var successOrFailed = useCaseForHiveImpl.getValueByKey(box, "userid");
     successOrFailed.fold(
         (l) => {print("failed")}, (r) => {userid = r!, print(r.toString())});
-    print("this is password");
-
+    
     try {
       Response response = await dio.post(
         ApiUrl.changePassword,
@@ -170,11 +166,7 @@ class RemoteSourceImplementation implements RemoteSource {
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
-      print("this is change passowrd");
-      print(response.statusCode);
       if (response.data["status"] == true) {
-        print(response.data);
-        print("print(response.statusCode);");
         return Future.value('Success');
       } else {
         throw ServerException();
@@ -188,8 +180,15 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
     //todo implement authorization token
 
-    Box box = await Hive.openBox(HiveConstants.userdata);
     final signInLocalDataSource = getIt<SignInLocalDataSource>();
+
+    String? accessToken;
+    Box box = await Hive.openBox(HiveConstants.userdata);
+
+    var accessTokenSuccessOrFailed =
+        useCaseForHiveImpl.getValueByKey(box, "access_token");
+    accessTokenSuccessOrFailed.fold(
+        (l) => {print("failed")}, (r) => {accessToken = r!});
 
     //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
 
@@ -197,12 +196,11 @@ class RemoteSourceImplementation implements RemoteSource {
       print("inside depot product retailer");
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
-      print(userInfo!.access_token);
       Response response = await dio.get(
         ApiUrl.depotProductAndRetailor,
         options: Options(
           headers: <String, String>{
-            'Authorization': 'Bearer ad66d7ea-0bd0-4893-bfe0-989cf95e174e'
+            'Authorization': 'Bearer '+ accessToken!
           },
         ),
       );
@@ -304,7 +302,7 @@ class RemoteSourceImplementation implements RemoteSource {
         options: Options(
           contentType: "application/json",
           headers: <String, String>{
-            'Authorization': 'Bearer e51d0831-3b0f-40d9-a8e5-8b88b7234ba9',
+            'Authorization': 'Bearer ' + accessToken!,
           },
         ),
       );

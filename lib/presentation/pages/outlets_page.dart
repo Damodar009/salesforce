@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salesforce/data/datasource/remoteSource/salesDataRemoteSource.dart';
 import 'package:salesforce/presentation/widgets/backgroundShadesWidget.dart';
 import 'package:salesforce/routes.dart';
 import '../../utils/app_colors.dart';
-import '../blocs/Attendence_Bloc/attendence_cubit.dart';
 
 class OutletScreen extends StatefulWidget {
   const OutletScreen({Key? key}) : super(key: key);
@@ -45,25 +42,22 @@ class _OutletScreenState extends State<OutletScreen> {
                 "Create new orders",
                 "To create new Orders and \n send or save the data ",
                 " Add now",
-                Routes.newOrderRoute,
-                context),
+                Routes.newOrderRoute),
             outletsCard(
                 "Create new Outlets",
                 "To Create New Outlets and \nSave Outlets",
                 "Add now",
-                Routes.newOutletsRoute,
-                context),
+                Routes.newOutletsRoute),
             outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
-                "Check In", Routes.salesDataCollection, context),
+                "Check In", Routes.salesDataCollection),
           ]),
         )
       ],
     );
   }
 
-  Widget outletsCard(String title, String subtitle, String text,
-      String navigateTo, BuildContext context) {
-    var attendanceCubit = BlocProvider.of<AttendenceCubit>(context);
+  Widget outletsCard(
+      String title, String subtitle, String text, String navigateTo) {
     return outletsCardOutline(
       Padding(
         padding: const EdgeInsets.all(16.0),

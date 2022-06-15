@@ -19,10 +19,6 @@ class GetAllPublishNotificationRepositoryImpl
           await getAllPublishNotificationRemoteDataSource
               .getAllPublishNotification();
 
-      print("object111111");
-
-      print(publishNotificationResponse);
-
       print("what happno bro");
 
       return Right(publishNotificationResponse);

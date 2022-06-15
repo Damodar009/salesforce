@@ -66,7 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             buildButtonNavigationBarItem('assets/icons/home.svg', "Home"),
             buildButtonNavigationBarItem('assets/icons/sales.svg', "sales"),
             buildButtonNavigationBarItem(
-                'assets/icons/Attendence.svg', "attendence"),
+                'assets/icons/attendence.svg', "attendence"),
             buildButtonNavigationBarItem('assets/icons/menu.svg', "menu"),
           ],
         ),

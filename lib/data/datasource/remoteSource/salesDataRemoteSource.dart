@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
+import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
+import 'package:salesforce/injectable.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../error/exception.dart';
@@ -17,6 +21,7 @@ abstract class SalesDataRemoteSource {
 
 @Injectable(as: SalesDataRemoteSource)
 class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
+  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   Future<String?> postImage(List<SalesData> salesData,
       List<String?> paymentDocuments, List<String?> merchandiseType) async {
     Dio dio = Dio();
@@ -52,6 +57,15 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
       'unique_key': uuids,
     });
 
+    String? accessToken;
+
+    Box box = await Hive.openBox(HiveConstants.userdata);
+
+    var accessTokenSuccessOrFailed =
+        useCaseForHiveImpl.getValueByKey(box, "access_token");
+    accessTokenSuccessOrFailed.fold((l) => {print("failed")},
+        (r) => {accessToken = r!, print(r.toString())});
+
     try {
       //todo image
       Response response = await dio.post(
@@ -60,7 +74,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
         options: Options(
           headers: <String, String>{
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer 9d027860-ab49-4ff9-bb28-eb1b6618b661'
+            'Authorization': 'Bearer ' + accessToken!
           },
         ),
       );
@@ -125,6 +139,15 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
       var encodedSalesData = json.encode(salesDataModeljson);
       print(encodedSalesData);
 
+      String? accessToken;
+
+      Box box = await Hive.openBox(HiveConstants.userdata);
+
+      var accessTokenSuccessOrFailed =
+          useCaseForHiveImpl.getValueByKey(box, "access_token");
+      accessTokenSuccessOrFailed.fold((l) => {print("failed")},
+          (r) => {accessToken = r!, print(r.toString())});
+
       try {
         print("strating to send sales data ");
         Response response = await dio.post(
@@ -133,7 +156,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
           options: Options(
             headers: <String, String>{
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer 9d027860-ab49-4ff9-bb28-eb1b6618b661'
+              'Authorization': 'Bearer ' + accessToken!
             },
           ),
         );
