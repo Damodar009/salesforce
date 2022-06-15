@@ -6,6 +6,7 @@ import 'package:salesforce/domain/entities/userData.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import '../../data/models/SalesDataModel.dart';
 import '../../error/failure.dart';
+import '../entities/Leave.dart';
 import '../entities/SalesData.dart';
 import '../entities/attendence.dart';
 import '../entities/depotProductRetailer.dart';
@@ -27,6 +28,7 @@ abstract class Repository {
 
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel);
+  Future<Either<Failure, String>> requestLeave(Leave leave);
 }
 
 abstract class AttendenceRepository {
@@ -53,5 +55,6 @@ abstract class SaveSalesDataRepository {
 }
 
 abstract class GetAllPublishNotificationRepository {
-  Future<Either<Failure, List<PublishNotification>>> getAllPublishNotification();
+  Future<Either<Failure, List<PublishNotification>>>
+      getAllPublishNotification();
 }

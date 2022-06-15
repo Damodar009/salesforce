@@ -17,6 +17,8 @@ class SalesAdapter extends TypeAdapter<Sales> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Sales(
+      orderStatus: fields[2] as bool,
+      requestedDate: fields[3] as String?,
       sales: fields[0] as int,
       product: fields[1] as String,
     );
@@ -25,11 +27,15 @@ class SalesAdapter extends TypeAdapter<Sales> {
   @override
   void write(BinaryWriter writer, Sales obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.sales)
       ..writeByte(1)
-      ..write(obj.product);
+      ..write(obj.product)
+      ..writeByte(2)
+      ..write(obj.orderStatus)
+      ..writeByte(3)
+      ..write(obj.requestedDate);
   }
 
   @override

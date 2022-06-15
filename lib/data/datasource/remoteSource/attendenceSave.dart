@@ -29,8 +29,6 @@ class AttendenceSave implements AttendenceRemoteSource {
 
     var attendenceInJson = attendenceModel.toJson();
     var jsonEncodedAnswer = jsonEncode(attendenceInJson);
-    print("this is attendence save ");
-    print(jsonEncodedAnswer);
 
     try {
       Response response = await dio.post(
@@ -44,9 +42,7 @@ class AttendenceSave implements AttendenceRemoteSource {
         ),
       );
       if (response.data["status"] == true) {
-        print(response);
         Attendence attendence = AttendenceModel.fromJson(response.data["data"]);
-
         return attendence;
       } else {
         throw ServerException();

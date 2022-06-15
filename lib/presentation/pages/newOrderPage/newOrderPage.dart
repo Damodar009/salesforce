@@ -1,4 +1,3 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,7 +11,6 @@ import 'package:salesforce/presentation/pages/newOrderPage/returnAndSale.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/wid.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
-import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/geolocation.dart';
 import '../../../data/datasource/local_data_sources.dart';
 import '../../../data/models/AvailabilityModel.dart';
@@ -23,6 +21,7 @@ import '../../../domain/entities/SalesData.dart';
 import '../../../domain/entities/sales.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../injectable.dart';
+import '../../../routes.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/hiveConstant.dart';
 import '../../../utils/validators.dart';
@@ -44,16 +43,16 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   ///availability
   List<OrderAvailability> availability = [];
-
-  //list for getting value
-  List<RerturnAndSale> sales = [];
-  List<RerturnAndSale> returns = [];
+  List<ReturnAndSale> sales = [];
+  List<ReturnAndSale> returns = [];
+  List<ReturnAndSale> orders = [];
 
   ////end here
   List<String> productName = [];
   List<String> returnParentProduct = [];
   List<String> availabilityParentProduct = [];
   List<String> salesParentProduct = [];
+  List<String> ordersParentProduct = [];
   List<dynamic> products = [];
 
   ///retailer
@@ -67,6 +66,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   final TextEditingController _returnRemarks = TextEditingController();
   final TextEditingController _salesRemarks = TextEditingController();
   final TextEditingController _availabilityRemarks = TextEditingController();
+  final TextEditingController _ordersRemarks = TextEditingController();
 
   bool outletsCreated = true;
 
@@ -74,12 +74,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   bool returnPressed = false;
   bool availabilityPressed = false;
   bool salesPressed = false;
+  bool orderPressed = false;
 
   // length of these widgets list
   late int returnLength;
   late int availabilityLength;
   late int salesLength;
-  int _counter = 0;
+  late int orderLength;
 
   List<String> returnProductNames = [];
 
@@ -110,13 +111,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         (r) => {
               for (var i = 0; i < r.length; i++)
                 {
-                  print("this is the list of retailer drop down"),
-                  print(r[i].id),
-                  print(r[i].name),
                   retailerList.add(r[i].name),
                   retailerIdList.add(r[i].id),
-                  print(retailerList.length),
-                  print(retailerIdList.length)
                 },
             });
   }
@@ -132,9 +128,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   }
 
   void decrementNumber() {
-    setState(() {
-      _counter--;
-    });
+    setState(() {});
   }
 
   @override
@@ -242,6 +236,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   });
                 }),
           const SizedBox(
+            height: 15,
+          ),
+          orderPressed
+              ? ordersWidget()
+              : textButton("Orders", textbuttonSize!, true, () {
+                  setState(() {
+                    returnPressed = false;
+                    availabilityPressed = false;
+                    salesPressed = false;
+                    orderPressed = true;
+                    orderLength = orders.length;
+                  });
+                }),
+          const SizedBox(
             height: 12,
           ),
           button("Save Order", () async {
@@ -252,6 +260,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 loading = true;
               });
 
+              DateTime dateTimeNow = DateTime.now();
               List<Sales> salessPojo = [];
               List<Returns> returnspojo = [];
               List<Availability> availabilityPojo = [];
@@ -260,12 +269,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     returned: returns[i].getReturn(),
                     product: returns[i].getProduct());
                 returnspojo.add(returnsmodel);
-
-                print(returnspojo[i]);
               }
               for (var i = 0; i < availability.length; i++) {
                 AvailabilityModel availabilityx = AvailabilityModel(
-                    availability: availability[i].getavailability(),
+                    availability: true,
                     stock: availability[i].getStock() ?? 0,
                     product: availability[i].getproduct());
                 availabilityPojo.add(availabilityx);
@@ -274,8 +281,18 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               for (var i = 0; i < sales.length; i++) {
                 SalesModel salesmodel = SalesModel(
                     sales: sales[i].getReturn(),
-                    product: sales[i].getProduct());
+                    product: sales[i].getProduct(),
+                    orderStatus: true);
                 salessPojo.add(salesmodel);
+                print(salessPojo[i]);
+              }
+              for (var i = 0; i < orders.length; i++) {
+                SalesModel ordermodel = SalesModel(
+                    sales: orders[i].getReturn(),
+                    product: orders[i].getProduct(),
+                    orderStatus: false,
+                    requestedDate: dateTimeNow.toString());
+                salessPojo.add(ordermodel);
                 print(salessPojo[i]);
               }
 
@@ -284,7 +301,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               Position? position = await geoLocationData.getCurrentLocation();
               double latitude = position!.latitude;
               double longitude = position.longitude;
-              DateTime dateTimeNow = DateTime.now();
 
               String assignedDepots = "";
               String userId = "";
@@ -292,16 +308,8 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
                   box, HiveConstants.assignedDepot);
 
-              failureOrsucess.fold(
-                  (l) => {
-                        //box.close(),
-                        print("this is failed")
-                      },
-                  (r) => {
-                        //box.close(),
-
-                        assignedDepots = r[0]
-                      });
+              failureOrsucess.fold((l) => {print("this is failed")},
+                  (r) => {assignedDepots = r[0]});
 
               UserDataModel? userDataModel =
                   await sharedPreference.getUserDataFromLocal();
@@ -328,13 +336,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       collectionDate: dateTimeNow.toString(),
                       latitude: latitude,
                       retailerPojo: retailerModel);
+                  print(salesDataModel);
                   newOrderCubit.getOrders(salesDataModel);
                   setState(() {
                     loading = false;
                   });
 
                   Navigator.of(context).pushNamed(Routes.paymentScreen);
-                  print("not okay");
                 }
               } else {
                 if (nameOfOutlet != "") {
@@ -353,14 +361,13 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       longitude: longitude,
                       collectionDate: dateTimeNow.toString(),
                       latitude: latitude);
+                  print(salesDataModel);
                   newOrderCubit.getOrders(salesDataModel);
 
                   setState(() {
                     loading = false;
                   });
-
                   Navigator.of(context).pushNamed(Routes.paymentScreen);
-                  print("not okay");
                 } else {
                   Fluttertoast.showToast(
                       msg: "Outlet is not selected",
@@ -377,9 +384,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 }
               }
             } else {
-              print("toasr");
-              //TODO show SNACKBAR
-
               Fluttertoast.showToast(
                   msg: "There is no valid order",
                   toastLength: Toast.LENGTH_SHORT,
@@ -388,11 +392,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                   backgroundColor: AppColors.primaryColor,
                   textColor: Colors.white,
                   fontSize: 16.0);
-
-              setState(() {
-                loading = false;
-              });
             }
+            setState(() {
+              loading = false;
+            });
           }, loading, AppColors.buttonColor),
           const SizedBox(
             height: 20,
@@ -469,23 +472,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                 )),
           );
         }),
-      ),
-    );
-  }
-
-  Widget title(String title) {
-    return Text(title);
-  }
-
-  Widget titles(String title) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
       ),
     );
   }
@@ -603,7 +589,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   if (checkIndex(sales, i)) {
                                     sales[i].setProduct(string);
                                   } else {
-                                    RerturnAndSale saless = RerturnAndSale();
+                                    ReturnAndSale saless = ReturnAndSale();
                                     saless.setProduct(string);
 
                                     sales.add(saless);
@@ -631,7 +617,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   if (checkIndex(sales, i)) {
                                     sales[i].setReturn(int.parse(string!));
                                   } else {
-                                    RerturnAndSale saless = RerturnAndSale();
+                                    ReturnAndSale saless = ReturnAndSale();
                                     saless.setReturn(int.parse(string!));
 
                                     sales.add(saless);
@@ -968,7 +954,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                     if (checkIndex(returns, i)) {
                                       returns[i].setProduct(string);
                                     } else {
-                                      RerturnAndSale returna = RerturnAndSale();
+                                      ReturnAndSale returna = ReturnAndSale();
                                       returna.setProduct(string);
 
                                       returns.add(returna);
@@ -991,7 +977,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 if (checkIndex(returns, i)) {
                                   returns[i].setReturn(int.parse(string!));
                                 } else {
-                                  RerturnAndSale returna = RerturnAndSale();
+                                  ReturnAndSale returna = ReturnAndSale();
                                   returna.setReturn(int.parse(string!));
 
                                   returns.add(returna);
@@ -1045,6 +1031,166 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
         textFeildWithMultipleLines(
             hintText: 'Remarks',
             controller: _returnRemarks,
+            validator: (string) {
+              Validators.validator(string);
+            })
+      ],
+    );
+  }
+
+  Widget ordersWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(),
+            titles("Orders"),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.36,
+            ),
+            cancleWidget(() {
+              setState(() {
+                orderPressed = false;
+              });
+            }),
+          ],
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        //todo if empty show 1 else list length
+        for (var i = 0; i < orderLength + 1; i++)
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey),
+                shape: BoxShape.rectangle,
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title("Product Name"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    textFeildWithDropDownFor(
+                        validator: (string) {},
+                        item: productName,
+                        onselect: (string) {
+                          setState(() {
+                            if (checkIndex(ordersParentProduct, i)) {
+                              ordersParentProduct[i] = string;
+                              print(ordersParentProduct[i]);
+                            } else {
+                              ordersParentProduct.add(string);
+                            }
+                          });
+                        },
+                        initialText: checkIndex(ordersParentProduct, i)
+                            ? ordersParentProduct[i]
+                            : ""),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    title("Types of Product"),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                            width: 150,
+                            //todo unchanged
+                            child: textFeildWithDropDownFor(
+                                validator: (string) {},
+                                item: checkIndex(ordersParentProduct, i)
+                                    ? getChildProducts(ordersParentProduct[i])
+                                    : [],
+                                onselect: (string) {
+                                  print(string);
+                                  setState(() {
+                                    if (checkIndex(orders, i)) {
+                                      orders[i].setProduct(string);
+                                    } else {
+                                      ReturnAndSale returna = ReturnAndSale();
+                                      returna.setProduct(string);
+
+                                      orders.add(returna);
+                                    }
+                                  });
+                                },
+                                initialText: checkIndex(orders, i)
+                                    ? orders[i].getProduct() ?? ""
+                                    : "")),
+                        SizedBox(
+                          width: 130,
+                          child: textFormFeildIncreAndDecre(
+                              validator: (string) {},
+                              initialValue: checkIndex(orders, i)
+                                  ? orders[i].getReturn() != null
+                                      ? orders[i].getReturn().toString()
+                                      : ""
+                                  : "",
+                              onChanged: (string) {
+                                if (checkIndex(orders, i)) {
+                                  orders[i].setReturn(int.parse(string!));
+                                } else {
+                                  ReturnAndSale returna = ReturnAndSale();
+                                  returna.setReturn(int.parse(string!));
+
+                                  orders.add(returna);
+                                }
+                              }),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              if (orders.isNotEmpty) {
+                                setState(() {
+                                  if (checkIndex(orders, i)) {
+                                    setState(() {
+                                      ordersParentProduct.removeAt(i);
+                                      orders.removeAt(i);
+                                      orderLength = orders.length;
+                                    });
+                                  } else {
+                                    orderLength = orderLength - 1;
+                                  }
+                                });
+                              } else {
+                                orderLength = orders.length;
+                              }
+                            },
+                            child: circleContainer())
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        textButton("Add more Products", textbuttonSize!, false, () {
+          setState(() {
+            print("the return length ${orders.length}");
+
+            orderLength = orders.length;
+            print(orders);
+          });
+        }),
+        const SizedBox(
+          height: 12,
+        ),
+        textFeildWithMultipleLines(
+            hintText: 'Remarks',
+            controller: _ordersRemarks,
             validator: (string) {
               Validators.validator(string);
             })

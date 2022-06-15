@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
+import 'package:salesforce/domain/entities/retailerDropDown.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
 import '../../../domain/entities/retailer.dart';
@@ -10,40 +11,67 @@ import '../../../domain/usecases/usecasesForRemoteSource.dart';
 class TodayTarget {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   var useCaseForSalesDataImpl = getIt<UseCaseForSalesDataImpl>();
-
+// get length
   Future<int> getTotalOutlets() async {
     int totalOutlets = 0;
+    List<RetailerDropDown>? retailerDropDownList = await getTotalOutLetList();
+    if (retailerDropDownList != null) {
+      totalOutlets = retailerDropDownList.length;
+    }
+    return totalOutlets;
+  }
+
+//get list
+  Future<List<RetailerDropDown>?> getTotalOutLetList() async {
+    List<RetailerDropDown> retailerDropDownList = [];
     Box totalOutletBox =
         await Hive.openBox(HiveConstants.depotProductRetailers);
     var successOrFailed = useCaseForHiveImpl.getValuesByKey(
         totalOutletBox, HiveConstants.retailerDropdownKey);
-    successOrFailed.fold(
-        (l) => {},
-        (r) => {
-              totalOutlets = r.length,
-            });
 
-    return totalOutlets;
+    successOrFailed.fold(
+        (l) => {print("get total outlet failed")},
+        (r) => {
+              for (int i = 0; i < r.length; i++)
+                {
+                  retailerDropDownList.add(r[i]),
+                },
+              print("get total outlet passed"),
+              print(retailerDropDownList)
+            });
+    return retailerDropDownList;
   }
 
   Future<int> getNewOutlets() async {
     int retailer = 0;
+    List<RetailerDropDown>? retailers = [];
+    retailers = await getNewOutletsList();
+    if (retailers != null) {
+      retailer = retailers.length;
+    }
+    return retailer;
+  }
+
+  Future<List<RetailerDropDown>?> getNewOutletsList() async {
+    List<RetailerDropDown> retailers = [];
     Box newRetailerBox = await Hive.openBox(HiveConstants.newRetailer);
     var successOrFailed =
         useCaseForHiveImpl.getAllValuesFromHiveBox(newRetailerBox);
     successOrFailed.fold(
-        (l) => {},
+        (l) => {
+              print("get mew outlet failed"),
+            },
         (r) => {
-              retailer = r.length,
+              for (int i = 0; i < r.length; i++) {retailers.add(r[i])}
             });
 
     List<dynamic> salesData = await getSalesData();
     for (var i = 0; i < salesData.length; i++) {
       if (salesData[i].retailerPojo != null) {
-        retailer = retailer + 1;
+        retailers.add(salesData[i].retailerPojo);
       }
     }
-    return retailer;
+    return retailers;
   }
 
   Future<int> getTotalOutletsVisitedToday() async {
@@ -62,9 +90,11 @@ class TodayTarget {
     Box salesBox = await Hive.openBox(HiveConstants.salesDataCollection);
     var successOrFailed = useCaseForHiveImpl.getAllValuesFromHiveBox(salesBox);
     successOrFailed.fold(
-        (l) => {},
+        (l) => {print("sales data failed")},
         (r) => {
+              print("sales data is passed"),
               salesData.addAll(r),
+              print(salesData)
             });
     return salesData;
   }

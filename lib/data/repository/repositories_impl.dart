@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/Userdata.dart';
+import 'package:salesforce/domain/entities/Leave.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
@@ -74,16 +75,6 @@ class RepositoryImplementation implements Repository {
     }
   }
 
-  // @override
-  // Future<Either<Failure, String>> attendenceSave() async {
-  //   try {
-  //     final response = await remoteSource.attendenceSave();
-  //     return Right(response);
-  //   } catch (e) {
-  //     return Left(ServerFailure());
-  //   }
-  // }
-
   @override
   Future<Either<Failure, DepotProductRetailer>>
       getDepotProductRetailerDropDown() async {
@@ -137,22 +128,20 @@ class RepositoryImplementation implements Repository {
     try {
       final response =
           await remoteSource.saveUserDetails(saveUserDetailsDataModel);
-
-      print('whatr is this beavior');
-
       return Right(response);
     } catch (e) {
       return Left(ServerFailure());
     }
   }
 
-  // @override
-  // Future<Either<Failure, SalesDataCollection>> saveSalesDataCollection() async {
-  //   try {
-  //     final response = await remoteSource.saveSalesDataCollection();
-  //     return Right(response);
-  //   } catch (e) {
-  //     return Left(ServerFailure());
-  //   }
-  // }
+  @override
+  Future<Either<Failure, String>> requestLeave(Leave leave) async {
+    try {
+      final response = await remoteSource.requestLeave(leave);
+
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
 }

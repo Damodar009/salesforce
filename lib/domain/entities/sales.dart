@@ -7,5 +7,13 @@ class Sales {
   final int sales;
   @HiveField(1)
   final String product;
-  Sales({required this.sales, required this.product});
+  @HiveField(2)
+  final bool orderStatus;
+  @HiveField(3)
+  final String? requestedDate;
+  Sales(
+      {required this.orderStatus,
+      this.requestedDate,
+      required this.sales,
+      required this.product});
 }

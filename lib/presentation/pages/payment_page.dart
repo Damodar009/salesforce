@@ -11,7 +11,7 @@ import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
 import '../../domain/entities/SalesData.dart';
 import '../../routes.dart';
-import '../widgets/deleteTheoryTestPopupWidget.dart';
+import '../widgets/delete_theory_testPopup_widget.dart';
 import '../widgets/imageWidget.dart';
 import '../widgets/visitedOutletWidget.dart';
 

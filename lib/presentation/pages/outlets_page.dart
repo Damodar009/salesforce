@@ -26,7 +26,7 @@ class _OutletScreenState extends State<OutletScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        BackgroundShades(),
+        const BackgroundShades(),
         SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -87,18 +87,19 @@ class _OutletScreenState extends State<OutletScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                    if (attendanceCubit.state is CheckedInState) {
-                      Navigator.of(context).pushNamed(navigateTo);
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: "Please go to depot and check in",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                    }
+                    Navigator.of(context).pushNamed(navigateTo);
+                    // if (attendanceCubit.state is CheckedInState) {
+                    //   Navigator.of(context).pushNamed(navigateTo);
+                    // } else {
+                    //   Fluttertoast.showToast(
+                    //       msg: "Please go to depot and check in",
+                    //       toastLength: Toast.LENGTH_SHORT,
+                    //       gravity: ToastGravity.BOTTOM,
+                    //       timeInSecForIosWeb: 1,
+                    //       backgroundColor: Colors.red,
+                    //       textColor: Colors.white,
+                    //       fontSize: 16.0);
+                    // }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

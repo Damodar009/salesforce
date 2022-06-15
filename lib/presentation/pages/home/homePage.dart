@@ -71,12 +71,13 @@ class _HomeScreenState extends State<HomeScreen> {
     newOutletsCount = await todayTarget.getNewOutlets();
     totalOutletsCount = await todayTarget.getTotalOutlets();
     visitedOutletCount = await todayTarget.getTotalOutletsVisitedToday();
+
     if (mounted) {
       setState(() {
-        todayTargets.add(totalOutletsCount);
-        todayTargets.add(newOutletsCount);
-        todayTargets.add(visitedOutletCount);
-        todayTargets.add(totalSalesCount);
+        todayTargets[0] = totalOutletsCount;
+        todayTargets[1] = newOutletsCount;
+        todayTargets[2] = visitedOutletCount;
+        todayTargets[3] = totalSalesCount;
       });
     }
 
@@ -113,6 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("this is today target");
+    print(todayTargets);
     double mediaQueryHeight = MediaQuery.of(context).size.height;
     double mediaQueryWidth = MediaQuery.of(context).size.width;
     var attendenceCubit = BlocProvider.of<AttendenceCubit>(context);
@@ -267,12 +270,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         bool check =
                                             await attendenceCubit.checkIn();
                                         if (check) {
+                                          //todo check flag in response of attendance save
                                           _initialData.getAndSaveInitalData();
                                           Navigator.of(context).pushNamed(
                                               Routes.attendanceRoute);
-                                        } else {
-
-                                        }
+                                        } else {}
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
