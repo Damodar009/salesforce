@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
-import 'package:salesforce/data/models/saveUserDetailsModel.dart';
 import 'package:salesforce/data/models/userDetailModel.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
@@ -11,7 +11,7 @@ import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/domain/usecases/userCaseForUploadImageSave.dart';
 import 'package:salesforce/error/failure.dart';
 import 'package:salesforce/injectable.dart';
-import 'package:salesforce/presentation/blocs/upload_image/upload_image_bloc.dart';
+import 'package:salesforce/utils/hiveConstant.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -34,7 +34,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
         final isSuccessful =
             await useCaseForRemoteSourceimpl.getUserDetailsData();
-
+        Box userBox = await Hive.openBox(HiveConstants.userData);
         isSuccessful.fold((l) {
           if (l is ServerFailure) {
             emit(GetProfileFailedState());
@@ -42,6 +42,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             emit(GetProfileFailedState());
           }
         }, (r) {
+          userBox.put(HiveConstants.userName, r.userDetail!.fullName);
+          userBox.put(HiveConstants.userImages, r.userDetail!.userDocument);
           emit(GetProfileLoadedState(userDetailsdata: r));
         });
       },
@@ -50,10 +52,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<SaveUserDetailsEvent>(
       (event, emit) async {
         emit(SaveUserDetailsLoadingState());
-        print("you are in bloc hai tah kta ho ");
 
         final isSuccessful =
             await saveEditProfileDatas(event.saveUserDetailsDataModel);
+        Box userBox = await Hive.openBox(HiveConstants.userData);
 
         isSuccessful.fold((l) {
           if (l is ServerFailure) {
@@ -61,7 +63,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           } else if (l is CacheFailure) {
             emit(SaveUserDetailsFailedState());
           }
-        }, (r) => emit(SaveUserDetailsLoadedState()));
+        }, (r) {
+          userBox.put(HiveConstants.userName, r.userDetail!.fullName);
+          userBox.put(HiveConstants.userImages, r.userDetail!.userDocument);
+          emit(SaveUserDetailsLoadedState());
+        });
       },
     );
   }

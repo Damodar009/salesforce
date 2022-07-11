@@ -17,10 +17,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
-    // TODO: implement initState
-    print("your are in profile page");
-
     super.initState();
+    print("your are in profile page");
     BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
   }
 
@@ -231,16 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           getProfileState: getProfilestate
                                               .userDetailsdata)));
                         }, false, AppColors.buttonColor),
-                        // SizedBox(
-                        //   height: mediaQueryHeight * 0.01,
-                        // ),
-                        // button('Change password', () {
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (BuildContext context) =>
-                        //               const ChangePasswordScreen()));
-                        // }, false, const Color(0xfffa8b7cb)),
+
                       ],
                     );
                   } else if (getProfilestate is GetProfileFailedState) {

@@ -1,11 +1,15 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:path_provider/path_provider.dart' as pathprovider;
 import 'package:salesforce/data/datasource/local_data_sources.dart';
 import 'package:salesforce/data/models/Userdata.dart';
+import 'package:salesforce/domain/entities/productName.dart';
 import 'package:salesforce/domain/entities/publish_notification.dart';
+import 'package:salesforce/domain/entities/requestedDropDown.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
 import 'package:salesforce/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
@@ -16,13 +20,17 @@ import 'package:salesforce/presentation/pages/dashboard.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/appTheme.dart';
+import 'package:salesforce/utils/geolocation.dart';
+import 'package:salesforce/utils/initialData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'domain/entities/SalesData.dart';
 import 'domain/entities/attendence.dart';
 import 'domain/entities/availability.dart';
 import 'domain/entities/depot.dart';
 import 'domain/entities/merchandise.dart';
 import 'domain/entities/merchndiseOrder.dart';
+import 'domain/entities/paymentType.dart';
 import 'domain/entities/products.dart';
 import 'domain/entities/region.dart';
 import 'domain/entities/retailer.dart';
@@ -33,7 +41,6 @@ import 'domain/entities/sales.dart';
 import 'domain/entities/saleslocationTrack.dart';
 import 'domain/usecases/useCaseTosendAllLocalData.dart';
 import 'injectable.dart';
-import 'package:path_provider/path_provider.dart' as pathprovider;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,29 +64,26 @@ Future<void> main() async {
     ..registerAdapter(RegionDropDownAdapter())
     ..registerAdapter(SalesAdapter())
     ..registerAdapter(MerchandiseDropDownAdapter())
-     ..registerAdapter(PublishNotificationAdapter());
+    ..registerAdapter(PublishNotificationAdapter())
+    ..registerAdapter(ProductNameAdapter())
+    ..registerAdapter(RequestedDropDownAdapter())
+    ..registerAdapter(PaymentTypeAdapter());
+
+  var geolocator = getIt<GeoLocationData>();
+  await geolocator.checkLocationPermission();
 
   final StreamSubscription<InternetConnectionStatus> listener =
       InternetConnectionChecker().onStatusChange.listen(
     (InternetConnectionStatus status) {
       switch (status) {
         case InternetConnectionStatus.connected:
-          // ignore: avoid_print
-          print("///////////////////////////");
-          var localDataSend = getIt<AllLocalDataToApi>();
-          var checklocalDataSend = getIt<SignInLocalDataSourceImpl>();
-          bool? checkData = checklocalDataSend.getLocalDataChecker();
-          if (checkData != null) {
-            if (checkData == true) {
-              localDataSend.getAllDatFromApiAndSend();
-            }
-          }
-          print('Data connection is available.');
+          var localDataSend = AllLocalDataToApi();
+          localDataSend.getAllDatFromApiAndSend();
+          final InitialData _initialData = InitialData();
+          _initialData.getAndSaveInitalData();
           break;
+
         case InternetConnectionStatus.disconnected:
-          // ignore: avoid_print
-          print('You are disconnected from the internet.');
-          print("*******************************");
           break;
       }
     },
@@ -97,16 +101,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isLoggedIn = true;
-  checkUserLoggedIn() async {
-    Box box = await Hive.openBox("salesForce");
-    isLoggedIn = box.get("isLoggedIN", defaultValue: false);
-  }
-
-  @override
-  void initState() {
-    checkUserLoggedIn();
-    super.initState();
-  }
 
   // var useCaseForRemoteSourceImpl = getIt<UseCaseForRemoteSourceimpl>();
   // var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
@@ -125,18 +119,13 @@ class _MyAppState extends State<MyApp> {
             create: (context) => PublishNotificationBloc()
               ..add(GetAllPublishNotificationEvent())),
         BlocProvider(create: (context) => NewOrderCubit()),
-
-        // BlocProvider<PublishNotificationBloc>(
-        // BlocProvider<PublishNotificationBloc>(
-        //   create: (context) => PublishNotificationBloc()),
-        // )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         onGenerateRoute: RouteGenerator.getRoute,
         title: 'SalesForce',
         theme: theme,
-        initialRoute: Routes.splashScreen,
+        home: SplashScreen(),
       ),
     );
   }
@@ -151,22 +140,14 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final signInLocalDataSource = getIt<SignInLocalDataSource>();
-  final prefs = getIt<SharedPreferences>();
 
-  bool isLoggedIn = false;
+  bool? isLoggedIn;
   checkUserLoggedIn() async {
     try {
-      print("this below is access toke hai ");
-      print("this is main page and the keys are below");
-
-      var _remeberMe = prefs.getBool("remember_me") ?? false;
-
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
-      print(userInfo!.access_token);
-
       setState(() {
-        if (_remeberMe) {
+        if (userInfo != null) {
           if (userInfo.access_token != null) {
             isLoggedIn = true;
           } else {
@@ -176,9 +157,7 @@ class _SplashScreenState extends State<SplashScreen> {
           isLoggedIn = false;
         }
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   @override
@@ -189,6 +168,21 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoggedIn ? DashboardScreen(index: 0) : const LOginScreen();
+    return isLoggedIn != null
+        ? isLoggedIn!
+            ? DashboardScreen(index: 0)
+            : const LOginScreen()
+        : Scaffold(
+            body: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  repeat: ImageRepeat.repeat,
+                  image: AssetImage(
+                    'assets/images/Splash.png',
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 }

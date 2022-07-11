@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:salesforce/utils/app_colors.dart';
 
 Widget dropDownSearchWidget(
-    List<String> items, Function(String? string) onTap) {
+    List<String> items,String selectedItem ,  Function(String? string) onTap) {
   return DropdownSearch<String>(
       popupProps: const PopupProps.menu(
         showSearchBox: true,
         showSelectedItems: true,
       ),
+      selectedItem: selectedItem,
       items: items,
       dropdownSearchDecoration: const InputDecoration(
           fillColor: Colors.white,

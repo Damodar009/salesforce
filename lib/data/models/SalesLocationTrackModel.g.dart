@@ -9,10 +9,10 @@ part of 'SalesLocationTrackModel.dart';
 SalesLocationTrackModel _$SalesLocationTrackModelFromJson(
         Map<String, dynamic> json) =>
     SalesLocationTrackModel(
-      (json['latitude'] as num).toDouble(),
-      (json['longitude'] as num).toDouble(),
-      json['trackingDate'] as String,
-      json['userId'] as String,
+      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble(),
+      trackingDate: json['trackingDate'] as String,
+      userId: json['userId'] as String,
     );
 
 Map<String, dynamic> _$SalesLocationTrackModelToJson(

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:salesforce/data/datasource/remoteSource/remotesource.dart';
-import 'package:salesforce/injectable.dart';
-
 import 'package:salesforce/utils/app_colors.dart';
 import 'package:salesforce/utils/validators.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +19,7 @@ class LOginScreen extends StatefulWidget {
 class _LOginScreenState extends State<LOginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final prefs = getIt<SharedPreferences>();
+
   final _formKey = GlobalKey<FormState>();
   bool rememberMe = false;
   bool obsecureText = true;
@@ -38,8 +36,9 @@ class _LOginScreenState extends State<LOginScreen> {
   bool _isChecked = false;
 
   //handle remember me function
-  void _handleRemeberme(bool value) {
+  Future<void> _handleRemeberme(bool value) async {
     _isChecked = value;
+    final prefs = await SharedPreferences.getInstance();
     prefs.setBool("remember_me", value);
     setState(() {
       _isChecked = value;
@@ -56,7 +55,7 @@ class _LOginScreenState extends State<LOginScreen> {
         if (state is LoginSuccessState) {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text('Login successful')));
-          print("routinhg");
+
           // Navigator.pushNamedAndRemoveUntil(context, Routes.dashboardRoute, (route) => false);
           Navigator.of(context)
               .pushNamedAndRemoveUntil(Routes.dashboardRoute, (route) => false);
@@ -117,7 +116,7 @@ class _LOginScreenState extends State<LOginScreen> {
                                         controller: _emailController,
                                         hintText: 'Username',
                                         obsecureText1: () {
-                                          setState(() {});
+                                          // setState(() {});
                                         }),
                                     const SizedBox(
                                       height: 20,
@@ -157,13 +156,9 @@ class _LOginScreenState extends State<LOginScreen> {
                                                 //todo write code for remember me
                                                 setStat(() {
                                                   rememberMe = newValue!;
-                                                  print(newValue);
                                                 });
                                                 _handleRemeberme(
                                                     newValue ?? false);
-                                                print(newValue);
-                                                print(
-                                                    "this is remember me bool value2222");
                                               });
                                         }),
                                         const Padding(
@@ -187,7 +182,6 @@ class _LOginScreenState extends State<LOginScreen> {
                                           return button(("Log in"), () {
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              print("is valid ");
                                               authbloc.add(LoginAttemptEvent(
                                                   username:
                                                       _emailController.text,

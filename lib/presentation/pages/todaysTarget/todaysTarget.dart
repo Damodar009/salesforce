@@ -44,17 +44,20 @@ class TodayTarget {
 
   Future<int> getNewOutlets() async {
     int retailer = 0;
-    List<RetailerDropDown>? retailers = [];
+    List<Retailer>? retailers = [];
     retailers = await getNewOutletsList();
     if (retailers != null) {
+      print(";;;;;;;;;;;;;;;");
       retailer = retailers.length;
+      print(retailer);
     }
     return retailer;
   }
 
-  Future<List<RetailerDropDown>?> getNewOutletsList() async {
-    List<RetailerDropDown> retailers = [];
+  Future<List<Retailer>?> getNewOutletsList() async {
+    List<Retailer> retailers = [];
     Box newRetailerBox = await Hive.openBox(HiveConstants.newRetailer);
+
     var successOrFailed =
         useCaseForHiveImpl.getAllValuesFromHiveBox(newRetailerBox);
     successOrFailed.fold(
@@ -62,7 +65,13 @@ class TodayTarget {
               print("get mew outlet failed"),
             },
         (r) => {
-              for (int i = 0; i < r.length; i++) {retailers.add(r[i])}
+              for (int i = 0; i < r.length; i++)
+                {
+                  print(
+                      "///////////////aaaaaaaaaaaaaaaaa///////////////aaaaaaaa"),
+                  print(r[i]),
+                  retailers.add(r[i])
+                }
             });
 
     List<dynamic> salesData = await getSalesData();
@@ -85,16 +94,14 @@ class TodayTarget {
     return toalOutletVisitedToday;
   }
 
-  Future<List> getSalesData() async {
-    List<dynamic> salesData = [];
+  Future<List<SalesData>> getSalesData() async {
+    List<SalesData> salesData = [];
     Box salesBox = await Hive.openBox(HiveConstants.salesDataCollection);
     var successOrFailed = useCaseForHiveImpl.getAllValuesFromHiveBox(salesBox);
     successOrFailed.fold(
         (l) => {print("sales data failed")},
         (r) => {
-              print("sales data is passed"),
-              salesData.addAll(r),
-              print(salesData)
+              for (int i = 0; i < r.length; i++) {salesData.add(r[i])}
             });
     return salesData;
   }

@@ -17,10 +17,10 @@ class SalesLocationTrackAdapter extends TypeAdapter<SalesLocationTrack> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SalesLocationTrack(
-      fields[0] as double,
-      fields[1] as double,
-      fields[2] as String,
-      fields[3] as String,
+      latitude: fields[0] as double,
+      longitude: fields[1] as double,
+      trackingDate: fields[2] as String,
+      userId: fields[3] as String,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/data/models/Userdata.dart';
@@ -11,7 +12,6 @@ import 'package:salesforce/presentation/pages/newOrderPage/widgets/newOutletsPag
 import 'package:salesforce/presentation/pages/newOrderPage/widgets/wid.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/utils/geolocation.dart';
-import 'package:searchfield/searchfield.dart';
 import '../../../data/datasource/local_data_sources.dart';
 import '../../../data/models/AvailabilityModel.dart';
 import '../../../data/models/RetailerModel.dart';
@@ -20,12 +20,14 @@ import '../../../data/models/returnModel.dart';
 import '../../../domain/entities/SalesData.dart';
 import '../../../domain/entities/sales.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
+import '../../../domain/usecases/useCaseForSalesDataTrackCollection.dart';
 import '../../../injectable.dart';
 import '../../../routes.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/hiveConstant.dart';
 import '../../../utils/validators.dart';
 import '../../widgets/buttonWidget.dart';
+import '../../widgets/dropdown_search_widget.dart';
 import '../../widgets/textformfeild.dart';
 
 class NewOrderScreen extends StatefulWidget {
@@ -38,6 +40,8 @@ class NewOrderScreen extends StatefulWidget {
 class _NewOrderScreenState extends State<NewOrderScreen> {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   var sharedPreference = getIt<SignInLocalDataSource>();
+  var useCaseForSalesDataTrackCollectionImpl =
+      getIt<UseCaseForSalesDataTrackCollectionImpl>();
   String nameOfOutlet = "";
   bool loading = false;
 
@@ -49,6 +53,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   ////end here
   List<String> productName = [];
+  List<Map<String, String>> childAndChildId = [];
   List<String> returnParentProduct = [];
   List<String> availabilityParentProduct = [];
   List<String> salesParentProduct = [];
@@ -102,11 +107,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
     return childProducts;
   }
 
-//todo do retiler in another page
   getRetailerList() async {
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
-    var sucessOrNot = useCaseForHiveImpl.getValuesByKey(box, "retailerTypes");
-    sucessOrNot.fold(
+    var successOrNot = useCaseForHiveImpl.getValuesByKey(
+        box, HiveConstants.retailerDropdownKey);
+    successOrNot.fold(
         (l) => {print("no success")},
         (r) => {
               for (var i = 0; i < r.length; i++)
@@ -133,12 +138,14 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   @override
   void initState() {
+    //   useCaseForSalesDataTrackCollectionImpl.saveSakesTrackDataTOHive(5);
     getRetailerList();
     getProductsFromHiveBox();
     super.initState();
   }
 
   getProductsFromHiveBox() async {
+    Map<String, String> map;
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
     var sucessOrNot = useCaseForHiveImpl.getValuesByKey(
       box,
@@ -152,8 +159,29 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               for (var i = 0; i < products.length; i++)
                 {
                   productName.add(products[i].name),
+                  for (int j = 0; j < products[i].childProducts.length; j++)
+                    {
+                      map = {
+                        products[i].childProducts[j]["name"]:
+                            products[i].childProducts[j]["id"]
+                      },
+                      childAndChildId.add(map),
+                    }
                 },
+              print(childAndChildId),
             });
+  }
+
+  String? changeNameTOId(String childProductName) {
+    String? id;
+    childAndChildId.forEach((element) {
+      element.forEach((key, value) {
+        if (key == childProductName) {
+          id = value;
+        }
+      });
+    });
+    return id;
   }
 
   @override
@@ -179,17 +207,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    // textFeildWithDropDownFor(
-                    //     validator: (string) {},
-                    //     item: retailerList,
-                    //     onselect: (string) {
-                    //       setState(() {
-                    //         nameOfOutlet = string;
-                    //       });
-                    //     },
-                    //     initialText: nameOfOutlet),
-
-                    dropDownSearchWidget(retailerList, (string) {
+                    dropDownSearchWidget(retailerList, nameOfOutlet, (string) {
                       setState(() {
                         nameOfOutlet = string!;
                       });
@@ -259,35 +277,52 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             height: 12,
           ),
           button("Save Order", () async {
+            //to close keyboard
+            if (WidgetsBinding.instance.window.viewInsets.bottom > 0.0) {
+              FocusScope.of(context).unfocus();
+            }
+
             if (returns.isNotEmpty ||
                 availability.isNotEmpty ||
-                sales.isNotEmpty) {
+                sales.isNotEmpty ||
+                orders.isNotEmpty) {
               setState(() {
                 loading = true;
               });
 
-              DateTime dateTimeNow = DateTime.now();
+              DateTime dateTime = DateTime.now();
+              String month = dateTime.month.toString().length == 1
+                  ? "0${dateTime.month.toString()}"
+                  : dateTime.month.toString();
+              String day = dateTime.day.toString().length == 1
+                  ? "0${dateTime.day.toString()}"
+                  : dateTime.day.toString();
+              String dateTimeNow = "${dateTime.year}-$month-$day";
+
               List<Sales> salessPojo = [];
               List<Returns> returnspojo = [];
               List<Availability> availabilityPojo = [];
               for (var i = 0; i < returns.length; i++) {
                 ReturnsModel returnsmodel = ReturnsModel(
                     returned: returns[i].getReturn(),
-                    product: returns[i].getProduct());
+                    product: changeNameTOId(returns[i].getProduct()) ?? "");
                 returnspojo.add(returnsmodel);
               }
+
               for (var i = 0; i < availability.length; i++) {
                 AvailabilityModel availabilityx = AvailabilityModel(
                     availability: true,
                     stock: availability[i].getStock() ?? 0,
-                    product: availability[i].getproduct());
+                    product:
+                        changeNameTOId(availability[i].getproduct() ?? "") ??
+                            "");
                 availabilityPojo.add(availabilityx);
                 print(availabilityPojo[i]);
               }
               for (var i = 0; i < sales.length; i++) {
                 SalesModel salesmodel = SalesModel(
                     sales: sales[i].getReturn(),
-                    product: sales[i].getProduct(),
+                    product: changeNameTOId(sales[i].getProduct()) ?? "",
                     orderStatus: true);
                 salessPojo.add(salesmodel);
                 print(salessPojo[i]);
@@ -295,9 +330,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               for (var i = 0; i < orders.length; i++) {
                 SalesModel ordermodel = SalesModel(
                     sales: orders[i].getReturn(),
-                    product: orders[i].getProduct(),
+                    product: changeNameTOId(orders[i].getProduct()) ?? "",
                     orderStatus: false,
-                    requestedDate: dateTimeNow.toString());
+                    requestedDate: dateTimeNow);
                 salessPojo.add(ordermodel);
                 print(salessPojo[i]);
               }
@@ -308,34 +343,25 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
               double latitude = position!.latitude;
               double longitude = position.longitude;
 
-              print(returnspojo[i]);
-            }
-            for (var i = 0; i < availability.length; i++) {
-              AvailabilityModel availabilityx = AvailabilityModel(
-                  availability: availability[i].getavailability(),
-                  stock: availability[i].getStock(),
-                  product: availability[i].getproduct());
-              availabilityPojo.add(availabilityx);
-              print(availabilityPojo[i]);
-            }
-            for (var i = 0; i < sales.length; i++) {
-              SalesModel salesmodel = SalesModel(
-                  sales: sales[i].getReturn(), product: sales[i].getProduct());
-              salessPojo.add(salesmodel);
-              print(salessPojo[i]);
-            }
+              String assignedDepots = "";
+              String userId = "";
+              // Box box = await Hive.openBox(HiveConstants.attendence);
+              // var failureOrsucess = useCaseForHiveImpl.getValueByKey(
+              //     box, HiveConstants.assignedDepot);
+              //
+              // failureOrsucess.fold((l) => {print("this is failed")},
+              //     (r) => {assignedDepots = r});
+              UserDataModel? userDataModel =
+                  await sharedPreference.getUserDataFromLocal();
+              if (userDataModel != null) {
+                userId = userDataModel.userid!;
+              }
 
-              failureOrsucess.fold((l) => {print("this is failed")},
-                  (r) => {assignedDepots = r[0]});
-
-            double longitude = position.longitude;
-            DateTime dateTimeNow = DateTime.now();
-
-            String assignedDepots = "";
-            String userId = "";
-            Box box = await Hive.openBox(HiveConstants.attendence);
-            var failureOrsucess = useCaseForHiveImpl.getValuesByKey(
-                box, HiveConstants.assignedDepot);
+              if (newOrderCubit.state is NewRetailerCreated) {
+                Object? sdm = newOrderCubit.state.props[0];
+                RetailerModel retailerModel;
+                if (sdm is RetailerModel) {
+                  retailerModel = sdm;
 
                   salesDataModel = SalesData(
                       sales: salessPojo,
@@ -345,9 +371,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       returnedDescription: _returnRemarks.text,
                       availabilityDescription: _availabilityRemarks.text,
                       userId: userId,
-                      assignedDepot: assignedDepots,
+                      assignedDepot: "NGBifEuwYylJoyRt7a8bkA==",
                       longitude: longitude,
-                      collectionDate: dateTimeNow.toString(),
+                      collectionDate: dateTimeNow,
                       latitude: latitude,
                       retailerPojo: retailerModel);
                   print(salesDataModel);
@@ -371,9 +397,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       availabilityDescription: _availabilityRemarks.text,
                       retailer: retailerId,
                       userId: userId,
-                      assignedDepot: assignedDepots,
+                      assignedDepot: "NGBifEuwYylJoyRt7a8bkA==",
                       longitude: longitude,
-                      collectionDate: dateTimeNow.toString(),
+                      collectionDate: dateTimeNow,
                       latitude: latitude);
                   print(salesDataModel);
                   newOrderCubit.getOrders(salesDataModel);
@@ -392,21 +418,10 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       textColor: Colors.white,
                       fontSize: 16.0);
 
-                salesDataModel = SalesData(
-                    sales: salessPojo,
-                    returns: returnspojo,
-                    availability: availabilityPojo,
-                    salesDescription: _salesRemarks.text,
-                    returnedDescription: _returnRemarks.text,
-                    availabilityDescription: _availabilityRemarks.text,
-                    userId: userId,
-                    assignedDepot: assignedDepots,
-                    longitude: longitude,
-                    collectionDate: dateTimeNow.toString(),
-                    latitude: latitude,
-                    retailerPojo: retailerModel);
-                newOrderCubit.getOrders(salesDataModel);
-                print("okay");
+                  setState(() {
+                    loading = false;
+                  });
+                }
               }
             } else {
               Fluttertoast.showToast(
@@ -469,7 +484,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                     fillColor: MaterialStateColor.resolveWith(
                                         (states) => AppColors.buttonColor),
                                     onChanged: (newValue) {
-                                      print(newValue);
                                       setStat(() {
                                         outletsCreated = newValue!;
                                       });
@@ -534,16 +548,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   ///sales
   Widget salesWidget() {
-    List<String> countries = [
-      'United States',
-      'America',
-      'Washington',
-      'India',
-      'Paris',
-      'Jakarta',
-      'Australia',
-      'Lorem Ipsum'
-    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -586,17 +590,19 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    dropDownSearchWidget(productName, (string) {
+                    dropDownSearchWidget(
+                        productName,
+                        checkIndex(salesParentProduct, i)
+                            ? salesParentProduct[i]
+                            : "", (string) {
                       setState(() {
                         if (checkIndex(salesParentProduct, i)) {
                           salesParentProduct[i] = string!;
-                          print(salesParentProduct[i]);
                         } else {
                           salesParentProduct.add(string!);
                         }
                       });
                     }),
-
                     // textFeildWithDropDownFor(
                     //     validator: (string) {},
                     //     item: productName,
@@ -624,48 +630,24 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       children: [
                         SizedBox(
                           width: 150,
-                          height: 47,
-                          //todo unchanged
                           child: dropDownSearchWidget(
                               checkIndex(salesParentProduct, i)
                                   ? getChildProducts(salesParentProduct[i])
                                   : [],
-                              // incrementReturn;
-                              onselect: (string) {
-                                setState(() {
-                                  if (checkIndex(sales, i)) {
-                                    sales[i].setProduct(string);
-                                  } else {
-                                    ReturnAndSale saless = ReturnAndSale();
-                                    saless.setProduct(string);
+                              checkIndex(sales, i)
+                                  ? sales[i].getProduct() ?? ""
+                                  : "", (string) {
+                            setState(() {
+                              if (checkIndex(sales, i)) {
+                                sales[i].setProduct(string!);
+                              } else {
+                                ReturnAndSale saless = ReturnAndSale();
+                                saless.setProduct(string!);
 
                                 sales.add(saless);
                               }
                             });
                           }),
-
-                          //  textFeildWithDropDownFor(
-                          //     validator: (string) {},
-                          //     item: checkIndex(salesParentProduct, i)
-                          //         ? getChildProducts(salesParentProduct[i])
-                          //         : [],
-                          //     // incrementReturn;
-                          //     onselect: (string) {
-                          //       setState(() {
-                          //         if (checkIndex(sales, i)) {
-                          //           sales[i].setProduct(string);
-                          //         } else {
-                          //           RerturnAndSale saless = RerturnAndSale();
-                          //           saless.setProduct(string);
-
-                          //           sales.add(saless);
-                          //         }
-                          //       });
-                          //     },
-                          //     initialText: checkIndex(sales, i)
-                          //         ? sales[i].getProduct() ?? ""
-                          //         : ""
-                          //         ),
                         ),
                         SizedBox(
                           width: 130,
@@ -677,28 +659,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                       : ""
                                   : "",
                               onChanged: (string) {
-                                setState(() {
-                                  print(string);
+                                if (checkIndex(sales, i)) {
+                                  sales[i].setReturn(int.parse(string!));
+                                } else {
+                                  ReturnAndSale saless = ReturnAndSale();
+                                  saless.setReturn(int.parse(string!));
 
-                                  print("increment number is clicked");
-                                  if (checkIndex(sales, i)) {
-                                    sales[i].setReturn(int.parse(string!));
-                                  } else {
-                                    ReturnAndSale saless = ReturnAndSale();
-                                    saless.setReturn(int.parse(string!));
-
-                                    sales.add(saless);
-                                  }
-                                });
+                                  sales.add(saless);
+                                }
                               }),
                         ),
                         InkWell(
                             onTap: () {
-                              print("the delete is clicked");
-                              print("weewewe $i");
                               setState(() {
                                 if (sales.isNotEmpty) {
-                                  print("this is niot what i want");
                                   setState(() {
                                     if (checkIndex(sales, i)) {
                                       salesParentProduct.removeAt(i);
@@ -709,7 +683,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                     }
                                   });
                                 } else {
-                                  print("no way what");
                                   salesLength = sales.length;
                                 }
                               });
@@ -784,8 +757,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-
-                    dropDownSearchWidget(productName, (string) {
+                    dropDownSearchWidget(
+                        productName,
+                        checkIndex(availabilityParentProduct, i)
+                            ? availabilityParentProduct[i]
+                            : "choose", (string) {
                       setState(() {
                         if (checkIndex(availabilityParentProduct, i)) {
                           availabilityParentProduct[i] = string!;
@@ -795,107 +771,26 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         }
                       });
                     }),
-                    // textFeildWithDropDownFor(
-                    //     validator: (string) {},
-                    //     item: productName,
-                    //     onselect: (string) {
-                    //       setState(() {
-                    //         if (checkIndex(availabilityParentProduct, i)) {
-                    //           availabilityParentProduct[i] = string;
-                    //           print(availabilityParentProduct[i]);
-                    //         } else {
-                    //           availabilityParentProduct.add(string);
-                    //         }
-                    //       });
-                    //     },
-                    //     initialText: checkIndex(availabilityParentProduct, i)
-                    //         ? availabilityParentProduct[i]
-                    //         : "choose"),
                     const SizedBox(
                       height: 12,
                     ),
-
-                    // title("Types of Product"),
-                    // const SizedBox(
-                    //   height: 12,
-                    // ),
-                    // textFeildWithDropDownFor(
-                    //     validator: (string) {},
-                    //     item: checkIndex(availabilityParentProduct, i)
-                    //         ? getChildProducts(availabilityParentProduct[i])
-                    //         : items,
-                    //     onselect: (string) {
-                    //       setState(() {
-                    //         if (checkIndex(availability, i)) {
-                    //           availability[i].setproduct(string);
-                    //         } else {
-                    //           //todo
-                    //           Availability available = Availability();
-                    //           available.setproduct(string);
-                    //
-                    //           availability.add(available);
-                    //         }
-                    //       });
-                    //     },
-                    //     initialText: checkIndex(availability, i)
-                    //         ? availability[i].getproduct()!
-                    //         : ""),
-                    // const SizedBox(
-                    //   height: 12,
-                    // ),
-
                     title("Types of Product"),
                     const SizedBox(
                       height: 12,
                     ),
-
                     Row(
                       children: [
                         SizedBox(
-                          width: 150,
-                          height: 47,
-                          //todo unchanged
-                          child: DropdownSearch<String>(
-                            popupProps: const PopupProps.menu(
-                              showSearchBox: true,
-                              showSelectedItems: true,
-                            ),
-                            items: checkIndex(availabilityParentProduct, i)
-                                ? getChildProducts(
-                                        availabilityParentProduct[i]) ??
-                                    []
-                                : [],
-                            dropdownSearchDecoration: const InputDecoration(
-                                fillColor: Colors.white,
-                                errorStyle: TextStyle(
-                                    color: Color.fromRGBO(2, 40, 89, 1)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(30.0),
-                                  ),
-                                  borderSide: BorderSide(
-                                      color: AppColors.textFeildINputBorder),
-                                ),
-                                filled: true,
-                                hintStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Inter',
-                                  fontSize: 15,
-                                ),
-                                hintText: "Select",
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 5),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30.0),
-                                    )),
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.blue),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30.0),
-                                    ))),
-                            onChanged: (string) {
+                            width: 150,
+                            //todo unchanged
+                            child: dropDownSearchWidget(
+                                checkIndex(availabilityParentProduct, i)
+                                    ? getChildProducts(
+                                        availabilityParentProduct[i])
+                                    : [],
+                                checkIndex(availability, i)
+                                    ? availability[i].getproduct() ?? ""
+                                    : "", (string) {
                               setState(() {
                                 if (checkIndex(availability, i)) {
                                   availability[i].setproduct(string);
@@ -908,33 +803,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   availability.add(available);
                                 }
                               });
-                            },
-                          ),
-                          // textFeildWithDropDownFor(
-                          //     validator: (string) {},
-                          //     item: checkIndex(availabilityParentProduct, i)
-                          //         ? getChildProducts(
-                          //                 availabilityParentProduct[i]) ??
-                          //             []
-                          //         : [],
-                          //     onselect: (string) {
-                          //       setState(() {
-                          //         if (checkIndex(availability, i)) {
-                          //           availability[i].setproduct(string);
-                          //         } else {
-                          //           //todo
-                          //           OrderAvailability available =
-                          //               OrderAvailability();
-                          //           available.setproduct(string);
-
-                          //           availability.add(available);
-                          //         }
-                          //       });
-                          //     },
-                          //     initialText: checkIndex(availability, i)
-                          //         ? availability[i].getproduct()!
-                          //         : ""),
-                        ),
+                            })),
                         SizedBox(
                           width: 140,
                           child: textFormFeildIncreAndDecre(
@@ -945,18 +814,15 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                       : ""
                                   : "",
                               onChanged: (string) {
-                                setState(() {
-                                  if (checkIndex(availability, i)) {
-                                    availability[i]
-                                        .setStock(int.parse(string!));
-                                  } else {
-                                    OrderAvailability available =
-                                        OrderAvailability();
-                                    available.setStock(int.parse(string!));
+                                if (checkIndex(availability, i)) {
+                                  availability[i].setStock(int.parse(string!));
+                                } else {
+                                  OrderAvailability available =
+                                      OrderAvailability();
+                                  available.setStock(int.parse(string!));
 
-                                    availability.add(available);
-                                  }
-                                });
+                                  availability.add(available);
+                                }
                               }),
                         ),
                         InkWell(
@@ -1051,23 +917,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    // textFeildWithDropDownFor(
-                    //     validator: (string) {},
-                    //     item: productName,
-                    //     onselect: (string) {
-                    //       setState(() {
-                    //         if (checkIndex(returnParentProduct, i)) {
-                    //           returnParentProduct[i] = string;
-                    //           print(returnParentProduct[i]);
-                    //         } else {
-                    //           returnParentProduct.add(string);
-                    //         }
-                    //       });
-                    //     },
-                    //     initialText: checkIndex(returnParentProduct, i)
-                    //         ? returnParentProduct[i]
-                    //         : ""),
-                    dropDownSearchWidget(productName, (string) {
+                    dropDownSearchWidget(
+                        productName,
+                        checkIndex(returnParentProduct, i)
+                            ? returnParentProduct[i]
+                            : "", (string) {
                       setState(() {
                         if (checkIndex(returnParentProduct, i)) {
                           returnParentProduct[i] = string!;
@@ -1087,39 +941,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     Row(
                       children: [
                         SizedBox(
-                            width: 150,
-                            //todo unchanged
-                            child: textFeildWithDropDownFor(
-                                validator: (string) {},
-                                item: checkIndex(returnParentProduct, i)
-                                    ? getChildProducts(returnParentProduct[i])
-                                    : [],
-                                onselect: (string) {
-                                  print(string);
-                                  setState(() {
-                                    if (checkIndex(returns, i)) {
-                                      returns[i].setProduct(string);
-                                    } else {
-                                      ReturnAndSale returna = ReturnAndSale();
-                                      returna.setProduct(string);
-
-                              //           returns.add(returna);
-                              //         }
-                              //       });
-                              //     },
-                              //     initialText: checkIndex(returns, i)
-                              //         ? returns[i].getProduct() ?? ""
-                              //         : ""),
-
-                              dropDownSearchWidget(
-                                  checkIndex(returnParentProduct, i)
-                                      ? getChildProducts(returnParentProduct[i])
-                                      : [], (string) {
+                          width: 150,
+                          //todo unchanged
+                          child: dropDownSearchWidget(
+                              checkIndex(returnParentProduct, i)
+                                  ? getChildProducts(returnParentProduct[i])
+                                  : [],
+                              checkIndex(returns, i)
+                                  ? returns[i].getProduct() ?? ""
+                                  : "", (string) {
                             setState(() {
                               if (checkIndex(returns, i)) {
                                 returns[i].setProduct(string!);
                               } else {
-                                RerturnAndSale returna = RerturnAndSale();
+                                ReturnAndSale returna = ReturnAndSale();
                                 returna.setProduct(string!);
 
                                 returns.add(returna);
@@ -1143,20 +978,26 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                   ReturnAndSale returna = ReturnAndSale();
                                   returna.setReturn(int.parse(string!));
 
-                                    returns.add(returna);
-                                  }
-                                });
+                                  returns.add(returna);
+                                }
                               }),
                         ),
                         InkWell(
                             onTap: () {
                               if (returns.isNotEmpty) {
-                                print("this is niot what i want");
                                 setState(() {
                                   if (checkIndex(returns, i)) {
-                                    returnParentProduct.removeAt(i);
-                                    returns.removeAt(i);
-                                    returnLength = returns.length;
+                                    print("this is index at $i for remove ");
+                                    print(returns[i].getProduct());
+                                    print(returns[i].getReturn());
+
+                                    setState(() {
+                                      returnParentProduct.removeAt(i);
+                                      returns.removeAt(i);
+                                      returnLength = returns.length;
+                                    });
+                                    print(returnParentProduct.length);
+                                    print(returns.length);
                                   } else {
                                     returnLength = returnLength - 1;
                                   }
@@ -1239,22 +1080,20 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-                    textFeildWithDropDownFor(
-                        validator: (string) {},
-                        item: productName,
-                        onselect: (string) {
-                          setState(() {
-                            if (checkIndex(ordersParentProduct, i)) {
-                              ordersParentProduct[i] = string;
-                              print(ordersParentProduct[i]);
-                            } else {
-                              ordersParentProduct.add(string);
-                            }
-                          });
-                        },
-                        initialText: checkIndex(ordersParentProduct, i)
+                    dropDownSearchWidget(
+                        productName,
+                        checkIndex(ordersParentProduct, i)
                             ? ordersParentProduct[i]
-                            : ""),
+                            : "", (string) {
+                      setState(() {
+                        if (checkIndex(ordersParentProduct, i)) {
+                          ordersParentProduct[i] = string!;
+                          print(ordersParentProduct[i]);
+                        } else {
+                          ordersParentProduct.add(string!);
+                        }
+                      });
+                    }),
                     const SizedBox(
                       height: 12,
                     ),
@@ -1267,27 +1106,24 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         SizedBox(
                             width: 150,
                             //todo unchanged
-                            child: textFeildWithDropDownFor(
-                                validator: (string) {},
-                                item: checkIndex(ordersParentProduct, i)
+                            child: dropDownSearchWidget(
+                                checkIndex(ordersParentProduct, i)
                                     ? getChildProducts(ordersParentProduct[i])
                                     : [],
-                                onselect: (string) {
-                                  print(string);
-                                  setState(() {
-                                    if (checkIndex(orders, i)) {
-                                      orders[i].setProduct(string);
-                                    } else {
-                                      ReturnAndSale returna = ReturnAndSale();
-                                      returna.setProduct(string);
-
-                                      orders.add(returna);
-                                    }
-                                  });
-                                },
-                                initialText: checkIndex(orders, i)
+                                checkIndex(orders, i)
                                     ? orders[i].getProduct() ?? ""
-                                    : "")),
+                                    : "", (string) {
+                              setState(() {
+                                if (checkIndex(orders, i)) {
+                                  orders[i].setProduct(string!);
+                                } else {
+                                  ReturnAndSale returna = ReturnAndSale();
+                                  returna.setProduct(string!);
+
+                                  orders.add(returna);
+                                }
+                              });
+                            })),
                         SizedBox(
                           width: 130,
                           child: textFormFeildIncreAndDecre(
@@ -1353,5 +1189,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
             })
       ],
     );
+  }
+
+  @override
+  deactivate() {
+    //  useCaseForSalesDataTrackCollectionImpl.saveSakesTrackDataTOHive(50);
+    super.deactivate();
   }
 }

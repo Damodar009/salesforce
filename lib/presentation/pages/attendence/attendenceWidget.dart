@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../utils/app_colors.dart';
 
-Widget attendenceWidget(
+Widget attendanceWidget(
   BuildContext context,
 ) {
   DateTime dataeTime = DateTime.now();

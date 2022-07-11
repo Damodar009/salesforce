@@ -1,17 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/presentation/pages/todaysTarget/todaysTarget.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
+import '../../domain/entities/retailer.dart';
+import '../../domain/entities/retailerDropDown.dart';
 import '../../utils/app_colors.dart';
 
-class NewTargetNewOutletsScreen extends StatelessWidget {
-  const NewTargetNewOutletsScreen({Key? key}) : super(key: key);
+class NewTargetNewOutletsScreen extends StatefulWidget {
+  final bool isNewRetailer;
+  const NewTargetNewOutletsScreen({Key? key, required this.isNewRetailer})
+      : super(key: key);
+
+  @override
+  State<NewTargetNewOutletsScreen> createState() =>
+      _NewTargetNewOutletsScreenState();
+}
+
+class _NewTargetNewOutletsScreenState extends State<NewTargetNewOutletsScreen> {
   // String text = "1234567890m";
+  TodayTarget todayTarget = TodayTarget();
+  List<RetailerDropDown>? retailerDropDownList = [];
+  List<Retailer>? retailers = [];
+  getTotalOutlets() async {
+    retailerDropDownList = await todayTarget.getTotalOutLetList();
+    setState(() {
+      retailerDropDownList;
+    });
+  }
+
+  getNewOutlets() async {
+    retailers = (await todayTarget.getNewOutletsList());
+    print("new retailers ");
+    print(retailers);
+    setState(() {
+      retailers;
+    });
+  }
+
+  @override
+  void initState() {
+    if (widget.isNewRetailer) {
+      getNewOutlets();
+    } else {
+      getTotalOutlets();
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: appBar(navTitle: "New outlets Data", context: context),
+      appBar: appBar(
+          navTitle:
+              widget.isNewRetailer ? "New outlets Data" : "Total Outlets data",
+          context: context),
       body: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           child: ConstrainedBox(
@@ -23,14 +66,35 @@ class NewTargetNewOutletsScreen extends StatelessWidget {
                   height: size.height * 0.02,
                 ),
                 // Text(text),
-                ListView.builder(
-                    primary: true,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return newTargetNewOutletsDetailsWidget(context);
-                    },
-                    itemCount: 10),
+                widget.isNewRetailer
+                    ? retailers!.isNotEmpty
+                        ? ListView.builder(
+                            primary: true,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return newTargetNewOutletsDetailsWidget(
+                                  context,
+                                  retailers![index].name,
+                                  retailers![index].contactNumber,
+                                  retailers![index].address);
+                            },
+                            itemCount: retailers!.length)
+                        : const Center(
+                            child: Text("no data"),
+                          )
+                    : ListView.builder(
+                        primary: true,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return newTargetNewOutletsDetailsWidget(
+                              context,
+                              retailerDropDownList![index].name,
+                              retailerDropDownList![index].contact_number,
+                              retailerDropDownList![index].address);
+                        },
+                        itemCount: retailerDropDownList!.length),
                 SizedBox(
                   height: size.height * 0.001,
                 ),
@@ -52,7 +116,8 @@ class NewTargetNewOutletsScreen extends StatelessWidget {
   }
 }
 
-Widget newTargetNewOutletsDetailsWidget(BuildContext context) {
+Widget newTargetNewOutletsDetailsWidget(
+    BuildContext context, String name, String contactPerson, String location) {
   Size size = MediaQuery.of(context).size;
   return Padding(
     padding: const EdgeInsets.all(16.0),
@@ -73,9 +138,11 @@ Widget newTargetNewOutletsDetailsWidget(BuildContext context) {
                   SizedBox(
                     width: size.width * 0.19,
                   ),
-                  Text(
-                    "Pujan Bohora",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Text(
+                      name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   )
                 ],
               ),
@@ -91,8 +158,8 @@ Widget newTargetNewOutletsDetailsWidget(BuildContext context) {
                     width: size.width * 0.02,
                   ),
                   Text(
-                    "9817034302",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    contactPerson,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   )
                 ],
               ),
@@ -106,8 +173,8 @@ Widget newTargetNewOutletsDetailsWidget(BuildContext context) {
                     width: size.width * 0.17,
                   ),
                   Text(
-                    "Barahi,kathmandu,Nepal",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    location,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   )
                 ],
               ),

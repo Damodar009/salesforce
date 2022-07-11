@@ -5,8 +5,15 @@ part 'SalesLocationTrackModel.g.dart';
 @JsonSerializable()
 class SalesLocationTrackModel extends SalesLocationTrack {
   SalesLocationTrackModel(
-      double latitude, double longitude, String trackingDate, String userId)
-      : super(latitude, longitude, trackingDate, userId);
+      {required double latitude,
+      required double longitude,
+      required String trackingDate,
+      required String userId})
+      : super(
+            latitude: latitude,
+            longitude: longitude,
+            trackingDate: trackingDate,
+            userId: userId);
 
   factory SalesLocationTrackModel.fromJson(Map<String, dynamic> json) =>
       _$SalesLocationTrackModelFromJson(json);

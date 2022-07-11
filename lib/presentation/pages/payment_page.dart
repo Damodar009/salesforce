@@ -1,20 +1,29 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:salesforce/domain/entities/paymentType.dart';
 import 'package:salesforce/presentation/blocs/newOrdrBloc/new_order_cubit.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/presentation/widgets/createExcelFile.dart';
-import 'package:salesforce/presentation/widgets/textformfeild.dart';
 import 'package:salesforce/utils/app_colors.dart';
+import 'package:salesforce/utils/dataChecker.dart';
 import '../../domain/entities/SalesData.dart';
+import '../../domain/entities/sales.dart';
+import '../../domain/usecases/hiveUseCases/hiveUseCases.dart';
+import '../../injectable.dart';
 import '../../routes.dart';
+import '../../utils/hiveConstant.dart';
 import '../widgets/delete_theory_testPopup_widget.dart';
+import '../widgets/dropdown_search_widget.dart';
 import '../widgets/imageWidget.dart';
 import '../widgets/visitedOutletWidget.dart';
+import 'newOrderPage/returnAndSale.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({Key? key}) : super(key: key);
@@ -24,19 +33,18 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  List<String> items = [
-    'Cash on Delivery',
-    'Debit Card',
-    'Credit',
-    'Online transation',
-    'Cheque',
-  ];
+  var useCaseHiveData = getIt<UseCaseForHiveImpl>();
+  DataChecker dataChecker = DataChecker();
+
+  List<String> paymentTypeName = [];
+  List<String> paymentTypeId = [];
 
   File? image;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _paymentController = TextEditingController();
   final TextEditingController _imageInputController = TextEditingController();
 
+  // todo don't repeat same function merge with merchandise support page
   Future pickImage() async {
     try {
       ImagePicker picker = ImagePicker();
@@ -48,8 +56,40 @@ class _PaymentScreenState extends State<PaymentScreen> {
         _imageInputController.text = image.name;
       });
     } on PlatformException catch (e) {
-      print("Failed to pick image $e");
+      if (kDebugMode) {
+        print("Failed to pick image $e");
+      }
     }
+  }
+
+//todo merge with payment type
+  getPaymentTypeFromHive() async {
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    // List<dynamic> ca = box.keys.toList();
+    // var sa = box.get("merchandise");
+    PaymentType paymentType;
+    var successOrFailed =
+        useCaseHiveData.getValuesByKey(box, HiveConstants.paymentTypeKey);
+    successOrFailed.fold(
+        (l) => {print("getting merchandise from hive is failed ")},
+        (r) => {
+              for (var i = 0; i < r.length; i++)
+                {
+                  paymentType = r[i],
+                  paymentTypeName.add(paymentType.payment_type),
+                  paymentTypeId.add(paymentType.key),
+                }
+            });
+  }
+
+  String getIdFromName(String name) {
+    return paymentTypeId[paymentTypeName.indexOf(name)];
+  }
+
+  @override
+  void initState() {
+    getPaymentTypeFromHive();
+    super.initState();
   }
 
   @override
@@ -86,11 +126,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            child: textFeildWithDropDown(
-                controller: _paymentController,
-                validator: (string) {},
-                hintText: 'Choose',
-                item: items),
+            child: dropDownSearchWidget(paymentTypeName, _nameController.text,
+                (string) {
+              setState(() {
+                _nameController.text = string!;
+              });
+            }),
           ),
           SizedBox(
             height: mediaQueryHeight * 0.04,
@@ -121,8 +162,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     style: linkStyle,
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        print("asdfadsfasdfasdf");
-                        if (_paymentController.text == "" &&
+                        if (_nameController.text == "" &&
                             _imageInputController.text == "") {
                           showDialog(
                               context: context,
@@ -131,48 +171,37 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       "You have not filled payment detail.Do you want to fill?",
                                       "Yes",
                                       "No", () {
-                                    print("inside yes");
                                     Navigator.of(context).pop();
                                   }, () {
-                                    print("inside yes");
+                                    Navigator.of(context).pop();
                                     Navigator.of(context).pushNamed(
                                         Routes.merchandiseSupportScreen);
                                   }));
-
-                          //todo add save data to hove
                         } else {
                           late SalesData sales;
-                          print("its running");
-
                           if (newOrderCubit.state is NewOrderLoaded) {
                             Object? sdm = newOrderCubit.state.props[0];
                             if (sdm is SalesData) {
                               sales = sdm;
+
                               SalesData model = sales.copyWith(
-                                  paymentType: _paymentController.text,
+                                  paymentType:
+                                      getIdFromName(_nameController.text),
                                   paymentdocument: image!.path);
-                              print("save sales data");
+                              newOrderCubit.getOrders(model);
 
                               // ExcelFile.generateExcel(model, "newOrder");
 
-                              newOrderCubit.saveSalesDataToHive(model);
-                              print("save payment data");
                               Navigator.of(context)
                                   .pushNamed(Routes.merchandiseSupportScreen);
-                              //todo replacement
-
                             }
                           }
-
-                          //
-                          // Navigator.of(context)
-                          //     .pushNamed(Routes.merchandiseSupportScreen);
                         }
                       }),
               ],
             ),
           ),
-          Spacer(),
+          const Spacer(),
           button(
             'Save Payment',
             () {
@@ -195,17 +224,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             "No", () {
                           Navigator.of(context).pop();
                           late SalesData sales;
-                          print("its running");
 
                           if (newOrderCubit.state is NewOrderLoaded) {
                             Object? sdm = newOrderCubit.state.props[0];
                             if (sdm is SalesData) {
                               sales = sdm;
 
-                              ExcelFile.generateExcel(sales, "newOrder");
-
+                              //  ExcelFile.generateExcel(sales, "newOrder");
                               newOrderCubit.saveSalesDataToHive(sales);
-                              //todo replacement
+                              dataChecker.setLocalDataChecker(true);
+
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => VisitedOutletWidget(
                                         visitedOutlets: visitedOutlets,
@@ -215,12 +243,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         }, () {
                           Navigator.of(context).pop();
                         }));
-
-                //todo show snackbar
-
               } else {
                 late SalesData sales;
-
                 if (newOrderCubit.state is NewOrderLoaded) {
                   Object? sdm = newOrderCubit.state.props[0];
                   if (sdm is SalesData) {
@@ -229,16 +253,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     SalesData model = sales.copyWith(
                         paymentType: _paymentController.text,
                         paymentdocument: image!.path);
-                    print(model.toString());
-
                     newOrderCubit.getOrders(model);
-
                     // JsonFile.writeJson(_controllerKey.text, _controllerValue.text);
-
-                    ExcelFile.generateExcel(model, "newOrder");
-
+                    //    ExcelFile.generateExcel(model, "newOrder");
                     newOrderCubit.saveSalesDataToHive(model);
-
+                    dataChecker.setLocalDataChecker(true);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => VisitedOutletWidget(
                               visitedOutlets: visitedOutlets,

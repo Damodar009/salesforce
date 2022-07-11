@@ -1,17 +1,19 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/AttendenceModel.dart';
 import 'package:salesforce/domain/entities/attendence.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/injectable.dart';
-import 'package:salesforce/utils/hiveConstant.dart';
+import '../../../domain/entities/AttendendenceDashbard.dart';
 import '../../../error/exception.dart';
+import '../../../utils/AapiUtils.dart';
 import '../../../utils/apiUrl.dart';
+import '../../models/AttendenceDashBoardModel.dart';
 
 abstract class AttendenceRemoteSource {
   Future<Attendence> saveAttendence(Attendence attendence);
+  Future<AttendanceDashboard?> getDashBoardAttendance();
 }
 
 @Injectable(as: AttendenceRemoteSource)
@@ -32,16 +34,12 @@ class AttendenceSave implements AttendenceRemoteSource {
         checkout_longitude: attendence.checkout_longitude,
         user: attendence.user);
 
-    var attendenceInJson = attendenceModel.toJson();
-    var jsonEncodedAnswer = jsonEncode(attendenceInJson);
+    var attendanceInJson = attendenceModel.toJson();
+    var jsonEncodedAnswer = jsonEncode(attendanceInJson);
 
     String? accessToken;
-    Box box = await Hive.openBox(HiveConstants.userdata);
-
-    var accessTokenSuccessOrFailed =
-        useCaseForHiveImpl.getValueByKey(box, "access_token");
-    accessTokenSuccessOrFailed.fold(
-        (l) => {print("failed")}, (r) => {accessToken = r!});
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
 
     try {
       Response response = await dio.post(
@@ -53,15 +51,42 @@ class AttendenceSave implements AttendenceRemoteSource {
         ),
       );
       if (response.data["status"] == true) {
-        Attendence attendence = AttendenceModel.fromJson(response.data["data"]);
-        return attendence;
+        Attendence attendance = AttendenceModel.fromJson(response.data["data"]);
+        return attendance;
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
-      print("this is attendence failed ");
+      print("this is attendance failed ");
       print(e);
     }
     throw ServerException();
+  }
+
+  @override
+  Future<AttendanceDashboard?> getDashBoardAttendance() async {
+    String? accessToken;
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
+
+    try {
+      Response response = await dio.get(
+        ApiUrl.dashboardAttendance,
+        options: Options(
+          contentType: "application/json",
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
+        ),
+      );
+      if (response.data["status"] == true) {
+        AttendanceDashboardModel attendanceDashboard =
+            AttendanceDashboardModel.fromJson(response.data["data"]);
+
+        return attendanceDashboard;
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      print(e);
+    }
   }
 }

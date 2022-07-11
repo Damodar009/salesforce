@@ -1,12 +1,10 @@
 import 'dart:async';
-
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/injectable.dart';
-
 import '../../error/failure.dart';
 import '../entities/Leave.dart';
 import '../entities/depotProductRetailer.dart';
@@ -28,8 +26,7 @@ abstract class UseCaseForRemoteSource {
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel);
 
-  // Future<Either<Failure, UserDetailsData>> saveUserDetails();
-
+  Future<Either<Failure, bool>> flagChecker();
 }
 
 @injectable
@@ -75,6 +72,11 @@ class UseCaseForRemoteSourceimpl implements UseCaseForRemoteSource {
   Future<Either<Failure, SaveUserDetailsDataModel>> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel) async {
     return await repository.saveUserDetails(saveUserDetailsDataModel);
+  }
+
+  @override
+  Future<Either<Failure, bool>> flagChecker() async {
+    return await repository.flagChecker();
   }
 
   // @override

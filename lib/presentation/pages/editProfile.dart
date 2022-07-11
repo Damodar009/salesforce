@@ -39,10 +39,8 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
-
   File? image;
   String initialValue = "";
-
   String selectedValue = "";
 
   void selectValueRadioButton(
@@ -63,10 +61,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController();
   final TextEditingController _temporaryAddressController =
       TextEditingController();
-  final TextEditingController _documentTypesController =
-      TextEditingController();
+  // final TextEditingController _documentTypesController =
+  //     TextEditingController();
 
-  final TextEditingController _genderController = TextEditingController();
+  // final TextEditingController _genderController = TextEditingController();
   final TextEditingController _imageController = TextEditingController();
 
   String dobOnChangeValue = "";
@@ -103,7 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     double mediaQueryHeight = MediaQuery.of(context).size.height;
-    double mediaQueryWidth = MediaQuery.of(context).size.width;
+    // double mediaQueryWidth = MediaQuery.of(context).size.width;
 
     double heightBetweenTextField = mediaQueryHeight * 0.02;
 
@@ -321,7 +319,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      child: dropDownSearchWidget(items, (string) {
+                      child:
+                          dropDownSearchWidget(items, initialValue, (string) {
                         setState(() {
                           initialValue = string!;
                         });
@@ -414,12 +413,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Padding(
                       padding: const EdgeInsets.all(13),
                       child: button('Save', () async {
-                        print("object99999");
-
                         String? phoneNumber;
-
                         Box box = await Hive.openBox(HiveConstants.userdata);
-
                         var phoneNumberSuccessOrFailed = useCaseForHiveImpl
                             .getValueByKey(box, "phoneNumber");
 
@@ -431,7 +426,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           SaveUserDetailsEvent(
                             saveUserDetailsDataModel: SaveUserDetailsDataModel(
                               id: widget.getProfileState.id,
-                              //userid
                               roleId: widget.getProfileState.roleId,
                               email: widget.getProfileState.email,
                               phoneNumber: phoneNumber,
@@ -473,15 +467,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         );
 
                         //edit profile event
+                        Navigator.pop(context);
+                        Navigator.pop(context);
 
-                        Navigator.pushNamed(context, Routes.menuScreen);
+                        //Navigator.pushNamed(context, Routes.menuScreen);
+                        // Navigator.pushNamed(context, Routes.dashboardRoute)
+                        //     .then((_) {
+                        //   // you have come back to your Settings screen
+                        //   print("askd");
+                        // });
+
                         // Navigator.pushNamedAndRemoveUntil(context, Routes.menuScreen, (route) => false),
                         BlocProvider.of<ProfileBloc>(context)
                             .add(GetProfileEvent());
                       },
-                          (Profilestate is SaveUserDetailsLoadingState
+                          Profilestate is SaveUserDetailsLoadingState
                               ? true
-                              : false),
+                              : false,
                           AppColors.buttonColor),
                     )
                   ],

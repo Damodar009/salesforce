@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:salesforce/presentation/pages/baclground.dart';
 import 'package:salesforce/presentation/pages/home/homePage.dart';
 import 'package:salesforce/presentation/pages/menuPage.dart';
+import 'package:salesforce/presentation/pages/reportPage.dart';
 import 'package:salesforce/utils/app_colors.dart';
-import 'calenderPage.dart';
+import '../../domain/usecases/useCaseForSalesDataTrackCollection.dart';
+import '../../injectable.dart';
 import 'outlets_page.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -19,9 +20,12 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int selectedIndex = 0;
 
+  var useCaseForSalesDataTrackCollectionImpl =
+      getIt<UseCaseForSalesDataTrackCollectionImpl>();
+
   @override
   void initState() {
-    selectedIndex = widget.index;
+    useCaseForSalesDataTrackCollectionImpl.saveSalesTrackDataTOHive(50);
     super.initState();
   }
 
@@ -74,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: IndexedStack(index: selectedIndex, children: const [
         HomeScreen(),
         OutletScreen(),
-        MyBackground(),
+        ReportPage(),
         MenuScreen(),
       ]),
     );

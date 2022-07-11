@@ -14,7 +14,22 @@ class SalesLocationTrack extends Equatable {
   final String userId;
 
   SalesLocationTrack(
-      this.latitude, this.longitude, this.trackingDate, this.userId);
+      {required this.latitude,
+      required this.longitude,
+      required this.trackingDate,
+      required this.userId});
+
+  SalesLocationTrack copyWith(
+          {required double latitude,
+          required double longitude,
+          String? trackingDate,
+          String? userId}) =>
+      SalesLocationTrack(
+        latitude: latitude,
+        userId: userId ?? this.userId,
+        longitude: longitude,
+        trackingDate: trackingDate ?? this.trackingDate,
+      );
 
   @override
   List<Object?> get props => [latitude, longitude, trackingDate, userId];

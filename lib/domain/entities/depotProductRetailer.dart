@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:salesforce/domain/entities/merchandise.dart';
+import 'package:salesforce/domain/entities/paymentType.dart';
 import 'package:salesforce/domain/entities/products.dart';
 import 'package:salesforce/domain/entities/region.dart';
+import 'package:salesforce/domain/entities/requestedDropDown.dart';
 import 'package:salesforce/domain/entities/retailerDropDown.dart';
 import 'package:salesforce/domain/entities/retailerType.dart';
 
@@ -14,6 +16,8 @@ class DepotProductRetailer extends Equatable {
   final List<RetailerDropDown> retailerDropDown;
   final List<RegionDropDown?> region;
   final List<MerchandiseDropDown> merchandise;
+  final List<RequestedDropDown> requestedDropDown;
+  final List<PaymentType> paymentType;
 
   const DepotProductRetailer(
       {required this.region,
@@ -21,10 +25,19 @@ class DepotProductRetailer extends Equatable {
       required this.products,
       required this.retailerType,
       required this.depots,
-      required this.retailerDropDown});
+      required this.retailerDropDown,
+      required this.requestedDropDown,
+      required this.paymentType});
 
   @override
-  List<Object?> get props => [products, retailerType, depots, retailerDropDown];
+  List<Object?> get props => [
+        products,
+        retailerType,
+        depots,
+        retailerDropDown,
+        requestedDropDown,
+        paymentType
+      ];
 }
 //
 // "merchandiseDropDown": [

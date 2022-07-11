@@ -1,22 +1,21 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/SalesData.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/injectable.dart';
-import 'package:salesforce/utils/hiveConstant.dart';
 import 'package:uuid/uuid.dart';
-
+import '../../../domain/entities/requestDeliver.dart';
 import '../../../error/exception.dart';
+import '../../../utils/AapiUtils.dart';
 import '../../../utils/apiUrl.dart';
 import '../../models/SalesDataModel.dart';
 import '../../models/merchandiseOrderModel.dart';
+import '../../models/requestDeliveredModel.dart';
 
 abstract class SalesDataRemoteSource {
   Future<String?> saveSalesData(List<SalesData> salesData);
+  Future<String> saveDeliveredRequest(List<RequestDelivered> requestDelivered);
 }
 
 @Injectable(as: SalesDataRemoteSource)
@@ -52,40 +51,37 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
         merchandiseType.add(null);
       }
     }
-    var formImageData = FormData.fromMap({
-      "image": images,
-      'unique_key': uuids,
-    });
+    if (images.isNotEmpty) {
+      var formImageData = FormData.fromMap({
+        "image": images,
+        'unique_key': uuids,
+      });
 
-    String? accessToken;
-
-    Box box = await Hive.openBox(HiveConstants.userdata);
-
-    var accessTokenSuccessOrFailed =
-        useCaseForHiveImpl.getValueByKey(box, "access_token");
-    accessTokenSuccessOrFailed.fold((l) => {print("failed")},
-        (r) => {accessToken = r!, print(r.toString())});
-
-    try {
-      //todo image
-      Response response = await dio.post(
-        "http://103.90.86.112:80/salesforce/api/image/multipleImageSave",
-        data: formImageData,
-        options: Options(
-          headers: <String, String>{
-            'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer ' + accessToken!
-          },
-        ),
-      );
-      if (response.data["status"] == true) {
-        return "Success";
-      } else {
+      String? accessToken;
+      AppInterceptors appInterceptors = AppInterceptors();
+      accessToken = await appInterceptors.getUserAccessToken();
+      try {
+        Response response = await dio.post(
+          ApiUrl.imageUpload,
+          data: formImageData,
+          options: Options(
+            headers: <String, String>{
+              'Content-Type': 'multipart/form-data',
+              'Authorization': 'Bearer ' + accessToken!
+            },
+          ),
+        );
+        if (response.data["status"] == true) {
+          return "Success";
+        } else {
+          throw ServerException();
+        }
+      } on DioError catch (e) {
+        print(e);
         throw ServerException();
       }
-    } on DioError catch (e) {
-      print(e);
-      throw ServerException();
+    } else {
+      return "Success";
     }
   }
 
@@ -98,22 +94,16 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
     String? success =
         await postImage(salesData, paymentDocuments, merchandiseType);
     if (success == "Success") {
-      print("starting sales data save");
       List<SalesDataModel> salesDataModel = [];
       for (var i = 0; i < salesData.length; i++) {
         String? payment = paymentDocuments[i];
         MerchandiseOrderModel? merchandiseOrderModel;
         if (salesData[i].merchandiseOrderPojo != null) {
-          print("inside merchandise poijo");
           merchandiseOrderModel = MerchandiseOrderModel(
               merchandise_id: salesData[i].merchandiseOrderPojo!.merchandise_id,
               description: salesData[i].merchandiseOrderPojo!.description,
               image: merchandiseType[i]!);
         }
-        print("the user id is ${salesData[i].assignedDepot}");
-        print("the payment id is ${payment}");
-        // todo check assigned depot
-
         SalesDataModel salesModel = SalesDataModel(
           salesPojo: salesData[i].sales,
           availabilityPojo: salesData[i].availability,
@@ -121,7 +111,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
           salesDescription: salesData[i].salesDescription,
           returnedDescription: salesData[i].returnedDescription,
           availabilityDescription: salesData[i].availabilityDescription,
-          assignedDepot: "NGBifEuwYylJoyRt7a8bkA==",
+          assignedDepot: salesData[i].assignedDepot,
           collectionDate: salesData[i].collectionDate,
           latitude: salesData[i].latitude,
           longitude: salesData[i].longitude,
@@ -137,19 +127,10 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
       }
       var salesDataModeljson = salesDataModel.map((e) => e.toJson(e)).toList();
       var encodedSalesData = json.encode(salesDataModeljson);
-      print(encodedSalesData);
-
       String? accessToken;
-
-      Box box = await Hive.openBox(HiveConstants.userdata);
-
-      var accessTokenSuccessOrFailed =
-          useCaseForHiveImpl.getValueByKey(box, "access_token");
-      accessTokenSuccessOrFailed.fold((l) => {print("failed")},
-          (r) => {accessToken = r!, print(r.toString())});
-
+      AppInterceptors appInterceptors = AppInterceptors();
+      accessToken = await appInterceptors.getUserAccessToken();
       try {
-        print("strating to send sales data ");
         Response response = await dio.post(
           ApiUrl.salesData,
           data: encodedSalesData,
@@ -160,21 +141,56 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
             },
           ),
         );
-        print(response);
+
         if (response.data["status"] == true) {
-          print("sending sales data  is successful");
           return "Success";
         } else {
-          print("failed to send sales data ");
           throw ServerException();
         }
       } on DioError catch (e) {
         print(e);
         throw ServerException();
       }
-    } else {
-      //todo
-      print("image saving failed");
+    } else {}
+  }
+
+  @override
+  Future<String> saveDeliveredRequest(
+      List<RequestDelivered> requestDelivered) async {
+    List<RequestedDeliveredModel> requestDeliveredModelList = [];
+    for (RequestDelivered request in requestDelivered) {
+      RequestedDeliveredModel requestDeliveredModel =
+          RequestedDeliveredModel(request.id, request.deliveredDate);
+      requestDeliveredModelList.add(requestDeliveredModel);
+    }
+    var inJson = requestDeliveredModelList.map((e) => e.toJson()).toList();
+    var jsonDecoded = json.encode(inJson);
+
+    Dio dio = Dio();
+    String? accessToken;
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
+
+    try {
+      Response response = await dio.post(
+        ApiUrl.requestDelivered,
+        data: jsonDecoded,
+        options: Options(
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken!
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return "Success";
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      print(e);
+      throw ServerException();
     }
   }
 }

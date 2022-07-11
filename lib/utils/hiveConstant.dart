@@ -18,6 +18,7 @@ class HiveConstants {
   static const String retailerDropdownKey = "retailerDropDown";
   static const String regionKey = "region";
   static const String merchandiseKey = "merchandise";
+  static const String paymentTypeKey = "paymentType";
 
   //attendence
   static const String attendenceCheckinKey = "chekIn";
@@ -32,4 +33,13 @@ class HiveConstants {
   //notice
   static const String publishNotice = "publishNotice";
 
+  //requestedOrder
+  static const String requestOrders = "requestOrders";
+  static const String deliveredOrders = "deliveredOrders";
+
+  //user Data
+  static const String userData = "userData";
+  static const String userImages = "userImages";
+  static const String userName = "userName";
+  static const String isLoggedIn = "isLoggedIn";
 }

@@ -1,37 +1,38 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
-import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/local_data_sources.dart';
-import 'package:salesforce/data/models/RetailerPojo.dart';
-import 'package:salesforce/data/models/SalesDataCollection.dart';
 import 'package:salesforce/data/models/SaveUserDetailsDataModel.dart';
 import 'package:salesforce/data/models/leaveModel.dart';
 import 'package:salesforce/data/models/userDetailsDataModel.dart';
 import 'package:salesforce/domain/entities/Leave.dart';
 import 'package:salesforce/domain/entities/retailerPojo.dart';
-import 'package:salesforce/domain/entities/sales_data_collection.dart';
 import 'package:salesforce/domain/entities/userDetailsData.dart';
 import 'package:salesforce/utils/apiUrl.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
 import '../../../domain/entities/merchandise.dart';
+import '../../../domain/entities/paymentType.dart';
 import '../../../domain/entities/products.dart';
 import '../../../domain/entities/region.dart';
+import '../../../domain/entities/requestedDropDown.dart';
 import '../../../domain/entities/retailer.dart';
 import '../../../domain/entities/retailerDropDown.dart';
 import '../../../domain/entities/retailerType.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../error/exception.dart';
 import '../../../injectable.dart';
-import '../../../utils/hiveConstant.dart';
+import '../../../utils/AapiUtils.dart';
 import '../../models/DepotModel.dart';
 import '../../models/Products.dart';
 import '../../models/RetailerModel.dart';
 import '../../models/RetailerType.dart';
 import '../../models/Userdata.dart';
 import '../../models/merchandiseModel.dart';
+import '../../models/paymentTypeModel.dart';
 import '../../models/regionModel.dart';
+import '../../models/requestedDropDownModel.dart';
 import '../../models/retailerDropDownModel.dart';
 import '../../models/userDetailModel.dart';
 import '../local_data_sources.dart';
@@ -40,6 +41,7 @@ abstract class RemoteSource {
   Future<UserDataModel> login(String username, String password);
 
   Future<String> changePassword(String oldpassword, String newPassword);
+  Future<String> refreshToken();
 
   Future<DepotProductRetailer> getDepotProductAndRetailer();
 
@@ -50,6 +52,7 @@ abstract class RemoteSource {
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel);
   Future<String> requestLeave(Leave leave);
+  Future<bool> flagChecker();
 }
 
 @Injectable(as: RemoteSource)
@@ -83,9 +86,6 @@ class RemoteSourceImplementation implements RemoteSource {
       );
       if (response.statusCode == 200) {
         UserDataModel userData = UserDataModel.fromJson(response.data);
-
-        // jsonEncode(userData.to)
-
         return userData;
       } else {
         throw ServerException();
@@ -98,37 +98,22 @@ class RemoteSourceImplementation implements RemoteSource {
 
   @override
   Future<UserDetailsData> getUserDetailsData() async {
-    String? userid;
+    String? userId;
     String? accessToken;
-    print("object1233444");
-    Box box = await Hive.openBox(HiveConstants.userdata);
-    print("iver below");
-
-    var access_Token = useCaseForHiveImpl.getValueByKey(box, "access_token");
-    access_Token.fold((l) => {print("failed")},
-        (r) => {accessToken = r!});
-
-    var successOrFailed = useCaseForHiveImpl.getValueByKey(box, "userid");
-    successOrFailed.fold(
-        (l) => {print("failed")}, (r) => {userid = r!});
-
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
+    userId = await appInterceptors.getUserId();
     try {
       Response response = await dio.get(
-        ApiUrl.getSalesStaff + userid!,
+        ApiUrl.getSalesStaff + userId!,
         options: Options(
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
 
-      print("Response code of getUserData ${response.statusCode}");
-
       if (response.data["status"] == true) {
         UserDetailsDataModel userDetailsData =
             UserDetailsDataModel.fromJson(response.data["data"]);
-
-        // hive.savetoken(userDetailsData: userDetailsData);
-
-        // hive.showtoken();
         return userDetailsData;
       } else {
         throw ServerException();
@@ -140,27 +125,20 @@ class RemoteSourceImplementation implements RemoteSource {
   }
 
   @override
-  Future<String> changePassword(String oldpassword, String newPassword) async {
-    String? userid;
+  Future<String> changePassword(String oldPassword, String newPassword) async {
+    String? userId;
     String? accessToken;
-    Box box = await Hive.openBox(HiveConstants.userdata);
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
+    userId = await appInterceptors.getUserId();
 
-    var accessTokenSuccessOrFailed =
-        useCaseForHiveImpl.getValueByKey(box, "access_token");
-    accessTokenSuccessOrFailed.fold((l) => {print("failed")},
-        (r) => {accessToken = r!, print(r.toString())});
-
-    var successOrFailed = useCaseForHiveImpl.getValueByKey(box, "userid");
-    successOrFailed.fold(
-        (l) => {print("failed")}, (r) => {userid = r!, print(r.toString())});
-    
     try {
       Response response = await dio.post(
         ApiUrl.changePassword,
         data: <String, String>{
-          'oldPassword': oldpassword,
+          'oldPassword': oldPassword,
           'newPassword': newPassword,
-          'userId': userid!
+          'userId': userId!
         },
         options: Options(
           headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
@@ -178,30 +156,15 @@ class RemoteSourceImplementation implements RemoteSource {
 
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
-    //todo implement authorization token
-
-    final signInLocalDataSource = getIt<SignInLocalDataSource>();
-
     String? accessToken;
-    Box box = await Hive.openBox(HiveConstants.userdata);
-
-    var accessTokenSuccessOrFailed =
-        useCaseForHiveImpl.getValueByKey(box, "access_token");
-    accessTokenSuccessOrFailed.fold(
-        (l) => {print("failed")}, (r) => {accessToken = r!});
-
-    //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
 
     try {
-      print("inside depot product retailer");
-      UserDataModel? userInfo =
-          await signInLocalDataSource.getUserDataFromLocal();
       Response response = await dio.get(
         ApiUrl.depotProductAndRetailor,
         options: Options(
-          headers: <String, String>{
-            'Authorization': 'Bearer '+ accessToken!
-          },
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
 
@@ -216,6 +179,7 @@ class RemoteSourceImplementation implements RemoteSource {
             (response.data["data"]["productDropDown"] as List)
                 .map((sectorModel) => ProductsModel.fromJson(sectorModel))
                 .toList();
+
         List<Depot> depots = (response.data["data"]["depotDetails"] as List)
             .map((sectorModel) => DepotModel.fromJson(sectorModel))
             .toList();
@@ -236,13 +200,25 @@ class RemoteSourceImplementation implements RemoteSource {
                 .map((sectorModel) => RegionDropDownModel.fromJson(sectorModel))
                 .toList();
 
+        List<RequestedDropDown> requestedDropDown = (response.data["data"]
+                ["requestedDropDown"] as List)
+            .map((sectorModel) => RequestedDropDownModel.fromJson(sectorModel))
+            .toList();
+
+        List<PaymentType> paymentType =
+            (response.data["data"]["paymentType"] as List)
+                .map((paymentType) => PaymentTypeModel.fromJson(paymentType))
+                .toList();
+
         depotProductRetailer = DepotProductRetailer(
             products: products,
             retailerType: retailerTypes,
             depots: depots,
             retailerDropDown: retailerDropdown,
             merchandise: merchandiseDropDown,
-            region: regionDropDown);
+            region: regionDropDown,
+            requestedDropDown: requestedDropDown,
+            paymentType: paymentType);
 
         return depotProductRetailer;
       } else {
@@ -258,13 +234,8 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<List<RetailerPojo>> saveAllRetailer(
       List<Retailer> listOfRetailers) async {
     String? accessToken;
-
-    Box box = await Hive.openBox(HiveConstants.userdata);
-
-    var accessTokenSuccessOrFailed =
-        useCaseForHiveImpl.getValueByKey(box, "access_token");
-    accessTokenSuccessOrFailed.fold((l) => {print("failed")},
-        (r) => {accessToken = r!, print(r.toString())});
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
 
     List<RetailerModel> retailerPojoModelList = [];
 
@@ -292,9 +263,6 @@ class RemoteSourceImplementation implements RemoteSource {
         .toList();
 
     var jsonEncodedAnswer = jsonEncode(saveRetailerInJson);
-    print(jsonEncodedAnswer);
-
-    //todo implement authorization token
     try {
       Response response = await dio.post(
         ApiUrl.saveAllRetailer,
@@ -308,7 +276,6 @@ class RemoteSourceImplementation implements RemoteSource {
       );
 
       if (response.data["status"] == true) {
-        print("this is true ");
         return Future.value([]);
       } else {
         throw ServerException();
@@ -323,9 +290,8 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel) async {
     String? accessToken;
-    UserDataModel? userInfo =
-        await signInLocalDataSource.getUserDataFromLocal();
-    accessToken = userInfo!.access_token;
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
     SaveUserDetailsDataModel saveUserDetailsData = SaveUserDetailsDataModel(
       id: saveUserDetailsDataModel.id,
       email: saveUserDetailsDataModel.email,
@@ -371,9 +337,8 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<String> requestLeave(Leave leave) async {
     String? accessToken;
-    UserDataModel? userInfo =
-        await signInLocalDataSource.getUserDataFromLocal();
-    accessToken = userInfo!.access_token;
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
     LeaveModel leaveModel = LeaveModel(
         fromDate: leave.fromDate,
         toDate: leave.toDate,
@@ -388,12 +353,80 @@ class RemoteSourceImplementation implements RemoteSource {
         data: encodedJson,
         options:
             Options(contentType: "application/json", headers: <String, String>{
-          'Authorization': 'Bearer 37edcf52-eaad-40aa-9366-1211a2f0e397'
+          'Authorization': 'Bearer ' + accessToken!
           //+ accessToken!,
         }),
       );
+
       if (response.data["status"] == true) {
         return response.data["message"];
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      print(e);
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<bool> flagChecker() async {
+    String? accessToken;
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
+
+    try {
+      Response response = await dio.get(
+        ApiUrl.flagChecker,
+        options:
+            Options(contentType: "application/json", headers: <String, String>{
+          'Authorization': 'Bearer ' + accessToken!
+          //+ accessToken!,
+        }),
+      );
+
+      if (response.data["status"] == true) {
+        bool flag = response.data["data"];
+        return flag;
+      } else {
+        throw ServerException();
+      }
+    } on DioError catch (e) {
+      print(e);
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<String> refreshToken() async {
+    String? accessToken;
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
+    const String _clientId = 'clientId';
+    const String _clientSecret = 'secret';
+    String s =
+        'Basic ' + base64Encode(utf8.encode('$_clientId:$_clientSecret'));
+    print(s);
+    try {
+      Response response = await dio.post(
+        ApiUrl.refreshToken,
+        queryParameters: <String, String>{
+          'grant_type': 'refresh_token',
+          'refresh_token': accessToken!,
+        },
+        options: Options(
+          contentType: "application/x-www-form-urlencoded",
+          headers: {
+            'Authorization': 'Basic ' +
+                base64Encode(utf8.encode('$_clientId:$_clientSecret'))
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        UserDataModel userData = UserDataModel.fromJson(response.data);
+        print("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+        print(userData);
+        return "userData";
       } else {
         throw ServerException();
       }

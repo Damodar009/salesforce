@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/salesPerson.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import 'package:salesforce/injectable.dart';
-import 'package:salesforce/utils/hiveConstant.dart';
 import '../../../error/exception.dart';
+import '../../../utils/AapiUtils.dart';
 import '../../../utils/apiUrl.dart';
 import '../../models/salesPersonModel.dart';
 
@@ -30,31 +29,21 @@ class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
 
     var salesPersonInJson = salesPersonModel.toJson();
     var jsonEncodedSalesPerson = jsonEncode(salesPersonInJson);
-
-     String? accessToken;
-
-      Box box = await Hive.openBox(HiveConstants.userdata);
-
-      var accessTokenSuccessOrFailed =
-          useCaseForHiveImpl.getValueByKey(box, "access_token");
-      accessTokenSuccessOrFailed.fold((l) => {print("failed")},
-          (r) => {accessToken = r!, print(r.toString())});
-
+    String? accessToken;
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
     try {
       Response response = await dio.post(
         ApiUrl.saveUser,
         data: jsonEncodedSalesPerson,
         options: Options(
           contentType: "application/json",
-          headers: <String, String>{
-            'Authorization': 'Bearer '+ accessToken!
-          },
+          headers: <String, String>{'Authorization': 'Bearer ' + accessToken!},
         ),
       );
       if (response.data["status"] == true) {
         SalesPerson salesPerson =
             SalesPersonModel.fromJson(response.data["data"]);
-        print("this is salesperson data ");
 
         return salesPerson;
       } else {

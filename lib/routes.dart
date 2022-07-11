@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:salesforce/main.dart';
+import 'package:salesforce/presentation/pages/RequestOrder/requestOrderPage.dart';
 import 'package:salesforce/presentation/pages/attendance_page.dart';
 import 'package:salesforce/presentation/pages/dashboard.dart';
-import 'package:salesforce/presentation/pages/editProfile.dart';
 import 'package:salesforce/presentation/pages/todaysTarget/listOfOrderAndOutlets.dart';
 import 'package:salesforce/presentation/pages/logOutPage.dart';
 import 'package:salesforce/presentation/pages/login/loginScreen.dart';
@@ -13,7 +13,7 @@ import 'package:salesforce/presentation/pages/newOutletsPage.dart';
 import 'package:salesforce/presentation/pages/payment_page.dart';
 import 'package:salesforce/presentation/pages/profilePage.dart';
 import 'package:salesforce/presentation/pages/today_target_new_outlets_screen.dart';
-import 'package:salesforce/presentation/pages/xlsOrderPage.dart';
+import 'package:salesforce/presentation/pages/userTrackScreen.dart';
 import 'package:salesforce/presentation/widgets/visitedOutletWidget.dart';
 
 class Routes {
@@ -31,11 +31,11 @@ class Routes {
   static const String totalOutLetsVisitedRoute = "/totalOutLetsVisited";
   static const String totalSalesRoute = "/totalSales";
   static const String visitedOutlets = "/visitedOutlets";
-  static const String xlsOrder = "/xlsOrder";
   static const String menuScreen = "/menuScreen";
   static const String merchandiseSupportScreen = "/merchandiseSupportScreen";
-
+  static const String requestOrderPage = "/requestOrderPage";
   static const paymentScreen = "/paymentScreen";
+  static const userTrackScreen = "/userTrackScreen";
 }
 
 class RouteGenerator {
@@ -62,7 +62,8 @@ class RouteGenerator {
       case Routes.paymentScreen:
         return MaterialPageRoute(builder: (_) => const PaymentScreen());
       case Routes.merchandiseSupportScreen:
-        return MaterialPageRoute(builder: (_) => const MerchandiseSupportScreen());
+        return MaterialPageRoute(
+            builder: (_) => const MerchandiseSupportScreen());
 
       case Routes.dashboardRoute:
         return MaterialPageRoute(
@@ -74,22 +75,29 @@ class RouteGenerator {
 
       case Routes.totalOutletsRoute:
         return MaterialPageRoute(
-            builder: (_) => ListOfOrderAndOutletDetailScreen());
+            builder: (_) => const NewTargetNewOutletsScreen(
+                  isNewRetailer: false,
+                ));
 
       case Routes.newOutletRoute:
         return MaterialPageRoute(
-            builder: (_) => const NewTargetNewOutletsScreen());
+            builder: (_) => const NewTargetNewOutletsScreen(
+                  isNewRetailer: true,
+                ));
 
       case Routes.totalOutLetsVisitedRoute:
         return MaterialPageRoute(
-            builder: (_) => ListOfOrderAndOutletDetailScreen());
+            builder: (_) => const ListOfOrderAndOutletDetailScreen());
 
       case Routes.totalSalesRoute:
         return MaterialPageRoute(
-            builder: (_) => ListOfOrderAndOutletDetailScreen());
+            builder: (_) => const ListOfOrderAndOutletDetailScreen());
 
-      case Routes.xlsOrder:
-        return MaterialPageRoute(builder: (_) => const XlsOrder());
+      case Routes.requestOrderPage:
+        return MaterialPageRoute(builder: (_) => const RequestOrderPage());
+
+      case Routes.userTrackScreen:
+        return MaterialPageRoute(builder: (_) => const UserTrackScreen());
 
       case Routes.visitedOutlets:
         if (args is VistedOutlets) {
@@ -109,8 +117,6 @@ class UndefinedRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text("undefined route")),
-    );
+    return Container();
   }
 }

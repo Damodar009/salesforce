@@ -13,6 +13,7 @@ import '../../../../utils/geolocation.dart';
 import '../../../../utils/hiveConstant.dart';
 import '../../../blocs/newOrdrBloc/new_order_cubit.dart';
 import '../../../widgets/buttonWidget.dart';
+import '../../../widgets/dropdown_search_widget.dart';
 import '../../../widgets/radioBotton.dart';
 import '../../../widgets/textformfeild.dart';
 
@@ -85,10 +86,9 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
         (r) => {
               for (var i = 0; i < r.length; i++)
                 {
-                  print("success"),
                   retailerTypes.add(r[i].name),
+                  retailerTypesId.add(r[i].id),
                 },
-              print(retailerTypes)
             });
   }
 
@@ -314,21 +314,12 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
             const SizedBox(
               height: 7,
             ),
-            textFeildWithDropDownFor(
-                item: retailerTypes,
-                validator: (string) {
-                  if (typesOfOutLets != "") {
-                    return null;
-                  } else {
-                    return "this cannot be empty";
-                  }
-                },
-                onselect: (string) {
-                  setState(() {
-                    typesOfOutLets = string;
-                  });
-                },
-                initialText: typesOfOutLets),
+
+            dropDownSearchWidget(retailerTypes, typesOfOutLets, (string) {
+              setState(() {
+                typesOfOutLets = string!;
+              });
+            }),
 
             const SizedBox(
               height: 12,
@@ -338,22 +329,11 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
             const SizedBox(
               height: 7,
             ),
-
-            textFeildWithDropDownFor(
-                item: regionName,
-                validator: (string) {
-                  if (region != " ") {
-                    return null;
-                  } else {
-                    return "this cannot be empty";
-                  }
-                },
-                onselect: (string) {
-                  setState(() {
-                    region = string;
-                  });
-                },
-                initialText: region),
+            dropDownSearchWidget(regionName, region, (string) {
+              setState(() {
+                region = string!;
+              });
+            }),
 
             const SizedBox(
               height: 20,
@@ -365,8 +345,14 @@ class _NewOutletsScreenOrderState extends State<NewOutletsScreenOrder> {
                 });
                 int index = regionName.indexOf(region);
                 String regions = regionId[index];
+                print(regions);
+                print("this is types of ooutlets asfdfa");
+                print(typesOfOutLets);
                 int retailerIndex = retailerTypes.indexOf(typesOfOutLets);
+                print(retailerIndex);
                 String retailerid = retailerTypesId[retailerIndex];
+                print("this is retailers id ");
+                print(retailerid);
                 RetailerModel retailer = RetailerModel(
                     name: _outLetName.text,
                     latitude: position!.latitude,

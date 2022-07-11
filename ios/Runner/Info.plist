@@ -53,8 +53,7 @@
 		<string>To show nearby cycles or stations</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>To get the image from library</string>
-		
 		<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-</dict>
+		<true/>
+	</dict>
 </plist>

@@ -59,7 +59,7 @@ class UseCaseForHiveImpl implements UseCaseForHive {
     try {
       box.put(key, values);
 
-      return const Right("Sucess");
+      return const Right("Success");
     } catch (e) {
       print(e);
       return Left(CacheFailure());
@@ -95,13 +95,13 @@ class UseCaseForHiveImpl implements UseCaseForHive {
   Either<Failure, String> savePublishNoticeInHive(Box box, String key, values) {
     try {
       print(
-          "you are inside the hive od publish notificaiton where you are saving data");
+          "you are inside the hive od publish notification where you are saving data");
       box.put(key, values);
 
       print(
-          "you are inside the hive od publish notificaiton where you are saving data");
+          "you are inside the hive od publish notification where you are saving data");
 
-      return const Right("Sucess");
+      return const Right("Success");
     } catch (e) {
       print(e);
       return Left(CacheFailure());

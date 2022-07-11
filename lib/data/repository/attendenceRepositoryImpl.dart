@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:salesforce/domain/entities/AttendendenceDashbard.dart';
 import 'package:salesforce/domain/entities/attendence.dart';
 import 'package:salesforce/error/failure.dart';
 import '../../domain/repositories/repository.dart';
@@ -16,6 +17,16 @@ class AttendenceRepositoryImpl implements AttendenceRepository {
       Attendence attendance) async {
     try {
       final question = await attendenceRemoteSource.saveAttendence(attendance);
+      return Right(question);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, AttendanceDashboard?>> getDashBoardAttendance() async {
+    try {
+      final question = await attendenceRemoteSource.getDashBoardAttendance();
       return Right(question);
     } catch (e) {
       return Left(ServerFailure());

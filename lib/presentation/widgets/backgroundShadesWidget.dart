@@ -10,11 +10,10 @@ class BackgroundShades extends StatefulWidget {
 }
 
 class _BackgroundShadesState extends State<BackgroundShades> {
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height + 375,
+      height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: Stack(
         children: [

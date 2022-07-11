@@ -2,18 +2,21 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salesforce/data/models/merchandiseOrderModel.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/presentation/widgets/buttonWidget.dart';
 import 'package:salesforce/utils/app_colors.dart';
+import 'package:salesforce/utils/dataChecker.dart';
 import '../../domain/entities/SalesData.dart';
 import '../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../routes.dart';
 import '../../utils/hiveConstant.dart';
 import '../blocs/newOrdrBloc/new_order_cubit.dart';
 import '../widgets/appBarWidget.dart';
+import '../widgets/dropdown_search_widget.dart';
 import '../widgets/imageWidget.dart';
 import '../widgets/textformfeild.dart';
 import '../widgets/visitedOutletWidget.dart';
@@ -34,19 +37,10 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
   final TextEditingController _imageInputController = TextEditingController();
 
   var useCaseHiveData = getIt<UseCaseForHiveImpl>();
-
+  DataChecker dataChecker = DataChecker();
   late String merchantTypeId;
   List<String> merchandiseName = [];
   List<String> merchandiseId = [];
-
-  List<String> itms = [
-    'Banner',
-    'Display',
-    'Pharase',
-    'T-shirt',
-    'And more',
-  ];
-
   File? image;
 
   Future pickImage() async {
@@ -70,19 +64,15 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
   }
 
   getMerchantDropDownFromHive() async {
-    print("inside getmerchant dropdown from hive ");
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
     List<dynamic> ca = box.keys.toList();
     var sa = box.get("merchandise");
-    print(sa);
-    print(ca);
+
     var successOrFailed =
         useCaseHiveData.getValuesByKey(box, HiveConstants.merchandiseKey);
     successOrFailed.fold(
         (l) => {print("getting merchandise from hive is failed ")},
         (r) => {
-              print("adsf"),
-              print(r),
               for (var i = 0; i < r.length; i++)
                 {
                   merchandiseName.add(r[i].name),
@@ -119,13 +109,12 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: textFeildWithDropDown(
-                    controller: _typesOfMerchandiseSupport,
-                    validator: (string) {},
-                    hintText:
-                        // widget.getProfileState.userDetail!.userDocument ??
-                        "Choose",
-                    item: merchandiseName),
+                child: dropDownSearchWidget(
+                    merchandiseName, _typesOfMerchandiseSupport.text, (string) {
+                  setState(() {
+                    _typesOfMerchandiseSupport.text = string!;
+                  });
+                }),
               ),
               SizedBox(
                 height: mediaQueryHeight * 0.04,
@@ -154,18 +143,13 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                       _typesOfMerchandiseSupport.text != "") {
                     MerchandiseOrderModel merchandiseOrderModel;
                     late SalesData sales;
-                    print("thi is before if condition");
-                    print(newOrderCubit.state);
                     if (newOrderCubit.state is NewOrderLoaded) {
                       Object? sdm = newOrderCubit.state.props[0];
                       if (sdm is SalesData) {
-                        print(sdm);
                         sales = sdm;
-
                         int index = merchandiseName
                             .indexOf(_typesOfMerchandiseSupport.text);
                         String merchandise = merchandiseId[index];
-                        print("this is merchandise data");
 
                         merchandiseOrderModel = MerchandiseOrderModel(
                             image: image!.path,
@@ -176,9 +160,11 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                             merchandiseOrderPojo: merchandiseOrderModel);
 
                         newOrderCubit.getOrders(salesData);
+
                         newOrderCubit.saveSalesDataToHive(salesData);
+                        dataChecker.setLocalDataChecker(true);
+
                         newOrderCubit.setInitialState();
-                        print("thi is working sdf");
 
                         final VistedOutlets visitedOutlets = VistedOutlets(
                           navTitle: 'TOTAL',
@@ -194,7 +180,14 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                       }
                     }
                   } else {
-                    //todo  showSnackbar
+                    Fluttertoast.showToast(
+                        msg: "Please fill all form",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: AppColors.primaryColor,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
                   }
 
                   // clear();
@@ -213,10 +206,8 @@ class _MerchandiseSupportScreenState extends State<MerchandiseSupportScreen> {
                     Object? sdm = newOrderCubit.state.props[0];
                     if (sdm is SalesData) {
                       sales = sdm;
-
                       newOrderCubit.saveSalesDataToHive(sales);
                       newOrderCubit.setInitialState();
-
                       final VistedOutlets visitedOutlets = VistedOutlets(
                         navTitle: 'TOTAL',
                         imageUrl: 'assets/images/total_order_complete.png',

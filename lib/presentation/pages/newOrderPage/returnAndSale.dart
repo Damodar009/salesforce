@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:salesforce/domain/entities/sales.dart';
 import 'package:salesforce/injectable.dart';
 import 'package:salesforce/utils/hiveConstant.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
@@ -82,4 +83,23 @@ Future<List<dynamic>> getSalesDataFromHive() async {
       (l) => {box.close(), print("")}, (r) => {salesData = r, box.close()});
 
   return salesData;
+}
+
+saveOrderDataTOHive(List<Sales> orderData) async {
+  Box box = await Hive.openBox(HiveConstants.requestOrders);
+  useCaseForHiveImpl.saveValuestoHiveBox(box, orderData).fold(
+      (l) => {print("saving orderData to hive is failed")},
+      (r) => {print("saving orderData to hive is passed")});
+}
+
+Future<List<Sales>> getOrderDataFromHive() async {
+  List<Sales> orderData = [];
+  Box box = await Hive.openBox(HiveConstants.requestOrders);
+  useCaseForHiveImpl.getAllValuesFromHiveBox(box).fold(
+      (l) => {print("getting  orderData from hive is failed")},
+      (r) => {
+            for (int i = 0; i < r.length; i++) {orderData.add(r[i])},
+            print("getting orderData to hive is passed")
+          });
+  return orderData;
 }

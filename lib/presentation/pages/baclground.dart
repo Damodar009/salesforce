@@ -35,21 +35,19 @@ class _MyBackgroundState extends State<MyBackground> {
                     message: 'Background location in progress',
                     icon: '@mipmap/ic_launcher',
                   );
-                  BackgroundLocation().getCurrentLocation().then((location) {
-                    setState(() {
-                      latitude = location.latitude.toString();
-                      longitude = location.longitude.toString();
-                    });
-                  });
                   await BackgroundLocation.setAndroidConfiguration(1000);
                   await BackgroundLocation.startLocationService(
                       distanceFilter: 0.1);
-
                   BackgroundLocation.getLocationUpdates((location) {
                     setState(() {
                       latitude = location.latitude.toString();
                       longitude = location.longitude.toString();
                     });
+                    print('''\n
+                        Latitude:  $latitude
+                        Longitude: $longitude
+               
+                   ''');
                   });
                 },
                 child: Text('Start Location Service')),

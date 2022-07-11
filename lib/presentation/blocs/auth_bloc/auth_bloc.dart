@@ -20,7 +20,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       isSuccessful.fold(
           (l) => {
-                print("This is the server failure "),
                 if (l is ServerFailure)
                   emit(LoginFailedState())
                 else if (l is CacheFailure)

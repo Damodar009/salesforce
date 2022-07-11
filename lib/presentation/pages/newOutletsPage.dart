@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:salesforce/domain/entities/retailer.dart';
 import 'package:salesforce/presentation/widgets/appBarWidget.dart';
 import 'package:salesforce/presentation/widgets/dropdown_search_widget.dart';
+import 'package:salesforce/utils/dataChecker.dart';
 import '../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../injectable.dart';
 import '../../utils/app_colors.dart';
@@ -58,8 +59,8 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
   }
 
   String? phoneValidator(String? string) {
-    if (string!.length < 10) {
-      return 'must be at least 10 digit';
+    if (string!.length != 10) {
+      return 'must be 10 digit';
     }
     return null;
   }
@@ -155,8 +156,6 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                     const SizedBox(
                       height: 12,
                     ),
-
-                    //todo
 
                     textFormField(
                         controller: _contactPerson,
@@ -330,23 +329,11 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                       height: 12,
                     ),
 
-                    dropDownSearchWidget(retailerTypes, (string) {
+                    dropDownSearchWidget(retailerTypes, initialValue, (string) {
                       setState(() {
                         initialValue = string!;
                       });
                     }),
-
-                    // textFeildWithDropDownFor(
-                    //     item: retailerTypes,
-                    //     validator: (string) {
-                    //       return validator(string);
-                    //     },
-                    //     onselect: (string) {
-                    //       setState(() {
-                    //         initialValue = string;
-                    //       });
-                    //     },
-                    //     initialText: initialValue),
 
                     const SizedBox(
                       height: 20,
@@ -356,21 +343,11 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                       height: 7,
                     ),
 
-                    textFeildWithDropDownFor(
-                        item: regionName,
-                        validator: (string) {
-                          if (region != " ") {
-                            return null;
-                          } else {
-                            return "this cannot be empty";
-                          }
-                        },
-                        onselect: (string) {
-                          setState(() {
-                            region = string;
-                          });
-                        },
-                        initialText: region),
+                    dropDownSearchWidget(regionName, region, (string) {
+                      setState(() {
+                        region = string!;
+                      });
+                    }),
 
                     const SizedBox(
                       height: 20,
@@ -380,13 +357,13 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                         setState(() {
                           loading = true;
                         });
-                        //todo get region
+                        DataChecker dataChecker = DataChecker();
+                        dataChecker.setLocalDataChecker(true);
                         int index = regionName.indexOf(region);
                         String regions = regionId[index];
                         int retailerIndex = retailerTypes.indexOf(initialValue);
                         String retailerid = retailerTypesId[retailerIndex];
 
-                        print("this is region id $regions");
                         Retailer retailer = Retailer(
                             name: _outLetName.text,
                             latitude: position!.latitude,
@@ -397,13 +374,10 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                             retailerClass: selectedValue.split(" ")[0],
                             retailerType: retailerid,
                             region: regions);
-                        print(retailer);
 
                         Box box = await Hive.openBox(HiveConstants.newRetailer);
                         var retailers = useCaseForHiveImpl.saveValuestoHiveBox(
                             box, retailer);
-
-                        Future.delayed(const Duration(seconds: 3), () {});
 
                         retailers.fold(
                             (l) => {
@@ -413,7 +387,7 @@ class _NewOutletsScreenState extends State<NewOutletsScreen> {
                                               Text('saving data is failed')))
                                 },
                             (r) => {
-                                  //todo emit hive success full and send to next page
+                                  dataChecker.setLocalDataChecker(true),
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text(

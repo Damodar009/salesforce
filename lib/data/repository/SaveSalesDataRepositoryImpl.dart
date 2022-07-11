@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../domain/entities/SalesData.dart';
+import '../../domain/entities/requestDeliver.dart';
 import '../../domain/repositories/repository.dart';
 import '../../error/failure.dart';
 import '../../injectable.dart';
@@ -17,6 +18,18 @@ class SaveSalesDataRepositoryImpl implements SaveSalesDataRepository {
     try {
       final question =
           await salesDataRemoteSource.saveSalesData(salesDataModel);
+      return Right(question);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, String?>> saveDeliveredRequest(
+      List<RequestDelivered> requestDelivered) async {
+    try {
+      final question =
+          await salesDataRemoteSource.saveDeliveredRequest(requestDelivered);
       return Right(question);
     } catch (e) {
       return Left(ServerFailure());

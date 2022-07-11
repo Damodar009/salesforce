@@ -1,24 +1,27 @@
 import 'package:dio/dio.dart';
-import 'package:hive/hive.dart';
 import 'package:salesforce/data/models/merchandiseModel.dart';
 import 'package:salesforce/data/models/regionModel.dart';
 import 'package:salesforce/data/models/retailerDropDownModel.dart';
 import 'package:salesforce/domain/entities/merchandise.dart';
 import 'package:salesforce/domain/entities/products.dart';
 import 'package:salesforce/domain/entities/region.dart';
+import 'package:salesforce/domain/entities/requestedDropDown.dart';
 import 'package:salesforce/domain/entities/retailerDropDown.dart';
 import 'package:salesforce/domain/entities/retailerType.dart';
 import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../domain/entities/depot.dart';
 import '../../../domain/entities/depotProductRetailer.dart';
+import '../../../domain/entities/paymentType.dart';
 import '../../../error/exception.dart';
 import '../../../injectable.dart';
+import '../../../utils/AapiUtils.dart';
 import '../../../utils/apiUrl.dart';
-import '../../../utils/hiveConstant.dart';
 import '../../models/DepotModel.dart';
 import '../../models/Products.dart';
 import '../../models/RetailerType.dart';
 import '../../models/Userdata.dart';
+import '../../models/paymentTypeModel.dart';
+import '../../models/requestedDropDownModel.dart';
 import '../local_data_sources.dart';
 
 abstract class GetDepotProductAndRetailer {
@@ -31,23 +34,11 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
 
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
-    //todo implement authorization token
-
-    Box box = await Hive.openBox(HiveConstants.userdata);
     final signInLocalDataSource = getIt<SignInLocalDataSource>();
-
-    //dynamic accessToken = useCaseForHiveImpl.getValueByKey(box, "access_token");
-
     String? accessToken;
-    // Box box = await Hive.openBox(HiveConstants.userdata);
-
-    var accessTokenSuccessOrFailed =
-        useCaseForHiveImpl.getValueByKey(box, "access_token");
-    accessTokenSuccessOrFailed.fold(
-        (l) => {print("failed")}, (r) => {accessToken = r!});
-
+    AppInterceptors appInterceptors = AppInterceptors();
+    accessToken = await appInterceptors.getUserAccessToken();
     try {
-      print("inside depot product ");
       UserDataModel? userInfo =
           await signInLocalDataSource.getUserDataFromLocal();
       print(userInfo!.access_token);
@@ -88,6 +79,15 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
             (response.data["data"]["regionDropDown"] as List)
                 .map((sectorModel) => RegionDropDownModel.fromJson(sectorModel))
                 .toList();
+        List<RequestedDropDown> requestedDropDown = (response.data["data"]
+                ["requestedDropDown"] as List)
+            .map((sectorModel) => RequestedDropDownModel.fromJson(sectorModel))
+            .toList();
+
+        List<PaymentType> paymentType =
+            (response.data["data"]["paymentType"] as List)
+                .map((paymentType) => PaymentTypeModel.fromJson(paymentType))
+                .toList();
 
         depotProductRetailer = DepotProductRetailer(
             products: products,
@@ -95,7 +95,9 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
             depots: depots,
             retailerDropDown: retailerDropdown,
             merchandise: merchandiseDropDown,
-            region: regionDropDown);
+            region: regionDropDown,
+            requestedDropDown: requestedDropDown,
+            paymentType: paymentType);
 
         return depotProductRetailer;
       } else {

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:salesforce/domain/entities/AttendendenceDashbard.dart';
 import 'package:salesforce/utils/app_colors.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DoughnutChart extends StatefulWidget {
-  const DoughnutChart({Key? key}) : super(key: key);
+  final double percentile;
+  final double presentDays;
+  final double absentDays;
+  DoughnutChart(
+      {required this.percentile,
+      required this.presentDays,
+      required this.absentDays})
+      : super();
 
   @override
   _DoughnutChartState createState() => _DoughnutChartState();
@@ -12,9 +20,15 @@ class DoughnutChart extends StatefulWidget {
 class _DoughnutChartState extends State<DoughnutChart> {
   late List<GDPdata> _chartDAta;
 
+  AttendanceDashboard? attendanceDashboard;
+
   @override
   void initState() {
-    _chartDAta = getChartData();
+    _chartDAta = [
+      GDPdata("sura", widget.absentDays.toInt(), AppColors.buttonColor),
+      GDPdata("prince", widget.presentDays.toInt(), AppColors.primaryColor),
+    ];
+
     super.initState();
   }
 
@@ -25,20 +39,11 @@ class _DoughnutChartState extends State<DoughnutChart> {
         SfCircularChart(
           annotations: <CircularChartAnnotation>[
             CircularChartAnnotation(
-                widget: Container(
-              child: PhysicalModel(
-                color: const Color.fromRGBO(230, 20, 230, 1),
-                child: Container(),
-                shape: BoxShape.circle,
-                elevation: 1,
-                shadowColor: Colors.black,
-              ),
-            )),
-            CircularChartAnnotation(
-                widget: const Text(
-              "71% \n attendence",
+                widget: Text(
+              "${(widget.percentile.toStringAsFixed(2))}\n Attendance",
+              // "${widget.percentile} \n Attendance",
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black, fontSize: 20),
+              style: const TextStyle(color: Colors.black, fontSize: 20),
             ))
           ],
           // legend:
@@ -56,18 +61,18 @@ class _DoughnutChartState extends State<DoughnutChart> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            indicater("Present", true),
+            indicator("Present", true),
             const SizedBox(
               width: 17,
             ),
-            indicater("Absent", false),
+            indicator("Absent", false),
           ],
         )
       ],
     );
   }
 
-  Widget indicater(String title, isPresence) {
+  Widget indicator(String title, isPresence) {
     return Row(
       children: [
         Container(
@@ -87,14 +92,6 @@ class _DoughnutChartState extends State<DoughnutChart> {
         )
       ],
     );
-  }
-
-  List<GDPdata> getChartData() {
-    final List<GDPdata> chartdata = [
-      GDPdata("sura", 12, AppColors.buttonColor),
-      GDPdata("prince", 18, AppColors.primaryColor),
-    ];
-    return chartdata;
   }
 }
 

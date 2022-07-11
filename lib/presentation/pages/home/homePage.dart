@@ -1,8 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/presentation/blocs/Attendence_Bloc/attendence_cubit.dart';
@@ -11,12 +11,21 @@ import 'package:salesforce/presentation/pages/todaysTarget/todaysTarget.dart';
 import 'package:salesforce/presentation/widgets/notice_list_view_widget.dart';
 import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/initialData.dart';
+import '../../../data/datasource/local_data_sources.dart';
+import '../../../data/datasource/remoteSource/remotesource.dart';
+import '../../../domain/entities/AttendendenceDashbard.dart';
+import '../../../domain/entities/requestDeliver.dart';
+import '../../../domain/usecases/useCaseForAttebdenceSave.dart';
+import '../../../domain/usecases/useCaseForSalesData.dart';
 import '../../../injectable.dart';
+import '../../../utils/AapiUtils.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/geolocation.dart';
 import '../../../utils/hiveConstant.dart';
+import '../userTrackScreen.dart';
 import 'attendenceRow.dart';
 import 'card.dart';
+import 'constants.dart';
 import 'doughnatChart.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,26 +36,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final InitialData _initialData = InitialData();
   final geoLocation = getIt<GeoLocationData>();
+  var useCaseForAttendanceImpl = getIt<UseCaseForAttendenceImpl>();
+  var salesData = getIt<UseCaseForSalesDataImpl>();
+
+  AttendanceDashboard attendanceDashboard = AttendanceDashboard(
+    0.0,
+    12.0,
+    18.0,
+  );
+
   bool loading = false;
   DateTime todayDateTime = DateTime.now();
 
   int? totalOutletsCount, newOutletsCount, visitedOutletCount, totalSalesCount;
   List<int?> todayTargets = [0, 0, 0, 0];
 
-  List<String> title = [
-    "Total Outlets",
-    "New Outlets",
-    "Total Outlets Visited Today",
-    "Total Sales Today"
-  ];
-  List<String> icons = [
-    "assets/icons/cardtotal.png",
-    "assets/icons/cardtotal.png",
-    "assets/icons/cardOutlets.png",
-    "assets/icons/cardOutlets.png",
-  ];
   String distanceTraveled = "0 km";
   String userName = "";
   bool? checkNotice;
@@ -58,11 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getUserName() async {
-    Box box = await Hive.openBox(HiveConstants.userdata);
-    String tempname = await box.get("name");
-    setState(() {
-      userName = tempname;
-    });
+    final signInLocalDataSource = getIt<SignInLocalDataSource>();
+    await signInLocalDataSource
+        .getUserDataFromLocal()
+        .then((value) => setState(() {
+              if (value != null && value.full_name != null) {
+                userName = value.full_name!;
+              }
+            }));
   }
 
   getTodayTargetData() async {
@@ -82,33 +90,33 @@ class _HomeScreenState extends State<HomeScreen> {
         todayTargets[3] = totalSalesCount;
       });
     }
-
-    // todayTarget.getAndSendSalesDataToApi(salesData);
   }
 
-  // saveCheckOutDataToApi() {
-  //   Attendence attendence = Attendence(
-  //     id: null,
-  //     macAddress: "30-65-EC-6F-C4-58",
-  //     checkin: "2022-12-21 09:30:00",
-  //     checkin_latitude: 21.21,
-  //     checkin_longitude: 122.12,
-  //     checkout: null,
-  //     checkout_latitude: null,
-  //     checkout_longitude: null,
-  //     user: "NGBifEuwYylJoyRt7a8bkA==",
-  //   );
-  //   print("started");
-  //   var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
-  //   useCaseForAttendenceImpl.attendenceSave(attendence);
-  // }
+  getChartData() async {
+    var successOrFailed =
+        await useCaseForAttendanceImpl.getDashBoardAttendance();
+    successOrFailed.fold(
+        (l) => {},
+        (r) => {
+              if (r != null)
+                {
+                  setState(() {
+                    attendanceDashboard = AttendanceDashboard(
+                      r.percentile,
+                      r.present_days,
+                      r.absent_days,
+                    );
+                  }),
+                }
+            });
+  }
 
-  // TodayTarget todayTarget = TodayTarget();
-  // todayTarget.sendListOfNewRetailer();
   final int _widgetIndex = 1;
   @override
   void initState() {
+    // salesData.saveDeliveredRequest(requestDelivered);
     BlocProvider.of<AttendenceCubit>(context).getCheckInStatus();
+    getChartData();
     getTodayTargetData();
     getUserName();
     super.initState();
@@ -116,83 +124,79 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("this is today target");
-    print(todayTargets);
-    double mediaQueryHeight = MediaQuery.of(context).size.height;
-    double mediaQueryWidth = MediaQuery.of(context).size.width;
-    var attendenceCubit = BlocProvider.of<AttendenceCubit>(context);
+    var attendanceCubit = BlocProvider.of<AttendenceCubit>(context);
 
     return IndexedStack(
       children: [
         Stack(
           children: [
             SingleChildScrollView(
-              //todo
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height + 395,
-                width: MediaQuery.of(context).size.width,
-                child: Stack(
-                  children: [
-                    Positioned(
-                        child: SvgPicture.asset(
-                      "assets/images/hometopleft.svg",
-                      color: const Color(0xffDAA53B),
-                    )),
-                    Positioned(
-                        right: 0,
-                        child: SvgPicture.asset(
-                          "assets/images/hometopright.svg",
-                          color: const Color(0xffDAA53B),
-                        )),
-                    Positioned(
-                        bottom: -50,
-                        child: SvgPicture.asset(
-                          "assets/images/homebottomleft.svg",
-                          color: const Color(0xffDAA53B),
-                        )),
-                    Positioned(
-                        bottom: -50,
-                        right: 0,
-                        child: SvgPicture.asset(
-                          "assets/images/homebottomright.svg",
-                          color: const Color(0xffDAA53B),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 60,
-                          ),
-                          Text("Hello $userName!",
-                              style: const TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryColor)),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          BlocBuilder<AttendenceCubit, AttendenceState>(
-                              builder: (context, state) {
-                            if (state is CheckedInState) {
-                              return const Text(
-                                  "Please checkout when completed",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ));
-                            } else {
-                              return const Text(
-                                  "Please check in to enter your attendance \n for today",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ));
-                            }
-                          }),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          Row(
+              child: Stack(
+                children: [
+                  Positioned(
+                      child: SvgPicture.asset(
+                    "assets/images/hometopleft.svg",
+                    color: const Color(0xffDAA53B),
+                  )),
+                  Positioned(
+                      right: 0,
+                      child: SvgPicture.asset(
+                        "assets/images/hometopright.svg",
+                        color: const Color(0xffDAA53B),
+                      )),
+                  Positioned(
+                      bottom: -50,
+                      child: SvgPicture.asset(
+                        "assets/images/homebottomleft.svg",
+                        color: const Color(0xffDAA53B),
+                      )),
+                  Positioned(
+                      bottom: -50,
+                      right: 0,
+                      child: SvgPicture.asset(
+                        "assets/images/homebottomright.svg",
+                        color: const Color(0xffDAA53B),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 60,
+                        ),
+                        Text("Hello $userName!",
+                            style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryColor)),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        BlocBuilder<AttendenceCubit, AttendenceState>(
+                            builder: (context, state) {
+                          if (state is CheckedInState) {
+                            return const Text("Please checkout when completed",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ));
+                          } else {
+                            return const Text(
+                                "Please check in to enter your attendance \n for today",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ));
+                          }
+                        }),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(Routes.userTrackScreen);
+                          },
+                          child: Row(
                             children: [
                               SvgPicture.asset("assets/images/homeWalked.svg"),
                               const SizedBox(
@@ -215,151 +219,188 @@ class _HomeScreenState extends State<HomeScreen> {
                               )
                             ],
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(13.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: const Color(0xffB5E8FC),
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        const Text("ATTENDANCE"),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(todayDateTime.toString(),
-                                            style:
-                                                const TextStyle(fontSize: 12))
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        BlocBuilder<AttendenceCubit,
-                                                AttendenceState>(
-                                            builder: (context, state) {
-                                          if (state is CheckedInState) {
-                                            return attendanceRow("Check Out",
-                                                () async {
-                                              setState(() {
-                                                loading = true;
-                                              });
-                                              bool check = await attendenceCubit
-                                                  .checkOut();
-                                              if (!check) {
-                                                Navigator.of(context).pushNamed(
-                                                    Routes.attendanceRoute);
-                                              } else {
-                                                // ScaffoldMessenger.of(context)
-                                                //     .showSnackBar(const SnackBar(
-                                                //         content:
-                                                //             Text('check out failed ')));
-                                              }
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(13.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: const Color(0xffB5E8FC),
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    children: [
+                                      const Text("ATTENDANCE"),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(todayDateTime.toString(),
+                                          style: const TextStyle(fontSize: 12))
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      BlocBuilder<AttendenceCubit,
+                                              AttendenceState>(
+                                          builder: (context, state) {
+                                        if (state is CheckedInState) {
+                                          return attendanceRow("Check Out",
+                                              () async {
+                                            setState(() {
+                                              loading = true;
+                                            });
+                                            bool check = await attendanceCubit
+                                                .checkOut();
 
-                                      if (result) {
-                                        bool check =
-                                            await attendenceCubit.checkIn();
-                                        if (check) {
-                                          //todo check flag in response of attendance save
-                                          _initialData.getAndSaveInitalData();
-                                          Navigator.of(context).pushNamed(
-                                              Routes.attendanceRoute);
-                                        } else {}
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                content: Text(
-                                                    'Please connect to internet')));
-                                      }
+                                            if (!check) {
+                                              Navigator.of(context).pushNamed(
+                                                  Routes.attendanceRoute);
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg: 'Checkout failed',
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  backgroundColor:
+                                                      AppColors.primaryColor,
+                                                  textColor: Colors.white);
+                                            }
 
-                                              setState(() {
-                                                loading = false;
-                                              });
-                                            }, loading);
-                                          }
-                                        }),
-                                      ],
-                                    )
-                                  ],
-                                ),
+                                            setState(() {
+                                              loading = false;
+                                            });
+                                          }, loading);
+                                        } else {
+                                          return attendanceRow("Check In",
+                                              () async {
+                                            RemoteSourceImplementation
+                                                remoteSourceImpl =
+                                                RemoteSourceImplementation();
+                                            var okay = await remoteSourceImpl
+                                                .refreshToken();
+                                            print(okay);
+                                            // setState(() {
+                                            //   loading = true;
+                                            // });
+                                            // // check internet
+                                            // bool result =
+                                            //     await InternetConnectionChecker()
+                                            //         .hasConnection;
+                                            //
+                                            // if (result) {
+                                            //   bool check = await attendanceCubit
+                                            //       .checkIn();
+                                            //   if (check) {
+                                            //     Navigator.of(context).pushNamed(
+                                            //         Routes.attendanceRoute);
+                                            //   } else {
+                                            //     Fluttertoast.showToast(
+                                            //         msg: "failed",
+                                            //         toastLength:
+                                            //             Toast.LENGTH_SHORT,
+                                            //         gravity:
+                                            //             ToastGravity.BOTTOM,
+                                            //         backgroundColor:
+                                            //             AppColors.primaryColor,
+                                            //         textColor: Colors.white);
+                                            //   }
+                                            // } else {
+                                            //   Fluttertoast.showToast(
+                                            //       msg:
+                                            //           'PLease connect to internet',
+                                            //       toastLength:
+                                            //           Toast.LENGTH_SHORT,
+                                            //       gravity: ToastGravity.BOTTOM,
+                                            //       backgroundColor:
+                                            //           AppColors.primaryColor,
+                                            //       textColor: Colors.white);
+                                            // }
+                                            //
+                                            // setState(() {
+                                            //   loading = false;
+                                            // });
+                                          }, loading);
+                                        }
+                                      }),
+                                    ],
+                                  )
+                                ],
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const Text("TOTAL ATTENDANCE"),
-                          const DoughnutChart(),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          const Text("Today Target"),
-                          Expanded(
-                              child: GridView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            primary: true,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2),
-                            itemBuilder: (_, index) => InkWell(
-                                onTap: () {
-                                  switch (index) {
-                                    case 0:
-                                      //todo get all  retailer  data from hive
-                                      Navigator.of(context)
-                                          .pushNamed(Routes.totalOutletsRoute);
-                                      break;
-                                    case 1:
-                                      //todo get new retailer  data from hive
-                                      Navigator.of(context)
-                                          .pushNamed(Routes.newOutletRoute);
-                                      break;
-                                    case 2:
-                                      // todo get data from hive for today visited outlet
-                                      Navigator.of(context).pushNamed(
-                                          Routes.totalOutLetsVisitedRoute);
-                                      break;
-                                    case 3:
-                                      //todo get data from hive for total sales report
-                                      Navigator.of(context)
-                                          .pushNamed(Routes.totalSalesRoute);
-                                      break;
-                                    default:
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: card(icons[index], title[index],
-                                      todayTargets[index] ?? 0, context),
-                                )),
-                            itemCount: 4,
-                          )),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        const Text("TOTAL ATTENDANCE"),
+                        DoughnutChart(
+                          percentile: attendanceDashboard.percentile.toDouble(),
+                          presentDays:
+                              attendanceDashboard.present_days.toDouble(),
+                          absentDays:
+                              attendanceDashboard.absent_days.toDouble(),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        const Text("Today Target"),
+                        SizedBox(
+                            height: 400,
+                            child: GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              primary: true,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2),
+                              itemBuilder: (_, index) => InkWell(
+                                  onTap: () {
+                                    switch (index) {
+                                      case 0:
+                                        Navigator.of(context).pushNamed(
+                                            Routes.totalOutletsRoute);
+                                        break;
+                                      case 1:
+                                        Navigator.of(context)
+                                            .pushNamed(Routes.newOutletRoute);
+                                        break;
+                                      case 2:
+                                        break;
+                                      case 3:
+                                        Navigator.of(context)
+                                            .pushNamed(Routes.totalSalesRoute);
+                                        break;
+                                      default:
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: card(icons[index], title[index],
+                                        todayTargets[index] ?? 0, context),
+                                  )),
+                              itemCount: 4,
+                            )),
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
             BlocBuilder<PublishNotificationBloc, PublishNotificationState>(
               builder: (context, state) {
                 if (state is PublishNotificationLoadedState) {
-                  print("shot notice mannnnnnn");
                   return Center(
                     child: NoticeListViewWidget(
                         data: state.publishNotificationState,
                         widgetIndex: _widgetIndex),
                   );
                 } else {
-                  print("you have an error so no notice");
                   return Container();
                 }
               },

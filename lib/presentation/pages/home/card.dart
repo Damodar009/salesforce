@@ -4,10 +4,8 @@ import '../../../utils/app_colors.dart';
 Widget card(String icon, String title, int number, BuildContext context) {
   return Center(
     child: Container(
-        // height: 140,
+        height: 150,
         width: 150,
-        // height: MediaQuery.of(context).size.height /2 ,
-        // width: MediaQuery.of(context).size.width/2,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(18.0)),
           color: AppColors.primaryColor,

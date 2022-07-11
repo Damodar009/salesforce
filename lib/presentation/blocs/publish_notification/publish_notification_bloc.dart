@@ -35,11 +35,13 @@ class PublishNotificationBloc
             emit(PublishNotificationFailedState());
           }
         }, (r) async {
-
-          useCaseForHiveImpl.savePublishNoticeInHive(
-              box, HiveConstants.publishNotice, r);
+          print("==========================++++++++++++++++++++");
+          if (r.isNotEmpty) {
+            useCaseForHiveImpl.savePublishNoticeInHive(
+                box, HiveConstants.publishNotice, r);
 //
-          emit(PublishNotificationLoadedState(publishNotificationState: r));
+            emit(PublishNotificationLoadedState(publishNotificationState: r));
+          }
 
           // var successOrFailed = useCaseForHiveImpl.getPublishNoticeFromHive(
           //     box, HiveConstants.publishNotice);
@@ -58,5 +60,3 @@ class PublishNotificationBloc
     );
   }
 }
-
-

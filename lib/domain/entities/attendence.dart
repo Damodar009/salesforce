@@ -34,8 +34,27 @@ class Attendence extends Equatable {
       this.checkout_longitude,
       this.user});
 
-
-
+  Attendence copyWith({
+    String? id,
+    String? macAddress,
+    String? checkin,
+    double? checkin_latitude,
+    double? checkin_longitude,
+    String? checkout,
+    double? checkout_latitude,
+    double? checkout_longitude,
+    user,
+  }) =>
+      Attendence(
+          id: id ?? this.id,
+          macAddress: macAddress ?? this.macAddress,
+          checkin: checkin ?? this.checkin,
+          checkin_latitude: checkin_latitude ?? this.checkout_latitude,
+          checkin_longitude: checkin_longitude ?? this.checkin_longitude,
+          checkout: checkout ?? this.checkout,
+          checkout_latitude: checkout_latitude ?? this.checkout_latitude,
+          checkout_longitude: checkout_longitude ?? this.checkout_longitude,
+          user: user ?? this.user);
 
   @override
   List<Object?> get props => [

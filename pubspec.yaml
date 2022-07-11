@@ -59,7 +59,6 @@ dependencies:
   hive_flutter: ^1.1.0
   geolocator: ^8.2.0
   mac_address: ^1.0.0
-  #background_location: ^0.8.1
   background_location:
     git:
       url: https://github.com/hilalbaig/background_location.git
@@ -72,7 +71,6 @@ dependencies:
   dropdown_search: ^4.0.0
   fullscreen: ^1.0.3
   flutter_launcher_icons: ^0.9.3
-  syncfusion_flutter_xlsio: ^20.1.59-beta
   searchfield: ^0.6.6
   textfield_search: ^0.10.0
 
@@ -89,17 +87,21 @@ dev_dependencies:
 
   flutter_lints: ^1.0.0
 
+flutter_native_splash:
+  background_image: "assets/images/splash.png"
+  android: true
+  ios: true
+  fullscreen: true
+
 flutter_icons:
   image_path: "assets/images/logo.jpeg"
   android: true
   ios: true  
 
-flutter_native_splash:
-  color: "#ffffff"
-  backgroundimage: "assets/images/Splash.png"
-  android: true
-  ios: true
-  fullscreen: true
+
+
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -150,3 +152,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+

@@ -3,19 +3,20 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:salesforce/domain/entities/depotProductRetailer.dart';
 import 'package:salesforce/injectable.dart';
+import 'package:salesforce/utils/app_colors.dart';
 import 'package:salesforce/utils/macAddress.dart';
-import '../../../data/datasource/local_data_sources.dart';
 import '../../../domain/entities/attendence.dart';
-import 'package:geolocator/geolocator.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../domain/usecases/useCaseForAttebdenceSave.dart';
 import '../../../domain/usecases/usecasesForRemoteSource.dart';
 import '../../../utils/geolocation.dart';
 import '../../../utils/hiveConstant.dart';
+
 part 'attendence_state.dart';
 
 class AttendenceCubit extends Cubit<AttendenceState> {
@@ -26,7 +27,6 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
   AttendenceCubit() : super(AttendenceInitial());
 
-  /// getiing user id from hive box
   Future<String> getUserIdFromHiveBox() async {
     String userId = "";
     Box box = await Hive.openBox(HiveConstants.userdata);
@@ -49,12 +49,10 @@ class AttendenceCubit extends Cubit<AttendenceState> {
               print("getting attendance data from the hive is failed"),
             },
         (r) => {
-              print(r),
               if (r != null)
                 {
                   moonLanding = DateTime.parse(r.checkin!),
-                  if (now.day == moonLanding.day)
-                    {isCheckIn = true, print("this is the check in greater ")}
+                  if (now.day == moonLanding.day) {isCheckIn = true}
                 }
             });
     if (isCheckIn == true) {
@@ -63,7 +61,6 @@ class AttendenceCubit extends Cubit<AttendenceState> {
       failureOrSucess.fold(
           (l) => {print("data from checkout hive box is failed")},
           (r) => {
-                print("data from hive attendance is passed"),
                 print(r),
                 if (r != null)
                   {
@@ -103,16 +100,12 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   /// check current location with depot list location
   Future<bool> checkCurrentLocationWithDepots(
       List<dynamic> depots, double latitude, double longitude) async {
-    print("we are inside depot ");
     bool isIndepot = false;
-    int minimumDistance = 20; // in meters
+    int minimumDistance = 50; // in meters
     var p = 0.017453292519943295;
     var c = cos;
 
     for (var i = 0; i < depots.length; i++) {
-      print("the location of depots are ");
-      print(depots[i].latitude);
-      print(depots[i].longitude);
       double latitude2 = depots[i].latitude;
       double longitude2 = depots[i].longitude;
 
@@ -127,6 +120,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
         isIndepot = true;
 
         Box box = await Hive.openBox(HiveConstants.attendence);
+
         var failureOrsucess = useCaseForHiveImpl.saveValueByKey(
             box, HiveConstants.assignedDepot, depots[i].id);
         break;
@@ -139,6 +133,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   Future<List<dynamic>?> getDepotList() async {
     print("get depot list");
     List<dynamic>? depots = await getDepotFromHive();
+
     if (depots != null) {
       return depots;
     } else {
@@ -165,6 +160,16 @@ class AttendenceCubit extends Cubit<AttendenceState> {
 
     if (isCheckIn) {
       //save data to api
+      Attendence? attendenceCheckOut =
+          box.get(HiveConstants.attendenceCheckOutKey);
+      if (attendenceCheckOut != null) {
+        attendance = attendance.copyWith(
+          checkout_longitude: attendenceCheckOut.checkout_longitude,
+          checkout_latitude: attendenceCheckOut.checkout_latitude,
+          checkout: attendenceCheckOut.checkout,
+        );
+      }
+
       var successOrFailed =
           await useCaseForAttendenceImpl.attendenceSave(attendance);
       successOrFailed.fold(
@@ -173,16 +178,18 @@ class AttendenceCubit extends Cubit<AttendenceState> {
               },
           (r) async => {
                 print("saving check in attendance data to Api is success"),
+                if (box.containsKey(HiveConstants.attendenceCheckOutKey))
+                  {box.delete(HiveConstants.attendenceCheckOutKey)},
+
                 //save to hive
                 useCaseForHiveImpl
                     .saveValueByKey(box, HiveConstants.attendenceCheckinKey, r)
                     .fold(
                         (l) => {print("saving check in to hive is failed")},
                         (r) => {
+                              print("saving check in to hive is passed"),
                               isSaved = true,
                             }),
-
-                //todo check for check out data anf send if available
               });
     } else {
       print("this is inside checkout");
@@ -192,16 +199,14 @@ class AttendenceCubit extends Cubit<AttendenceState> {
             .attendenceSave(attendance)
             .then((value) => {
                   value.fold(
-                      (l) => {
-                            // print("check out data is failed"),
-                          },
+                      (l) => {},
                       (r) => {
                             isSaved = true,
                           })
                 });
       } else {
-        var checklocalDataSend = getIt<SignInLocalDataSourceImpl>();
-        checklocalDataSend.setLocalDataChecker(true);
+        // var checklocalDataSend = getIt<SignInLocalDataSourceImpl>();
+        // checklocalDataSend.setLocalDataChecker(true);
       }
       var successOrFailedApi = useCaseForHiveImpl.saveValueByKey(
           box, HiveConstants.attendenceCheckOutKey, attendance);
@@ -252,15 +257,18 @@ class AttendenceCubit extends Cubit<AttendenceState> {
   Future<List<dynamic>?> getDepotFromHive() async {
     List<dynamic>? depots;
     Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+
     var failureOrSuccess =
         useCaseForHiveImpl.getValuesByKey(box, HiveConstants.depotKey);
 
     failureOrSuccess.fold(
         (l) => {
+              print("getting depot from hive is failed")
               //todo hive failed
               //   emit(HiveSaveFailed()),
             },
-        (r) => {depots = r});
+        (r) =>
+            {print("getting depot from hive is passed"), print(r), depots = r});
 
     return depots;
   }
@@ -272,23 +280,11 @@ class AttendenceCubit extends Cubit<AttendenceState> {
     bool checkedInBool = false;
     Attendence? checkInAttendance =
         await getAttendanceDataFromHiveBox(HiveConstants.attendenceCheckinKey);
-    //todo check day not others
-
-    if (now.day == DateTime.parse(checkInAttendance!.checkin!).day) {
-      Fluttertoast.showToast(
-          msg: "you have already checked in for today",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      print("this is  check in");
-
+    if ((checkInAttendance == null ||
+        now.day != DateTime.parse(checkInAttendance.checkin!).day)) {
       Position? position = await geolocator.getCurrentLocation();
       List<dynamic>? depots = await getDepotList();
-      print("this is depots list");
+
       if (position != null && depots != null) {
         bool isInDepot = await checkCurrentLocationWithDepots(
             depots, position.latitude, position.longitude);
@@ -306,6 +302,7 @@ class AttendenceCubit extends Cubit<AttendenceState> {
           String macAddresss = await macAddress.getMacAddress();
 
           String userId = await getUserIdFromHiveBox();
+
           Attendence checkInAttendance = Attendence(
               id: null,
               macAddress: macAddresss,
@@ -316,31 +313,36 @@ class AttendenceCubit extends Cubit<AttendenceState> {
               checkout_latitude: null,
               checkout_longitude: null,
               user: userId);
-          print("before save data to api or hive");
 
           bool checkedIn = await saveDataToApiOrHive(checkInAttendance, true);
-
           if (checkedIn) {
             emit(CheckedInState());
             checkedInBool = checkedIn;
           } else {
             checkedInBool = false;
-            print("check in is not successful");
           }
         } else {
           Fluttertoast.showToast(
-              msg: "you have already checked in for today",
+              msg: "Please go to the depot.",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.primaryColor,
               textColor: Colors.white,
               fontSize: 16.0);
           checkedInBool = false;
         }
       }
+    } else {
+      Fluttertoast.showToast(
+          msg: "you have already checked in for today",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: AppColors.primaryColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
-
     return checkedInBool;
   }
 

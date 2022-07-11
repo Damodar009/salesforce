@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salesforce/data/datasource/remoteSource/salesDataRemoteSource.dart';
 import 'package:salesforce/presentation/widgets/backgroundShadesWidget.dart';
 import 'package:salesforce/routes.dart';
 import '../../utils/app_colors.dart';
+import '../blocs/Attendence_Bloc/attendence_cubit.dart';
 
 class OutletScreen extends StatefulWidget {
   const OutletScreen({Key? key}) : super(key: key);
@@ -17,10 +20,8 @@ class _OutletScreenState extends State<OutletScreen> {
       SalesDataRemoteSourceImpl();
 
   @override
-  void initState() {}
-
-  @override
   Widget build(BuildContext context) {
+    var attendanceCubit = BlocProvider.of<AttendenceCubit>(context);
     return Stack(
       children: [
         const BackgroundShades(),
@@ -39,25 +40,33 @@ class _OutletScreenState extends State<OutletScreen> {
               height: 10,
             ),
             outletsCard(
-                "Create new orders",
+                attendanceCubit,
+                "Create New Orders",
                 "To create new Orders and \n send or save the data ",
                 " Add now",
                 Routes.newOrderRoute),
             outletsCard(
-                "Create new Outlets",
+                attendanceCubit,
+                "Create New Outlets",
                 "To Create New Outlets and \nSave Outlets",
                 "Add now",
                 Routes.newOutletsRoute),
-            outletsCard("Sales Data Collection", "From\n 2022/1/1/ to 2022/1/1",
-                "Check In", Routes.salesDataCollection),
+            outletsCard(
+                attendanceCubit,
+                "Sales Data Collection",
+                "From\n 2022/1/1/ to 2022/1/1",
+                "Check In",
+                Routes.salesDataCollection),
+            outletsCard(attendanceCubit, "Order Requests",
+                "From\n 2022/1/1/ to 2022/1/1", "View", Routes.requestOrderPage)
           ]),
         )
       ],
     );
   }
 
-  Widget outletsCard(
-      String title, String subtitle, String text, String navigateTo) {
+  Widget outletsCard(var attendance, String title, String subtitle, String text,
+      String navigateTo) {
     return outletsCardOutline(
       Padding(
         padding: const EdgeInsets.all(16.0),
@@ -81,30 +90,33 @@ class _OutletScreenState extends State<OutletScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed(navigateTo);
-                    // if (attendanceCubit.state is CheckedInState) {
-                    //   Navigator.of(context).pushNamed(navigateTo);
-                    // } else {
-                    //   Fluttertoast.showToast(
-                    //       msg: "Please go to depot and check in",
-                    //       toastLength: Toast.LENGTH_SHORT,
-                    //       gravity: ToastGravity.BOTTOM,
-                    //       timeInSecForIosWeb: 1,
-                    //       backgroundColor: Colors.red,
-                    //       textColor: Colors.white,
-                    //       fontSize: 16.0);
-                    // }
+                    if (attendance.state == CheckedInState()) {
+                      Navigator.of(context).pushNamed(navigateTo);
+                    } else {
+                      Navigator.of(context).pushNamed(navigateTo);
+                      // Fluttertoast.showToast(
+                      //     msg: "Please go to depot and check in",
+                      //     toastLength: Toast.LENGTH_SHORT,
+                      //     gravity: ToastGravity.BOTTOM,
+                      //     timeInSecForIosWeb: 1,
+                      //     backgroundColor: Colors.red,
+                      //     textColor: Colors.white,
+                      //     fontSize: 16.0);
+                    }
                   },
                   child: Container(
+                    width: 150,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 15),
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30)),
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                          fontSize: 13, color: AppColors.textColor),
+                    child: Center(
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                            fontSize: 13, color: AppColors.textColor),
+                      ),
                     ),
                   ),
                 ),

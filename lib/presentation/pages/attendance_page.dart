@@ -47,7 +47,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
           ),
           Visibility(
               visible: showAttendence,
-              child: Center(child: attendenceWidget(context))),
+              child: Center(child: attendanceWidget(context))),
         ],
       ),
     );

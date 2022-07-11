@@ -13,7 +13,7 @@ class InitialData {
     var failureOrsucess =
         await useCaseForRemoteSourceimpl.getDepotProductRetailerDropDown();
     failureOrsucess.fold(
-        (l) => {print("failedalksndadasd")}, (r) => {depotProductRetailer = r});
+        (l) => {print("failed")}, (r) => {depotProductRetailer = r});
 
     return depotProductRetailer;
   }
@@ -22,31 +22,48 @@ class InitialData {
       DepotProductRetailer? depotProductRetailer) async {
     if (depotProductRetailer != null) {
       Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+      print("depotProductRetailer.depots");
       useCaseForHiveImpl.saveValueByKey(
           box, HiveConstants.depotKey, depotProductRetailer.depots);
       useCaseForHiveImpl.saveValueByKey(
           box, HiveConstants.productKey, depotProductRetailer.products);
       useCaseForHiveImpl.saveValueByKey(box, HiveConstants.retailerTypeKey,
           depotProductRetailer.retailerType);
-
       useCaseForHiveImpl.saveValueByKey(box, HiveConstants.retailerDropdownKey,
           depotProductRetailer.retailerDropDown);
-      print("this is merchandisr data from api");
-
-      print(depotProductRetailer.merchandise);
       useCaseForHiveImpl.saveValueByKey(
           box, HiveConstants.regionKey, depotProductRetailer.region);
       useCaseForHiveImpl.saveValueByKey(
           box, HiveConstants.merchandiseKey, depotProductRetailer.merchandise);
-    } else {
-      print("failed");
-    }
+      useCaseForHiveImpl.saveValueByKey(
+          box, HiveConstants.paymentTypeKey, depotProductRetailer.paymentType);
+
+      useCaseForHiveImpl.saveValueByKey(box, HiveConstants.requestOrders,
+          depotProductRetailer.requestedDropDown);
+    } else {}
   }
 
   getAndSaveInitalData() async {
-    DepotProductRetailer? depotProductRetailer;
-    depotProductRetailer = await getDepotAndDropDownFromApi();
+    // bool? flag = await flagChecker();
+    if (true) {
+      DepotProductRetailer? depotProductRetailer;
+      depotProductRetailer = await getDepotAndDropDownFromApi();
 
-    await saveDepotProductRetailerDropDownToHiveBox(depotProductRetailer);
+      await saveDepotProductRetailerDropDownToHiveBox(depotProductRetailer);
+    } else {
+      return;
+    }
+  }
+
+  flagChecker() async {
+    bool flag = true;
+    await useCaseForRemoteSourceimpl.flagChecker().then((value) => {
+          value.fold(
+              (l) => {print("flag checker failed")},
+              (r) => {
+                    flag = r,
+                  })
+        });
+    return flag;
   }
 }
