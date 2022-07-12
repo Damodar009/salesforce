@@ -38,7 +38,7 @@ class AttendenceSave implements AttendenceRemoteSource {
     var jsonEncodedAnswer = jsonEncode(attendanceInJson);
 
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
 
     try {
@@ -57,7 +57,6 @@ class AttendenceSave implements AttendenceRemoteSource {
         throw ServerException();
       }
     } on DioError catch (e) {
-      print("this is attendance failed ");
       print(e);
     }
     throw ServerException();
@@ -66,7 +65,7 @@ class AttendenceSave implements AttendenceRemoteSource {
   @override
   Future<AttendanceDashboard?> getDashBoardAttendance() async {
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
 
     try {

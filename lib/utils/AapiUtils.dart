@@ -4,7 +4,7 @@ import '../data/datasource/local_data_sources.dart';
 
 import '../injectable.dart';
 
-class AppInterceptors extends Interceptor {
+class ApiHelper {
   final signInLocalDataSource = getIt<SignInLocalDataSource>();
 
   Future<String?> getUserAccessToken() async {
@@ -15,6 +15,11 @@ class AppInterceptors extends Interceptor {
   Future<String?> getUserId() async {
     var userDataModel = await signInLocalDataSource.getUserDataFromLocal();
     return userDataModel!.userid;
+  }
+
+  Future<String?> getRefreshToken() async {
+    var userDataModel = await signInLocalDataSource.getUserDataFromLocal();
+    return userDataModel!.refresh_token;
   }
   // @override
   // FutureOr<dynamic> onRequest(RequestOptions options) async {

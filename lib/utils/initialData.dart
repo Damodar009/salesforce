@@ -44,14 +44,12 @@ class InitialData {
   }
 
   getAndSaveInitalData() async {
-    // bool? flag = await flagChecker();
-    if (true) {
+    bool? flag = await flagChecker();
+    if (flag!) {
       DepotProductRetailer? depotProductRetailer;
       depotProductRetailer = await getDepotAndDropDownFromApi();
 
       await saveDepotProductRetailerDropDownToHiveBox(depotProductRetailer);
-    } else {
-      return;
     }
   }
 

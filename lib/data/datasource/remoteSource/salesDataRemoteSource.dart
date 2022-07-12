@@ -58,7 +58,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
       });
 
       String? accessToken;
-      AppInterceptors appInterceptors = AppInterceptors();
+      ApiHelper appInterceptors = ApiHelper();
       accessToken = await appInterceptors.getUserAccessToken();
       try {
         Response response = await dio.post(
@@ -128,7 +128,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
       var salesDataModeljson = salesDataModel.map((e) => e.toJson(e)).toList();
       var encodedSalesData = json.encode(salesDataModeljson);
       String? accessToken;
-      AppInterceptors appInterceptors = AppInterceptors();
+      ApiHelper appInterceptors = ApiHelper();
       accessToken = await appInterceptors.getUserAccessToken();
       try {
         Response response = await dio.post(
@@ -168,7 +168,7 @@ class SalesDataRemoteSourceImpl implements SalesDataRemoteSource {
 
     Dio dio = Dio();
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
 
     try {

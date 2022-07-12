@@ -33,6 +33,7 @@ import 'domain/entities/merchndiseOrder.dart';
 import 'domain/entities/paymentType.dart';
 import 'domain/entities/products.dart';
 import 'domain/entities/region.dart';
+import 'domain/entities/requestDeliver.dart';
 import 'domain/entities/retailer.dart';
 import 'domain/entities/retailerDropDown.dart';
 import 'domain/entities/retailerType.dart';
@@ -46,7 +47,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureInjection();
   final directory = await pathprovider.getApplicationDocumentsDirectory();
-  // Hive.initFlutter());
   Hive.init(directory.path);
   Hive
     ..init(directory.path)
@@ -67,6 +67,7 @@ Future<void> main() async {
     ..registerAdapter(PublishNotificationAdapter())
     ..registerAdapter(ProductNameAdapter())
     ..registerAdapter(RequestedDropDownAdapter())
+    ..registerAdapter(RequestDeliveredAdapter())
     ..registerAdapter(PaymentTypeAdapter());
 
   var geolocator = getIt<GeoLocationData>();
@@ -101,12 +102,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isLoggedIn = true;
-
-  // var useCaseForRemoteSourceImpl = getIt<UseCaseForRemoteSourceimpl>();
-  // var useCaseForAttendenceImpl = getIt<UseCaseForAttendenceImpl>();
-  // var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
-  // var useCaseForUploadImageImpl = getIt<UseCaseForUploadImageImpl>();
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(

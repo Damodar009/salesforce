@@ -41,17 +41,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text('Error occured.')));
         }
-        // TODO: implement listener
       },
       child: Scaffold(
         appBar: appBar(
-            context: context,
-            // icon: Icons.arrow_back_ios_new_outlined,
-            navTitle: 'CHANGE PASSWORD',
-            // backNavigate: () {
-            //   Navigator.pop(context);
-            // },
-            ),
+          context: context,
+          // icon: Icons.arrow_back_ios_new_outlined,
+          navTitle: 'CHANGE PASSWORD',
+          // backNavigate: () {
+          //   Navigator.pop(context);
+          // },
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
           child: Form(
@@ -116,7 +115,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       setState(() {
                         obsecureTextReTypePassword =
                             !obsecureTextReTypePassword;
-                        print("hgchgfcxhgfcdgrvhctdx");
                       });
                     }),
                 const Spacer(),

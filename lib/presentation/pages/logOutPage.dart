@@ -65,28 +65,16 @@ class LogOutPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: button("Log off", () async {
-                  print("log out button clicked");
                   final prefs = await SharedPreferences.getInstance();
-
                   prefs.clear();
 
-                  Box box = await Hive.openBox(HiveConstants.userdata);
-
-                  box.deleteFromDisk();
-                  // Navigator.pushAndRemoveUntil(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (BuildContext context) => LOginScreen()),
-                  //     (route) => false);
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LOginScreen(),
-                      ));
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (BuildContext context) => LOginScreen()));
+                  Navigator.pushAndRemoveUntil<dynamic>(
+                    context,
+                    MaterialPageRoute<dynamic>(
+                        builder: (BuildContext context) => LOginScreen()),
+                    (route) =>
+                        false, //if you want to disable back feature set to false
+                  );
                 }, false, AppColors.primaryColor),
               )
             ],

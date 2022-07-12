@@ -4,9 +4,11 @@ import 'package:salesforce/domain/entities/requestedDropDown.dart';
 import 'package:salesforce/presentation/pages/RequestOrder/widgets/eachRequestWidget.dart';
 import 'package:salesforce/utils/app_colors.dart';
 import '../../../domain/entities/productName.dart';
+import '../../../domain/entities/requestDeliver.dart';
 import '../../../domain/usecases/hiveUseCases/hiveUseCases.dart';
 import '../../../injectable.dart';
 import '../../../utils/hiveConstant.dart';
+import '../../widgets/appBarWidget.dart';
 
 class RequestOrderPage extends StatefulWidget {
   const RequestOrderPage({Key? key}) : super(key: key);
@@ -16,51 +18,7 @@ class RequestOrderPage extends StatefulWidget {
 }
 
 class _RequestOrderPageState extends State<RequestOrderPage> {
-  List<RequestedDropDown> requestedDropDown = [
-    const RequestedDropDown(productName: [
-      ProductName(
-          id: 'werrtytddsdggfytytty',
-          quantity: 13,
-          requestedDate: '2022-2-2',
-          productName: 'rc'),
-      ProductName(
-          id: 'werrtytddsdggfvcvytytty',
-          quantity: 13,
-          requestedDate: '2022-2-2',
-          productName: 'rc fanta'),
-      ProductName(
-          id: 'werrtytdfgfgdsdggfytytty',
-          quantity: 13,
-          requestedDate: '2022-2-2',
-          productName: 'rc priny'),
-      ProductName(
-          id: 'werrtytddsdggfydfdtytty',
-          quantity: 13,
-          requestedDate: '2022-2-2',
-          productName: 'rc as')
-    ], retailerName: 'Surasa'),
-    const RequestedDropDown(productName: [
-      ProductName(
-          id: 'werrtytytyuioyhjuhjngfhtty',
-          quantity: 14,
-          requestedDate: '2022-2-2',
-          productName: 'rc asa')
-    ], retailerName: 'Sanjay'),
-    const RequestedDropDown(productName: [
-      ProductName(
-          id: 'werrtgfhrdfgrytjkjytytty',
-          quantity: 15,
-          requestedDate: '2022-2-2',
-          productName: 'rc cola')
-    ], retailerName: 'pujan'),
-    const RequestedDropDown(productName: [
-      ProductName(
-          id: 'werrtydfgsdfgjkksdfgstytytty',
-          quantity: 16,
-          requestedDate: '2022-2-2',
-          productName: 'rc cola')
-    ], retailerName: 'laxmi')
-  ];
+  List<RequestedDropDown> requestedDropDown = [];
   List<RequestedDropDown> searchRequestedDropDown = [];
 
   List<RequestedDropDown> deliveredRequested = [];
@@ -89,10 +47,7 @@ class _RequestOrderPageState extends State<RequestOrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Requested Orders"),
-        centerTitle: false,
-      ),
+      appBar: appBar(navTitle: 'Requested Order', context: context),
       body: Column(
         children: [
           Padding(
@@ -115,7 +70,7 @@ class _RequestOrderPageState extends State<RequestOrderPage> {
                 searchRequestedDropDown = [];
                 searchRequestedDropDown = requestedDropDown.where((element) {
                   bool contains = false;
-                  //print(element.retailerName);
+
                   List<String> retailersName = element.retailerName.split(" ");
                   for (String words in retailersName) {
                     if (words
@@ -214,13 +169,13 @@ class _RequestOrderPageState extends State<RequestOrderPage> {
 
   @override
   deactivate() async {
-    // List<RequestedDropDown> deliveredOrders = [];
-    // List<RequestedDropDown> notDeliveredOrders = [];
-    // var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
-    // Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
+    var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+    Box box = await Hive.openBox(HiveConstants.depotProductRetailers);
     List<RequestedDropDown> remainedRequested = [];
     bool addRemainedRequestedDropDown = true;
+    bool addProductName = true;
     for (int i = 0; i < requestedDropDown.length; i++) {
+      addRemainedRequestedDropDown = true;
       for (int j = 0; j < deliveredRequested.length; j++) {
         if (requestedDropDown[i].retailerName ==
             deliveredRequested[j].retailerName) {
@@ -228,45 +183,58 @@ class _RequestOrderPageState extends State<RequestOrderPage> {
           List<ProductName> productName = deliveredRequested[j].productName;
           List<ProductName> requestedProductName =
               requestedDropDown[i].productName;
-          List<ProductName> newProductName = [];
+          List<ProductName> remainedProductName = [];
 
           for (int k = 0; k < requestedProductName.length; k++) {
             for (int l = 0; l < productName.length; l++) {
-              if (!(requestedProductName[k].productName ==
+              addProductName = true;
+              if ((requestedProductName[k].productName ==
                   productName[l].productName)) {
-                newProductName.add(productName[l]);
+                addProductName = false;
+                break;
               }
+            }
+            if (addProductName) {
+              remainedProductName.add(requestedProductName[k]);
             }
           }
           remainedRequested.add(RequestedDropDown(
               retailerName: deliveredRequested[j].retailerName,
-              productName: newProductName));
+              productName: remainedProductName));
         }
       }
       if (addRemainedRequestedDropDown) {
         remainedRequested.add(requestedDropDown[i]);
       }
     }
-    print(remainedRequested.toString());
-    //
-    // for (RequestedDropDown as in requestedDropDown) {
-    //   if (retailersName.contains(as.retailerName)) {
-    //     deliveredOrders.add(as);
-    //   } else {
-    //     notDeliveredOrders.add(as);
-    //   }
-    // }
-    // if (deliveredOrders.isNotEmpty) {
-    //   useCaseForHiveImpl.saveValueByKey(
-    //       box, HiveConstants.deliveredOrders, deliveredOrders);
-    // }
-    // if (notDeliveredOrders.isNotEmpty) {
-    //   useCaseForHiveImpl.saveValueByKey(
-    //       box, HiveConstants.requestOrders, notDeliveredOrders);
-    // }
+    if (remainedRequested.isNotEmpty) {
+      useCaseForHiveImpl.saveValueByKey(
+          box, HiveConstants.requestOrders, remainedRequested);
+    }
+    if (deliveredRequested.isNotEmpty) {
+      List<RequestDelivered> requestedDelivereds = [];
+      for (int i = 0; i < deliveredRequested.length; i++) {
+        List<ProductName> pr = deliveredRequested[i].productName;
+        for (int j = 0; j < pr.length; j++) {
+          requestedDelivereds
+              .add(RequestDelivered(pr[j].id, pr[j].requestedDate));
+        }
+      }
+
+      await useCaseForHiveImpl
+          .getValueByKey(box, HiveConstants.deliveredOrders)
+          .fold(
+              (l) => {},
+              (r) => {
+                    for (RequestDelivered re in r)
+                      {
+                        requestedDelivereds.add(re),
+                      }
+                  });
+      useCaseForHiveImpl.saveValueByKey(
+          box, HiveConstants.deliveredOrders, requestedDelivereds);
+      print(requestedDelivereds.toString());
+    }
     super.deactivate();
   }
 }
-
-// {element.retailerName.split(" ").forEach((elment) {
-// elment.startsWith(searchText)}

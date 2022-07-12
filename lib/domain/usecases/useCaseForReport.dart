@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import '../../data/models/reportModel.dart';
-import '../../data/repository/reportRepositoryImpl.dart';
 import '../../error/failure.dart';
 import '../../injectable.dart';
+import '../repositories/repository.dart';
 
 abstract class UseCaseForReport {
   Future<Either<Failure, List<ReportModel>?>> getReport();
@@ -11,7 +11,7 @@ abstract class UseCaseForReport {
 
 @injectable
 class UseCaseForReportImpl implements UseCaseForReport {
-  var reportRepository = getIt<ReportRepositoryImpl>();
+  var reportRepository = getIt<ReportRepository>();
   UseCaseForReportImpl({required this.reportRepository});
 
   @override

@@ -22,7 +22,7 @@ class UploadImageRemoteDataSourceImpl implements UploadImageRemoteDataSource {
   Future<String> uploadImageSave(String imageName) async {
     try {
       String? accessToken;
-      AppInterceptors appInterceptors = AppInterceptors();
+      ApiHelper appInterceptors = ApiHelper();
       accessToken = await appInterceptors.getUserAccessToken();
 
       FormData data = FormData.fromMap({

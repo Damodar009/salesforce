@@ -13,9 +13,11 @@ import 'package:salesforce/routes.dart';
 import 'package:salesforce/utils/initialData.dart';
 import '../../../data/datasource/local_data_sources.dart';
 import '../../../data/datasource/remoteSource/remotesource.dart';
+import '../../../data/datasource/remoteSource/report.dart';
 import '../../../domain/entities/AttendendenceDashbard.dart';
 import '../../../domain/entities/requestDeliver.dart';
 import '../../../domain/usecases/useCaseForAttebdenceSave.dart';
+import '../../../domain/usecases/useCaseForReport.dart';
 import '../../../domain/usecases/useCaseForSalesData.dart';
 import '../../../injectable.dart';
 import '../../../utils/AapiUtils.dart';
@@ -114,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final int _widgetIndex = 1;
   @override
   void initState() {
-    // salesData.saveDeliveredRequest(requestDelivered);
     BlocProvider.of<AttendenceCubit>(context).getCheckInStatus();
     getChartData();
     getTodayTargetData();
@@ -280,13 +281,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         } else {
                                           return attendanceRow("Check In",
                                               () async {
-                                            RemoteSourceImplementation
-                                                remoteSourceImpl =
-                                                RemoteSourceImplementation();
-                                            var okay = await remoteSourceImpl
-                                                .refreshToken();
-                                            print(okay);
-                                            // setState(() {
+                                            InitialData jin = InitialData();
+                                            jin.flagChecker();
+                                            // RemoteSourceImplementation
+                                            //     remoteSource =
+                                            //     RemoteSourceImplementation();
+                                            // remoteSource
+                                            //     .refreshToken(); // setState(() {
                                             //   loading = true;
                                             // });
                                             // // check internet

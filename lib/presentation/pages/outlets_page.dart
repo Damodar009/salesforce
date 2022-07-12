@@ -93,15 +93,14 @@ class _OutletScreenState extends State<OutletScreen> {
                     if (attendance.state == CheckedInState()) {
                       Navigator.of(context).pushNamed(navigateTo);
                     } else {
-                      Navigator.of(context).pushNamed(navigateTo);
-                      // Fluttertoast.showToast(
-                      //     msg: "Please go to depot and check in",
-                      //     toastLength: Toast.LENGTH_SHORT,
-                      //     gravity: ToastGravity.BOTTOM,
-                      //     timeInSecForIosWeb: 1,
-                      //     backgroundColor: Colors.red,
-                      //     textColor: Colors.white,
-                      //     fontSize: 16.0);
+                      Fluttertoast.showToast(
+                          msg: "Please go to depot and check in",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
                     }
                   },
                   child: Container(

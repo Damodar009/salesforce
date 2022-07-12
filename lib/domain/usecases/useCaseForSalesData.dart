@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-
 import '../../data/models/SalesDataModel.dart';
 import '../../error/failure.dart';
 import '../../injectable.dart';

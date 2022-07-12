@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:salesforce/presentation/blocs/publish_notification/publish_notification_bloc.dart';
 import 'package:salesforce/presentation/pages/changePasswordPage.dart';
@@ -202,7 +203,14 @@ class _MenuScreenState extends State<MenuScreen> {
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       NoticeBoardTableScreen()));
-                        } else {}
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: 'Notice is Empty!',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              backgroundColor: AppColors.primaryColor,
+                              textColor: Colors.white);
+                        }
                       },
                       child: profileOptions(mediaQueryWidth, context,
                           Icons.notifications, 'Notice Board'),
@@ -269,17 +277,3 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 }
-
-//
-//
-// DateTime selectedDate = DateTime.now();
-//
-// var as = showDatePicker(
-//     context: context,
-//     initialDate: selectedDate,
-//     firstDate: DateTime(2001),
-//     lastDate: DateTime(2101, 8))
-//     .then(
-//         (value) => print(value?.month));
-
-//userImage !=null ? NetworkImage(userImage!)

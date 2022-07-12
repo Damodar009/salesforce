@@ -345,12 +345,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
               String assignedDepots = "";
               String userId = "";
-              // Box box = await Hive.openBox(HiveConstants.attendence);
-              // var failureOrsucess = useCaseForHiveImpl.getValueByKey(
-              //     box, HiveConstants.assignedDepot);
-              //
-              // failureOrsucess.fold((l) => {print("this is failed")},
-              //     (r) => {assignedDepots = r});
+              Box box = await Hive.openBox(HiveConstants.attendence);
+              var failureOrsucess = useCaseForHiveImpl.getValueByKey(
+                  box, HiveConstants.assignedDepot);
+
+              failureOrsucess.fold((l) => {print("this is failed")},
+                  (r) => {assignedDepots = r});
               UserDataModel? userDataModel =
                   await sharedPreference.getUserDataFromLocal();
               if (userDataModel != null) {
@@ -371,12 +371,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       returnedDescription: _returnRemarks.text,
                       availabilityDescription: _availabilityRemarks.text,
                       userId: userId,
-                      assignedDepot: "NGBifEuwYylJoyRt7a8bkA==",
+                      assignedDepot: assignedDepots,
                       longitude: longitude,
                       collectionDate: dateTimeNow,
                       latitude: latitude,
                       retailerPojo: retailerModel);
-                  print(salesDataModel);
+
                   newOrderCubit.getOrders(salesDataModel);
                   setState(() {
                     loading = false;
@@ -397,7 +397,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       availabilityDescription: _availabilityRemarks.text,
                       retailer: retailerId,
                       userId: userId,
-                      assignedDepot: "NGBifEuwYylJoyRt7a8bkA==",
+                      assignedDepot: assignedDepots,
                       longitude: longitude,
                       collectionDate: dateTimeNow,
                       latitude: latitude);
@@ -603,22 +603,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                         }
                       });
                     }),
-                    // textFeildWithDropDownFor(
-                    //     validator: (string) {},
-                    //     item: productName,
-                    //     onselect: (string) {
-                    //       setState(() {
-                    //         if (checkIndex(salesParentProduct, i)) {
-                    //           salesParentProduct[i] = string;
-                    //           print(salesParentProduct[i]);
-                    //         } else {
-                    //           salesParentProduct.add(string);
-                    //         }
-                    //       });
-                    //     },
-                    //     initialText: checkIndex(salesParentProduct, i)
-                    //         ? salesParentProduct[i]
-                    //         : ""),
                     const SizedBox(
                       height: 12,
                     ),
@@ -987,17 +971,11 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                               if (returns.isNotEmpty) {
                                 setState(() {
                                   if (checkIndex(returns, i)) {
-                                    print("this is index at $i for remove ");
-                                    print(returns[i].getProduct());
-                                    print(returns[i].getReturn());
-
                                     setState(() {
                                       returnParentProduct.removeAt(i);
                                       returns.removeAt(i);
                                       returnLength = returns.length;
                                     });
-                                    print(returnParentProduct.length);
-                                    print(returns.length);
                                   } else {
                                     returnLength = returnLength - 1;
                                   }
@@ -1017,10 +995,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ),
         textButton("Add more Products", textbuttonSize!, false, () {
           setState(() {
-            print("the return length ${returns.length}");
-
             returnLength = returns.length;
-            print(returns);
           });
         }),
         const SizedBox(
@@ -1088,7 +1063,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                       setState(() {
                         if (checkIndex(ordersParentProduct, i)) {
                           ordersParentProduct[i] = string!;
-                          print(ordersParentProduct[i]);
                         } else {
                           ordersParentProduct.add(string!);
                         }
@@ -1172,10 +1146,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
           ),
         textButton("Add more Products", textbuttonSize!, false, () {
           setState(() {
-            print("the return length ${orders.length}");
-
             orderLength = orders.length;
-            print(orders);
           });
         }),
         const SizedBox(
@@ -1193,7 +1164,6 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
 
   @override
   deactivate() {
-    //  useCaseForSalesDataTrackCollectionImpl.saveSakesTrackDataTOHive(50);
     super.deactivate();
   }
 }

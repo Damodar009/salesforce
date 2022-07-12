@@ -17,7 +17,6 @@ class NewTargetNewOutletsScreen extends StatefulWidget {
 }
 
 class _NewTargetNewOutletsScreenState extends State<NewTargetNewOutletsScreen> {
-  // String text = "1234567890m";
   TodayTarget todayTarget = TodayTarget();
   List<RetailerDropDown>? retailerDropDownList = [];
   List<Retailer>? retailers = [];
@@ -30,8 +29,7 @@ class _NewTargetNewOutletsScreenState extends State<NewTargetNewOutletsScreen> {
 
   getNewOutlets() async {
     retailers = (await todayTarget.getNewOutletsList());
-    print("new retailers ");
-    print(retailers);
+
     setState(() {
       retailers;
     });
@@ -80,30 +78,32 @@ class _NewTargetNewOutletsScreenState extends State<NewTargetNewOutletsScreen> {
                                   retailers![index].address);
                             },
                             itemCount: retailers!.length)
-                        : const Center(
-                            child: Text("no data"),
-                          )
-                    : ListView.builder(
-                        primary: true,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return newTargetNewOutletsDetailsWidget(
-                              context,
-                              retailerDropDownList![index].name,
-                              retailerDropDownList![index].contact_number,
-                              retailerDropDownList![index].address);
-                        },
-                        itemCount: retailerDropDownList!.length),
+                        : const Center(child: Text("No Data!"))
+                    : retailerDropDownList!.isNotEmpty
+                        ? ListView.builder(
+                            primary: true,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return newTargetNewOutletsDetailsWidget(
+                                  context,
+                                  retailerDropDownList![index].name,
+                                  retailerDropDownList![index].contact_number,
+                                  retailerDropDownList![index].address);
+                            },
+                            itemCount: retailerDropDownList!.length)
+                        : const Center(child: Text("No Data!")),
                 SizedBox(
                   height: size.height * 0.001,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: button("Go to home", () {
-                    Navigator.pop(context);
-                  }, false, AppColors.buttonColor),
-                ),
+                (retailerDropDownList!.isNotEmpty || retailers!.isNotEmpty)
+                    ? Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: button("Go to home", () {
+                          Navigator.pop(context);
+                        }, false, AppColors.buttonColor),
+                      )
+                    : const SizedBox(),
                 const SizedBox(
                   height: 15,
                 )

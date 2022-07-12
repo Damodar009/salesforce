@@ -36,7 +36,7 @@ class GetDepotProductAndRetailerImpl implements GetDepotProductAndRetailer {
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
     final signInLocalDataSource = getIt<SignInLocalDataSource>();
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     try {
       UserDataModel? userInfo =

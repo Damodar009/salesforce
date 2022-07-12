@@ -261,21 +261,12 @@ class AttendenceCubit extends Cubit<AttendenceState> {
     var failureOrSuccess =
         useCaseForHiveImpl.getValuesByKey(box, HiveConstants.depotKey);
 
-    failureOrSuccess.fold(
-        (l) => {
-              print("getting depot from hive is failed")
-              //todo hive failed
-              //   emit(HiveSaveFailed()),
-            },
-        (r) =>
-            {print("getting depot from hive is passed"), print(r), depots = r});
+    failureOrSuccess.fold((l) => {}, (r) => {depots = r});
 
     return depots;
   }
 
-  /// check in
   Future<bool> checkIn() async {
-    //check today date with check in
     DateTime now = DateTime.now();
     bool checkedInBool = false;
     Attendence? checkInAttendance =
@@ -296,7 +287,6 @@ class AttendenceCubit extends Cubit<AttendenceState> {
         //   deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
 
         if (isInDepot) {
-          print("you are inside depot");
           MacAddress macAddress = MacAddress();
           String dateTime = DateTime.now().toString();
           String macAddresss = await macAddress.getMacAddress();

@@ -1,11 +1,12 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:salesforce/data/datasource/remoteSource/report.dart';
 import 'package:salesforce/domain/repositories/repository.dart';
 import 'package:salesforce/error/failure.dart';
-
 import '../../injectable.dart';
 import '../models/reportModel.dart';
 
+@Injectable(as: ReportRepository)
 class ReportRepositoryImpl implements ReportRepository {
   var reportRemoteSource = getIt<ReportRemoteSource>();
   ReportRepositoryImpl({required this.reportRemoteSource});

@@ -21,7 +21,7 @@ class GetAllPublishNotificationRemoteDataSourceImpl
   Future<List<PublishNotification>> getAllPublishNotification() async {
     Dio dio = Dio();
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     try {
       Response response = await dio.get(

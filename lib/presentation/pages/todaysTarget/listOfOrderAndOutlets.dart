@@ -71,7 +71,7 @@ class _ListOfOrderAndOutletDetailScreenState
 
   getDataFromHiveForTodaySalesData() async {
     Box boxs = await Hive.openBox(HiveConstants.salesDataCollection);
-    print("sales data collection inside hive ");
+
     var successOrFailed = useCaseForHiveImpl.getAllValuesFromHiveBox(boxs);
     successOrFailed.fold(
         (l) => {print("this is so sad")},
@@ -79,10 +79,8 @@ class _ListOfOrderAndOutletDetailScreenState
               setState(() {
                 for (var i = 0; i < r.length; i++) {
                   salesData.add(r[i]);
-                  print(r[i]);
                 }
               }),
-              print(salesData.length)
             });
   }
 
@@ -100,8 +98,6 @@ class _ListOfOrderAndOutletDetailScreenState
   String? getNameFromId(String retailerId) {
     String? retailerName;
     retailerData.map((e) => {
-          print(e.id),
-          print(retailerId),
           if (e.id == retailerId)
             {print("it is not equal"), retailerName = e.name}
           else
@@ -134,34 +130,33 @@ class _ListOfOrderAndOutletDetailScreenState
                   height: 30,
                 ),
                 //  Text(text),
-                ListView.builder(
-                    primary: true,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      List<String>? products = [];
-
-                      products = changeIdTOName(salesData[index].sales!);
-
-                      // List<String>? products = [];
-                      // products = changeIdTOName(salesData[index].sales!);
-
-                      return individualOrderDetail(
-                          salesData[index].retailer != null
-                              ? getNameFromId(salesData[index].retailer!)
-                              : salesData[index].retailerPojo!.name,
-                          changeIdTOName(salesData[index].sales!));
-                    },
-                    itemCount: salesData.length),
+                salesData.isNotEmpty
+                    ? ListView.builder(
+                        primary: true,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return individualOrderDetail(
+                              salesData[index].retailer != null
+                                  ? getNameFromId(salesData[index].retailer!)
+                                  : salesData[index].retailerPojo!.name,
+                              changeIdTOName(salesData[index].sales!));
+                        },
+                        itemCount: salesData.length)
+                    : const Center(
+                        child: Text("No Data !"),
+                      ),
                 const SizedBox(
                   height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: button("Go to home", () {
-                    Navigator.pop(context);
-                  }, false, AppColors.buttonColor),
-                ),
+                salesData.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: button("Go to home", () {
+                          Navigator.pop(context);
+                        }, false, AppColors.buttonColor),
+                      )
+                    : const SizedBox(),
                 const SizedBox(
                   height: 15,
                 )

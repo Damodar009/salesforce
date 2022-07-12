@@ -30,7 +30,7 @@ class SalesTeamRemoteSourceImpl implements SalesTeamRemoteSource {
     var salesPersonInJson = salesPersonModel.toJson();
     var jsonEncodedSalesPerson = jsonEncode(salesPersonInJson);
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     try {
       Response response = await dio.post(

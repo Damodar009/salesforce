@@ -5,6 +5,7 @@ import 'package:salesforce/domain/entities/attendence.dart';
 import 'package:salesforce/domain/entities/requestDeliver.dart';
 import 'package:salesforce/domain/usecases/useCaseForAttebdenceSave.dart';
 import 'package:salesforce/domain/usecases/useCaseForSalesData.dart';
+import 'package:salesforce/domain/usecases/useCaseForSalesDataTrackCollection.dart';
 import 'package:salesforce/domain/usecases/usecasesForRemoteSource.dart';
 import 'package:salesforce/utils/dataChecker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import '../../data/datasource/local_data_sources.dart';
 import '../../injectable.dart';
 import '../../utils/hiveConstant.dart';
 import '../entities/retailer.dart';
+import '../entities/saleslocationTrack.dart';
 import 'hiveUseCases/hiveUseCases.dart';
 
 @injectable
@@ -22,7 +24,7 @@ class AllLocalDataToApi {
 
   bool sendAllLocalDataToAPi(
       {List<SalesData>? salesData,
-      List<dynamic>? locations,
+      List<SalesLocationTrack>? locations,
       List<Retailer>? mewOutlets,
       Attendence? attendance,
       List<RequestDelivered>? requestedDelivered}) {
@@ -70,6 +72,19 @@ class AllLocalDataToApi {
                   },
               (r) => deleteDeliveredOrders()));
     }
+
+    if (locations != null) {
+      var useCaseForSalesDataTrackCollectionImpl =
+          getIt<UseCaseForSalesDataTrackCollectionImpl>();
+      useCaseForSalesDataTrackCollectionImpl
+          .saveSalesDataAndTrackCollection(locations)
+          .then((value) => value.fold(
+              (l) => {
+                    allDataSend = false,
+                  },
+              (r) => deleteLocationData()));
+      ;
+    }
     return allDataSend;
   }
 
@@ -80,15 +95,17 @@ class AllLocalDataToApi {
       List<Retailer>? mewOutlets;
       Attendence? attendance;
       List<RequestDelivered>? requestedDelivered;
+      List<SalesLocationTrack> salesDataTrack;
 
       salesData = await getSalesData();
       mewOutlets = await getNewRetailers();
       attendance = await getAttendanceDataFromHiveBox();
       requestedDelivered = await getDeliveredOrderFromHive();
+      salesDataTrack = await getSalesTrackDataFromHive();
 
       bool allDataSend = sendAllLocalDataToAPi(
           salesData: salesData,
-          locations: null,
+          locations: salesDataTrack,
           mewOutlets: mewOutlets,
           attendance: attendance,
           requestedDelivered: requestedDelivered);
@@ -155,18 +172,29 @@ class AllLocalDataToApi {
         .fold(
             (l) => {print("getting delivered data from hive is failed")},
             (r) => {
-                  for (int i = 0; i < r.length; i++)
+                  for (RequestDelivered request in r)
                     {
-                      for (int j = 0; j < r[i].productName.length; j++)
-                        requestDelivered.add(RequestDelivered(
-                            r[i].productName[j].id,
-                            r[i].productName[j].requestedDate))
-                    },
+                      requestDelivered.add(request),
+                    }
                 });
     return requestDelivered;
   }
 
-  //delete data from retailers box , salesdata box , attendance box
+  Future<List<SalesLocationTrack>> getSalesTrackDataFromHive() async {
+    List<SalesLocationTrack> salesTrackLocation = [];
+    Box locationBox;
+    locationBox = await Hive.openBox(HiveConstants.salesPersonLocationTrack);
+    useCaseForHiveImpl.getAllValuesFromHiveBox(locationBox).fold(
+        (l) => {print("getting delivered data from hive is failed")},
+        (r) => {
+              for (SalesLocationTrack request in r)
+                {
+                  salesTrackLocation.add(request),
+                }
+            });
+    return salesTrackLocation;
+  }
+
   deleteRetailerData() async {
     Box salesBox = await Hive.openBox(HiveConstants.newRetailer);
     salesBox.clear();
@@ -185,5 +213,11 @@ class AllLocalDataToApi {
   deleteDeliveredOrders() async {
     Box deliveredBox = await Hive.openBox(HiveConstants.depotProductRetailers);
     deliveredBox.delete(HiveConstants.deliveredOrders);
+  }
+
+  deleteLocationData() async {
+    Box locationBox =
+        await Hive.openBox(HiveConstants.salesPersonLocationTrack);
+    locationBox.clear();
   }
 }

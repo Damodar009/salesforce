@@ -58,6 +58,7 @@ abstract class RemoteSource {
 @Injectable(as: RemoteSource)
 class RemoteSourceImplementation implements RemoteSource {
   Dio dio = Dio();
+
   var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
   final signInLocalDataSource = getIt<SignInLocalDataSource>();
 
@@ -100,7 +101,7 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<UserDetailsData> getUserDetailsData() async {
     String? userId;
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     userId = await appInterceptors.getUserId();
     try {
@@ -128,7 +129,7 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<String> changePassword(String oldPassword, String newPassword) async {
     String? userId;
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     userId = await appInterceptors.getUserId();
 
@@ -157,7 +158,7 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<DepotProductRetailer> getDepotProductAndRetailer() async {
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
 
     try {
@@ -234,7 +235,7 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<List<RetailerPojo>> saveAllRetailer(
       List<Retailer> listOfRetailers) async {
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
 
     List<RetailerModel> retailerPojoModelList = [];
@@ -290,7 +291,7 @@ class RemoteSourceImplementation implements RemoteSource {
   Future<SaveUserDetailsDataModel> saveUserDetails(
       SaveUserDetailsDataModel saveUserDetailsDataModel) async {
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     SaveUserDetailsDataModel saveUserDetailsData = SaveUserDetailsDataModel(
       id: saveUserDetailsDataModel.id,
@@ -337,7 +338,7 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<String> requestLeave(Leave leave) async {
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     LeaveModel leaveModel = LeaveModel(
         fromDate: leave.fromDate,
@@ -372,8 +373,14 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<bool> flagChecker() async {
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
+
+    dio.interceptors.add(InterceptorsWrapper(onError: (error, handler) {
+      if (error.response?.statusCode == 401) {
+        print("not okay");
+      }
+    }));
 
     try {
       Response response = await dio.get(
@@ -400,22 +407,22 @@ class RemoteSourceImplementation implements RemoteSource {
   @override
   Future<String> refreshToken() async {
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     const String _clientId = 'clientId';
     const String _clientSecret = 'secret';
-    String s =
-        'Basic ' + base64Encode(utf8.encode('$_clientId:$_clientSecret'));
-    print(s);
+    String p = base64Encode(utf8.encode('$_clientId:$_clientSecret'));
+    print(p);
+
     try {
       Response response = await dio.post(
         ApiUrl.refreshToken,
         queryParameters: <String, String>{
           'grant_type': 'refresh_token',
-          'refresh_token': accessToken!,
+          'refresh_token': "5686e02d-1e31-4f24-8108-87b6c3e85cca",
         },
         options: Options(
-          contentType: "application/x-www-form-urlencoded",
+          contentType: "application/json",
           headers: {
             'Authorization': 'Basic ' +
                 base64Encode(utf8.encode('$_clientId:$_clientSecret'))
@@ -424,14 +431,11 @@ class RemoteSourceImplementation implements RemoteSource {
       );
       if (response.statusCode == 200) {
         UserDataModel userData = UserDataModel.fromJson(response.data);
-        print("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-        print(userData);
         return "userData";
       } else {
         throw ServerException();
       }
     } on DioError catch (e) {
-      print(e);
       throw ServerException();
     }
   }

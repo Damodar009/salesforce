@@ -1,9 +1,9 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:salesforce/domain/entities/saleslocationTrack.dart';
-import 'package:salesforce/domain/usecases/hiveUseCases/hiveUseCases.dart';
-import 'package:salesforce/injectable.dart';
+
 import '../../../error/exception.dart';
 import '../../../utils/AapiUtils.dart';
 import '../../../utils/apiUrl.dart';
@@ -38,7 +38,7 @@ class SalesDataAndTrackCollectionRemoteSourceimpl
 
     var jsonEncodedAnswer = jsonEncode(salesTrackInJson);
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
     try {
       Response response = await dio.post(

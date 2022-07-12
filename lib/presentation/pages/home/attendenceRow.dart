@@ -31,26 +31,3 @@ Widget attendanceRow(String checkIn, Function() onclick, bool loading) {
     ],
   );
 }
-
-// setState(() {
-// loading = true;
-// });
-// // check internet
-// bool result = await InternetConnectionChecker().hasConnection;
-//
-// if (result) {
-// bool check = await attendenceCubit.checkIn();
-// if (!check) {
-// Navigator.of(context).pushNamed(Routes.attendanceRoute);
-// } else {
-// ScaffoldMessenger.of(context).showSnackBar(
-// const SnackBar(content: Text('Please go to depot first')));
-// }
-// } else {
-// ScaffoldMessenger.of(context).showSnackBar(
-// const SnackBar(content: Text('Please connect to internet')));
-// }
-//
-// setState(() {
-// loading = false;
-// });

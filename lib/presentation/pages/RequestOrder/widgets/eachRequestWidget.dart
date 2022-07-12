@@ -6,7 +6,7 @@ import '../../../../utils/app_colors.dart';
 Widget eachRequestedOrder(
     String retailerName,
     String collectionDate,
-    List<ProductName> orderRequests,
+    List<ProductName>? orderRequests,
     List<RequestedDropDown> deliveredRequested,
     Function(RequestedDropDown) onTap) {
   bool checkProduct(String productName) {
@@ -43,7 +43,7 @@ Widget eachRequestedOrder(
         title: Text(retailerName),
         subtitle: Text(collectionDate),
         children: [
-          for (int i = 0; i < orderRequests.length; i++)
+          for (int i = 0; i < orderRequests!.length; i++)
             Row(
               children: [
                 Padding(

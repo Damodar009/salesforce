@@ -13,11 +13,11 @@ abstract class ReportRemoteSource {
 class ReportRemoteSourceImpl implements ReportRemoteSource {
   @override
   Future<List<ReportModel>?> getReport() async {
-    //  var useCaseForHiveImpl = getIt<UseCaseForHiveImpl>();
+
     Dio dio = Dio();
     @override
     String? accessToken;
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     accessToken = await appInterceptors.getUserAccessToken();
 
     try {
@@ -26,10 +26,11 @@ class ReportRemoteSourceImpl implements ReportRemoteSource {
         data: {"order_type": "sales", "product_id": "0", "time": "DAY"},
         options: Options(
           contentType: "application/json",
-          headers: <String, String>{'Authorization': 'Bearer $accessToken'},
+          headers: <String, String>{'Authorization': 'Bearer eb8620bd-5337-45d4-a430-1285a4d7ec1c'},
         ),
       );
       if (response.data["status"] == true) {
+        print(response);
         List<ReportModel> reports = (response.data["data"] as List)
             .map((report) => ReportModel.fromJson(report))
             .toList();

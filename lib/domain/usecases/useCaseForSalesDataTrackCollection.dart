@@ -34,22 +34,22 @@ class UseCaseForSalesDataTrackCollectionImpl
 
   @override
   saveSalesTrackDataTOHive(double distanceFilter) async {
-    await BackgroundLocation.setAndroidNotification(
-      title: 'Background service is running',
-      message: 'Background location in progress',
-      icon: '@mipmap/ic_launcher',
-    );
+    // await BackgroundLocation.setAndroidNotification(
+    //   title: 'Background service is running',
+    //   message: 'Background location in progress',
+    //   icon: '@mipmap/ic_launcher',
+    // );
     DateTime dateTime = DateTime.now();
     Box locationBox;
     locationBox = await Hive.openBox(HiveConstants.salesPersonLocationTrack);
-    AppInterceptors appInterceptors = AppInterceptors();
+    ApiHelper appInterceptors = ApiHelper();
     String? userId = await appInterceptors.getUserId();
     if (userId != null) {
       SalesLocationTrack salesLocationTrack = SalesLocationTrack(
           trackingDate: "${dateTime.year}-${dateTime.month}-${dateTime.day}",
           longitude: 1,
           latitude: 1,
-          userId: '');
+          userId: userId);
 
       await BackgroundLocation.setAndroidConfiguration(3000);
       await BackgroundLocation.startLocationService(
@@ -60,9 +60,6 @@ class UseCaseForSalesDataTrackCollectionImpl
             latitude: location.latitude!, longitude: location.longitude!);
 
         locationBox.add(salesLocationTracks);
-        print("location is updating regularly ");
-        print(location.latitude);
-        print(location.longitude);
       });
     }
   }
